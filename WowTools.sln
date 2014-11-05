@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateFieldExtractor", "Upd
 		{809CC30D-558F-46ED-87E9-06AF0BC63FB6} = {809CC30D-558F-46ED-87E9-06AF0BC63FB6}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedirectDecrypt", "RedirectDecrypt\RedirectDecrypt.csproj", "{D6071EA5-14C9-4FE9-9CEC-D3D4E9335E21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -33,6 +35,10 @@ Global
 		{134032CA-7960-4C7E-B4EF-056D5141D7D6}.Debug|Win32.Build.0 = Debug|Win32
 		{134032CA-7960-4C7E-B4EF-056D5141D7D6}.Release|Win32.ActiveCfg = Release|Win32
 		{134032CA-7960-4C7E-B4EF-056D5141D7D6}.Release|Win32.Build.0 = Release|Win32
+		{D6071EA5-14C9-4FE9-9CEC-D3D4E9335E21}.Debug|Win32.ActiveCfg = Debug|x86
+		{D6071EA5-14C9-4FE9-9CEC-D3D4E9335E21}.Debug|Win32.Build.0 = Debug|x86
+		{D6071EA5-14C9-4FE9-9CEC-D3D4E9335E21}.Release|Win32.ActiveCfg = Release|x86
+		{D6071EA5-14C9-4FE9-9CEC-D3D4E9335E21}.Release|Win32.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
