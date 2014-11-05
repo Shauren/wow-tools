@@ -35,6 +35,11 @@ namespace RedirectDecrypt
                     sb.AppendFormat("Panama seed: {0}", Program.ByteArrayToHexString(PanamaKey));
                     sb.AppendLine();
                 }
+                if (Adler32 != 0)
+                {
+                    sb.AppendFormat("Adler32: {0}", Adler32.ToString("X8"));
+                    sb.AppendLine();
+                }
                 sb.AppendFormat(Encoding.ASCII.GetString(Haiku));
                 sb.AppendLine();
                 sb.AppendLine("HMAC: " + Program.ByteArrayToHexString(Hmac));
@@ -51,5 +56,6 @@ namespace RedirectDecrypt
         public byte[] Hmac;
         public byte[] PanamaKey;
         public byte[] PiDigits;
+        public uint Adler32;
     }
 }
