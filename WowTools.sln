@@ -17,6 +17,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateFieldExtractor", "Upd
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedirectDecrypt", "RedirectDecrypt\RedirectDecrypt.csproj", "{D6071EA5-14C9-4FE9-9CEC-D3D4E9335E21}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpcodeToConnectionGenerator", "OpcodeToConnectionGenerator\OpcodeToConnectionGenerator.vcxproj", "{1A52AB80-9486-4F5D-B247-031E8575C4E8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{809CC30D-558F-46ED-87E9-06AF0BC63FB6} = {809CC30D-558F-46ED-87E9-06AF0BC63FB6}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -39,6 +44,10 @@ Global
 		{D6071EA5-14C9-4FE9-9CEC-D3D4E9335E21}.Debug|Win32.Build.0 = Debug|x86
 		{D6071EA5-14C9-4FE9-9CEC-D3D4E9335E21}.Release|Win32.ActiveCfg = Release|x86
 		{D6071EA5-14C9-4FE9-9CEC-D3D4E9335E21}.Release|Win32.Build.0 = Release|x86
+		{1A52AB80-9486-4F5D-B247-031E8575C4E8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1A52AB80-9486-4F5D-B247-031E8575C4E8}.Debug|Win32.Build.0 = Debug|Win32
+		{1A52AB80-9486-4F5D-B247-031E8575C4E8}.Release|Win32.ActiveCfg = Release|Win32
+		{1A52AB80-9486-4F5D-B247-031E8575C4E8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
