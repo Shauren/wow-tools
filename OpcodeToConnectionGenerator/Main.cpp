@@ -90,7 +90,7 @@ char __cdecl sub_5F4D86(int a1, int a2, int a3, void *a4, size_t a5)
   char result; // al@4
 
   if ( (((_WORD)a2 - 1) & 0x1508) != 5376
-    || (unsigned __int8)sub_5F4CF1(a2) && NetClient::GetWowConnectionIndex(a3) != 1 )
+    || (unsigned __int8)sub_5F534B(a2) && NetClient::GetWowConnectionIndex(a3) != 1 )
   {
     result = 0;
   }
@@ -131,7 +131,7 @@ char __cdecl sub_5FF895(int a1, int a2, int a3, void *a4, size_t a5)
     && v8 != 1480
     && (v9 = v5 & 0xDCE, v9 != 1354)
     && v9 != 1482
-    || (unsigned __int8)sub_5FA1D7(a2) && NetClient::GetWowConnectionIndex(a3) != 1 )
+    || (unsigned __int8)sub_5FA8D3(a2) && NetClient::GetWowConnectionIndex(a3) != 1 )
   {
     result = 0;
   }
@@ -148,7 +148,7 @@ char __cdecl sub_61F2FF(int a1, int a2, int a3, void *a4, size_t a5)
   char result; // al@4
 
   if ( (((_WORD)a2 - 1) & 0x158C) != 4100
-    || (unsigned __int8)sub_61F26B(a2) && NetClient::GetWowConnectionIndex((void *)a1, a3) != 1 )
+    || (unsigned __int8)sub_61F832(a2) && NetClient::GetWowConnectionIndex((void *)a1, a3) != 1 )
   {
     result = 0;
   }
@@ -172,7 +172,7 @@ char __cdecl sub_CAE52D(int a1, int a2, int a3, void *a4, size_t a5)
     && (v5 & 0xDE4) != 352
     && (v5 & 0x5F4) != 496
     && (v5 & 0x74A) != 1802
-    || (unsigned __int8)sub_CAE2AA(a2) && NetClient::GetWowConnectionIndex(a3) != 1 )
+    || (unsigned __int8)sub_CAE4CB(a2) && NetClient::GetWowConnectionIndex(a3) != 1 )
   {
     result = 0;
   }
@@ -194,13 +194,13 @@ BOOL WINAPI DllMain(HANDLE hDllHandle, DWORD dwReason, LPVOID lpreserved)
 
     JamGroup grp[4];
     grp[0].BelongsToGroup = &IsClientQuest;
-    grp[0].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x5F4CF1));
+    grp[0].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x5F534B));
     grp[1].BelongsToGroup = &IsClient;
-    grp[1].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x5FA1D7));
+    grp[1].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x5FA8D3));
     grp[2].BelongsToGroup = &IsClientGuild;
-    grp[2].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x61F26B));
+    grp[2].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x61F832));
     grp[3].BelongsToGroup = &IsClientSpell;
-    grp[3].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0xCAE2AA));
+    grp[3].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0xCAE4CB));
 
     FILE* dump = nullptr;
     fopen_s(&dump, "dump.txt", "w");
