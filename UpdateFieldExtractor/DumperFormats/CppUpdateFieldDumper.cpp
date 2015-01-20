@@ -4,10 +4,47 @@
 
 void CppUpdateFieldDumper::Dump()
 {
+    BuildUpdateFieldEnum(ObjectFields, "ObjectFields", GetInputData()->ObjectFields, OBJECT_COUNT, "OBJECT_END", "");
+    BuildDynamicUpdateFieldEnum(ObjectDynamicFields, "ObjectDynamicFields", nullptr, OBJECT_DYNAMIC_COUNT, "OBJECT_DYNAMIC_END", "");
+
+    BuildUpdateFieldEnum(ItemFields, "ItemFields", GetInputData()->ItemFields, ITEM_COUNT, "ITEM_END", "OBJECT_END");
+    BuildDynamicUpdateFieldEnum(ItemDynamicFields, "ItemDynamicFields", GetInputData()->ItemDynamicFields, ITEM_DYNAMIC_COUNT, "ITEM_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+
+    BuildUpdateFieldEnum(ContainerFields, "ContainerFields", GetInputData()->ContainerFields, CONTAINER_COUNT, "CONTAINER_END", "ITEM_END");
+    BuildDynamicUpdateFieldEnum(ContainerDynamicFields, "ContainerDynamicFields", nullptr, CONTAINER_DYNAMIC_COUNT, "CONTAINER_DYNAMIC_END", "ITEM_DYNAMIC_END");
+
+    BuildUpdateFieldEnum(UnitFields, "UnitFields", GetInputData()->UnitFields, UNIT_COUNT, "UNIT_END", "OBJECT_END");
+    BuildDynamicUpdateFieldEnum(UnitDynamicFields, "UnitDynamicFields", GetInputData()->UnitDynamicFields, UNIT_DYNAMIC_COUNT, "UNIT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+
+    BuildUpdateFieldEnum(PlayerFields, "PlayerFields", GetInputData()->PlayerFields, PLAYER_COUNT, "PLAYER_END", "UNIT_END");
+    Enum::Member head = *(PlayerFields.GetMember("PLAYER_FIELD_INV_SLOT_HEAD"));
+    head.ValueName = "PLAYER_FIELD_END_NOT_SELF";
+    head.Comment = "";
+    PlayerFields.AddMemberSorted(std::move(head));
+    BuildDynamicUpdateFieldEnum(PlayerDynamicFields, "PlayerDynamicFields", GetInputData()->PlayerDynamicFields, PLAYER_DYNAMIC_COUNT, "PLAYER_DYNAMIC_END", "UNIT_DYNAMIC_END");
+
+    BuildUpdateFieldEnum(GameObjectFields, "GameObjectFields", GetInputData()->GameObjectFields, GAMEOBJECT_COUNT, "GAMEOBJECT_END", "OBJECT_END");
+    BuildDynamicUpdateFieldEnum(GameObjectDynamicFields, "GameObjectDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "GAMEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+
+    BuildUpdateFieldEnum(DynamicObjectFields, "DynamicObjectFields", GetInputData()->DynamicObjectFields, DYNAMICOBJECT_COUNT, "DYNAMICOBJECT_END", "OBJECT_END");
+    BuildDynamicUpdateFieldEnum(DynamicObjectDynamicFields, "DynamicObjectDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "DYNAMICOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+
+    BuildUpdateFieldEnum(CorpseFields, "CorpseFields", GetInputData()->CorpseFields, CORPSE_COUNT, "CORPSE_END", "OBJECT_END");
+    BuildDynamicUpdateFieldEnum(CorpseDynamicFields, "CorpseDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "CORPSE_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+
+    BuildUpdateFieldEnum(AreaTriggerFields, "AreaTriggerFields", GetInputData()->AreaTriggerFields, AREATRIGGER_COUNT, "AREATRIGGER_END", "OBJECT_END");
+    BuildDynamicUpdateFieldEnum(AreaTriggerDynamicFields, "AreaTriggerDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "AREATRIGGER_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+
+    BuildUpdateFieldEnum(SceneObjectFields, "SceneObjectFields", GetInputData()->SceneObjectFields, SCENEOBJECT_COUNT, "SCENEOBJECT_END", "OBJECT_END");
+    BuildDynamicUpdateFieldEnum(SceneObjectDynamicFields, "SceneObjectDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "SCENEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+
+    BuildUpdateFieldEnum(ConversationFields, "ConversationFields", GetInputData()->ConversationFields, CONVERSATION_COUNT, "CONVERSATION_END", "OBJECT_END");
+    BuildDynamicUpdateFieldEnum(ConversationDynamicFields, "ConversationDynamicFields", GetInputData()->ConversationDynamicFields, CONVERSATION_DYNAMIC_COUNT, "CONVERSATION_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+
     std::ofstream updateFieldsDump("UpdateFields.h");
 
     updateFieldsDump << "/*" << std::endl;
-    updateFieldsDump << " * Copyright (C) 2008-2014 TrinityCore <http://www.trinitycore.org/>" << std::endl;
+    updateFieldsDump << " * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>" << std::endl;
     updateFieldsDump << " * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>" << std::endl;
     updateFieldsDump << " *" << std::endl;
     updateFieldsDump << " * This program is free software; you can redistribute it and/or modify it" << std::endl;
@@ -30,41 +67,9 @@ void CppUpdateFieldDumper::Dump()
     updateFieldsDump << "// Auto generated for version " << FormatVersion(", ") << std::endl;
     updateFieldsDump << std::endl;
 
-    DumpUpdateFields(updateFieldsDump, "ObjectFields", GetInputData()->ObjectFields, OBJECT_COUNT, "OBJECT_END", "");
-    DumpDynamicFields(updateFieldsDump, "ObjectDynamicFields", nullptr, OBJECT_DYNAMIC_COUNT, "OBJECT_DYNAMIC_END", "");
-
-    DumpUpdateFields(updateFieldsDump, "ItemFields", GetInputData()->ItemFields, ITEM_COUNT, "ITEM_END", "OBJECT_END");
-    DumpDynamicFields(updateFieldsDump, "ItemDynamicFields", GetInputData()->ItemDynamicFields, ITEM_DYNAMIC_COUNT, "ITEM_DYNAMIC_END", "OBJECT_DYNAMIC_END");
-
-    DumpUpdateFields(updateFieldsDump, "ContainerFields", GetInputData()->ContainerFields, CONTAINER_COUNT, "CONTAINER_END", "ITEM_END");
-    DumpDynamicFields(updateFieldsDump, "ContainerDynamicFields", nullptr, CONTAINER_DYNAMIC_COUNT, "CONTAINER_DYNAMIC_END", "ITEM_DYNAMIC_END");
-
-    DumpUpdateFields(updateFieldsDump, "UnitFields", GetInputData()->UnitFields, UNIT_COUNT, "UNIT_END", "OBJECT_END");
-    DumpDynamicFields(updateFieldsDump, "UnitDynamicFields", GetInputData()->UnitDynamicFields, UNIT_DYNAMIC_COUNT, "UNIT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
-
-    DumpUpdateFields(updateFieldsDump, "PlayerFields", GetInputData()->PlayerFields, PLAYER_COUNT, "PLAYER_END", "UNIT_END");
-    DumpDynamicFields(updateFieldsDump, "PlayerDynamicFields", GetInputData()->PlayerDynamicFields, PLAYER_DYNAMIC_COUNT, "PLAYER_DYNAMIC_END", "UNIT_DYNAMIC_END");
-
-    DumpUpdateFields(updateFieldsDump, "GameObjectFields", GetInputData()->GameObjectFields, GAMEOBJECT_COUNT, "GAMEOBJECT_END", "OBJECT_END");
-    DumpDynamicFields(updateFieldsDump, "GameObjectDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "GAMEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
-
-    DumpUpdateFields(updateFieldsDump, "DynamicObjectFields", GetInputData()->DynamicObjectFields, DYNAMICOBJECT_COUNT, "DYNAMICOBJECT_END", "OBJECT_END");
-    DumpDynamicFields(updateFieldsDump, "DynamicObjectDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "DYNAMICOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
-
-    DumpUpdateFields(updateFieldsDump, "CorpseFields", GetInputData()->CorpseFields, CORPSE_COUNT, "CORPSE_END", "OBJECT_END");
-    DumpDynamicFields(updateFieldsDump, "CorpseDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "CORPSE_DYNAMIC_END", "OBJECT_DYNAMIC_END");
-
-    DumpUpdateFields(updateFieldsDump, "AreaTriggerFields", GetInputData()->AreaTriggerFields, AREATRIGGER_COUNT, "AREATRIGGER_END", "OBJECT_END");
-    DumpDynamicFields(updateFieldsDump, "AreaTriggerDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "AREATRIGGER_DYNAMIC_END", "OBJECT_DYNAMIC_END");
-
-    DumpUpdateFields(updateFieldsDump, "SceneObjectFields", GetInputData()->SceneObjectFields, SCENEOBJECT_COUNT, "SCENEOBJECT_END", "OBJECT_END");
-    DumpDynamicFields(updateFieldsDump, "SceneObjectDynamicFields", nullptr, GAMEOBJECT_DYNAMIC_COUNT, "SCENEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
-
-    DumpUpdateFields(updateFieldsDump, "ConversationField", GetInputData()->ConversationFields, CONVERSATION_COUNT, "CONVERSATION_END", "OBJECT_END");
-    DumpDynamicFields(updateFieldsDump, "ConversationDynamicField", GetInputData()->ConversationDynamicFields, CONVERSATION_DYNAMIC_COUNT, "CONVERSATION_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    DumpEnums(updateFieldsDump);
 
     updateFieldsDump << "#endif // _UPDATEFIELDS_H" << std::endl;
-
     updateFieldsDump.close();
 
     std::ofstream updateFieldFlags("UpdateFieldFlags.cpp");
@@ -136,78 +141,12 @@ void CppUpdateFieldDumper::Dump()
     updateFieldFlags.close();
 }
 
-void CppUpdateFieldDumper::DumpUpdateFields(std::ofstream& file, std::string const& name, UpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase)
+void CppUpdateFieldDumper::DumpEnum(std::ofstream& file, Enum const& enumData)
 {
-    file << "enum " << name << std::endl;
-    file << "{" << std::endl;
+    if (enumData.GetMembers().empty())
+        return;
 
-    std::int32_t i = 0;
-    while (i < count)
-    {
-        UpdateField* field = &data[i];
-        std::string name = GetInputData()->ReadProcessMemoryCString(data[i].NameAddress);
-        if (name == "CGUnitData::npcFlags[UMNW0]")
-        {
-            name = "CGUnitData::npcFlags";
-            field = &data[i + 1];
-        }
-
-        std::string oldName = GetOldName(name.c_str());
-        if (!oldName.empty())
-            name = oldName;
-
-        std::string pad(PaddingSize - name.length(), ' ');
-        if (name == "PLAYER_FIELD_INV_SLOT_HEAD")
-            file << Tab << "PLAYER_FIELD_END_NOT_SELF " << pad << "= UNIT_END + " << hex_number(i) << ',' << std::endl << std::endl;
-
-        file << Tab << name << pad << "= ";
-        if (!fieldBase.empty())
-            file << fieldBase << " + ";
-
-        file << hex_number(i) << ',';
-        file << " // Size: " << field->Size << ", Flags: " << GetUpdateFieldFlagName(field->Flags) << std::endl;
-        i += field->Size;
-    }
-
-    file << Tab << end << std::string(PaddingSize - end.length(), ' ') << "= ";
-    if (!fieldBase.empty())
-        file << fieldBase << " + ";
-
-    file << hex_number(i) << ',' << std::endl;
-
-    file << "};" << std::endl << std::endl;
-}
-
-void CppUpdateFieldDumper::DumpDynamicFields(std::ofstream& file, std::string const& name, DynamicUpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase)
-{
-    file << "enum " << name << std::endl;
-    file << "{" << std::endl;
-
-    std::int32_t i = 0;
-    while (i < count)
-    {
-        DynamicUpdateField* field = &data[i];
-        std::string name = GetInputData()->ReadProcessMemoryCString(data[i].NameAddress);
-        std::string oldName = GetOldName(name.c_str());
-        if (!oldName.empty())
-            name = oldName;
-
-        std::string pad(PaddingSize - name.length(), ' ');
-        file << Tab << name << pad << "= ";
-        if (!fieldBase.empty())
-            file << fieldBase << " + ";
-
-        file << hex_number(i) << ',';
-        file << " //  Flags: " << GetUpdateFieldFlagName(field->Flags) << std::endl;
-        ++i;
-    }
-
-    file << Tab << end << std::string(PaddingSize - end.length(), ' ') << "= ";
-    if (!fieldBase.empty())
-        file << fieldBase << " + ";
-
-    file << hex_number(i) << ',' << std::endl;
-    file << "};" << std::endl << std::endl;
+    file << EnumOutput(std::make_unique<Cpp>(), enumData, 0);
 }
 
 void CppUpdateFieldDumper::DumpFlags(std::ofstream& file, std::string const& varName, std::vector<UpdateField*> const& fields, std::vector<UpdateFieldSizes> const& counts)
@@ -220,7 +159,7 @@ void CppUpdateFieldDumper::DumpFlags(std::ofstream& file, std::string const& var
         UpdateField* fieldDefs = fields[i];
         UpdateFieldSizes count = counts[i];
 
-        std::int32_t j = 0;
+        std::uint32_t j = 0;
         while (j < count)
         {
             std::string flagName = GetUpdateFieldFlagFullName(fieldDefs[j].Flags);
@@ -251,7 +190,7 @@ void CppUpdateFieldDumper::DumpDynamicFlags(std::ofstream& file, std::string con
         DynamicUpdateField* fieldDefs = fields[i];
         UpdateFieldSizes count = counts[i];
 
-        std::int32_t j = 0;
+        std::uint32_t j = 0;
         while (j < count)
         {
             std::string flagName = GetUpdateFieldFlagFullName(fieldDefs[j].Flags);

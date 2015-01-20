@@ -1,5 +1,6 @@
 
 #include "UpdateFieldDumper.h"
+#include "UpdateFieldNameMap.h"
 #include <sstream>
 #include <cstdio>
 
@@ -21,21 +22,21 @@ enum UpdatefieldFlags
 
 namespace Offsets
 {
-    DWORD_PTR const ObjectFields = 0xD1FE30;
-    DWORD_PTR const ItemFields = 0xD1FA58;
-    DWORD_PTR const ItemDynamicFields = 0xD1F670;
-    DWORD_PTR const ContainerFields = 0xD1EF60;
-    DWORD_PTR const UnitFields = 0xD1DBC0;
-    DWORD_PTR const UnitDynamicFields = 0xD1D224;
-    DWORD_PTR const PlayerFields = 0xD15E28;
-    DWORD_PTR const PlayerDynamicFields = 0xD0E088;
-    DWORD_PTR const GameObjectFields = 0xD0DF48;
-    DWORD_PTR const DynamicObjectFields = 0xD0DD48;
-    DWORD_PTR const CorpseFields = 0xD0DAC8;
-    DWORD_PTR const AreaTriggerFields = 0xD0D848;
-    DWORD_PTR const SceneObjectFields = 0xD0D700;
-    DWORD_PTR const ConversationFields = 0xD0D60C;
-    DWORD_PTR const ConversationDynamicFields = 0xD0D560;
+    DWORD_PTR const ObjectFields = 0xD221D0;
+    DWORD_PTR const ItemFields = 0xD21DF8;
+    DWORD_PTR const ItemDynamicFields = 0xD21A10;
+    DWORD_PTR const ContainerFields = 0xD21300;
+    DWORD_PTR const UnitFields = 0xD1FF60;
+    DWORD_PTR const UnitDynamicFields = 0xD1F5C4;
+    DWORD_PTR const PlayerFields = 0xD181C8;
+    DWORD_PTR const PlayerDynamicFields = 0xD10428;
+    DWORD_PTR const GameObjectFields = 0xD102E8;
+    DWORD_PTR const DynamicObjectFields = 0xD100E8;
+    DWORD_PTR const CorpseFields = 0xD0FE68;
+    DWORD_PTR const AreaTriggerFields = 0xD0FBE8;
+    DWORD_PTR const SceneObjectFields = 0xD0FAA0;
+    DWORD_PTR const ConversationFields = 0xD0F9AC;
+    DWORD_PTR const ConversationDynamicFields = 0xD0F900;
 
     DWORD_PTR BaseAddress;
 }
@@ -80,6 +81,55 @@ std::string Data::ReadProcessMemoryCString(DWORD_PTR address)
     return _stringCache[orig_address] = str;
 }
 
+void UpdateFieldDumper::BuildUpdateFieldEnum(Enum& enumData, std::string const& name, UpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase)
+{
+    enumData.SetName(name);
+
+    std::uint32_t i = 0;
+    while (i < count)
+    {
+        UpdateField* field = &data[i];
+        std::string name = GetInputData()->ReadProcessMemoryCString(data[i].NameAddress);
+        if (name == "CGUnitData::npcFlags[UMNW0]")
+        {
+            name = "CGUnitData::npcFlags";
+            field = &data[i + 1];
+        }
+
+        std::string oldName = GetOldName(name.c_str());
+        if (!oldName.empty())
+            name = oldName;
+
+        enumData.AddMember(Enum::Member(i, FormatValue(i, fieldBase), name,
+            static_cast<std::ostringstream&>(std::ostringstream() << "Size: " << field->Size << ", Flags: " << GetUpdateFieldFlagName(field->Flags)).str()));
+
+        i += field->Size;
+    }
+
+    enumData.AddMember(Enum::Member(i, FormatValue(i, fieldBase), end, ""));
+}
+
+void UpdateFieldDumper::BuildDynamicUpdateFieldEnum(Enum& enumData, std::string const& name, DynamicUpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase)
+{
+    enumData.SetName(name);
+
+    std::uint32_t i = 0;
+    while (i < count)
+    {
+        DynamicUpdateField* field = &data[i];
+        std::string name = GetInputData()->ReadProcessMemoryCString(data[i].NameAddress);
+        std::string oldName = GetOldName(name.c_str());
+        if (!oldName.empty())
+            name = oldName;
+
+        enumData.AddMember(Enum::Member(i, FormatValue(i, fieldBase), name,
+            static_cast<std::ostringstream&>(std::ostringstream() << "Flags: " << GetUpdateFieldFlagName(field->Flags)).str()));
+        ++i;
+    }
+
+    enumData.AddMember(Enum::Member(i, FormatValue(i, fieldBase), end, ""));
+}
+
 std::string const UpdateFieldDumper::Tab = std::string(4, ' ');
 
 std::string UpdateFieldDumper::FormatVersion(std::string const& partSeparator) const
@@ -89,6 +139,42 @@ std::string UpdateFieldDumper::FormatVersion(std::string const& partSeparator) c
         << _versionInfo.FileBuildPart << partSeparator << _versionInfo.FilePrivatePart;
 
     return str.str();
+}
+
+std::string UpdateFieldDumper::FormatValue(std::uint32_t val, std::string const& valueBase)
+{
+    std::ostringstream str;
+    if (!valueBase.empty())
+        str << valueBase << " + ";
+
+    str << hex_number(val);
+    return str.str();
+}
+
+void UpdateFieldDumper::DumpEnums(std::ofstream& updateFieldsDump)
+{
+    DumpEnum(updateFieldsDump, ObjectFields);
+    DumpEnum(updateFieldsDump, ObjectDynamicFields);
+    DumpEnum(updateFieldsDump, ItemFields);
+    DumpEnum(updateFieldsDump, ItemDynamicFields);
+    DumpEnum(updateFieldsDump, ContainerFields);
+    DumpEnum(updateFieldsDump, ContainerDynamicFields);
+    DumpEnum(updateFieldsDump, UnitFields);
+    DumpEnum(updateFieldsDump, UnitDynamicFields);
+    DumpEnum(updateFieldsDump, PlayerFields);
+    DumpEnum(updateFieldsDump, PlayerDynamicFields);
+    DumpEnum(updateFieldsDump, GameObjectFields);
+    DumpEnum(updateFieldsDump, GameObjectDynamicFields);
+    DumpEnum(updateFieldsDump, DynamicObjectFields);
+    DumpEnum(updateFieldsDump, DynamicObjectDynamicFields);
+    DumpEnum(updateFieldsDump, CorpseFields);
+    DumpEnum(updateFieldsDump, CorpseDynamicFields);
+    DumpEnum(updateFieldsDump, AreaTriggerFields);
+    DumpEnum(updateFieldsDump, AreaTriggerDynamicFields);
+    DumpEnum(updateFieldsDump, SceneObjectFields);
+    DumpEnum(updateFieldsDump, SceneObjectDynamicFields);
+    DumpEnum(updateFieldsDump, ConversationFields);
+    DumpEnum(updateFieldsDump, ConversationDynamicFields);
 }
 
 std::string UpdateFieldDumper::GetUpdateFieldFlagName(std::uint16_t flag)
@@ -141,6 +227,32 @@ void UpdateFieldDumper::AppendIf(std::uint16_t flag, std::uint16_t flagToCheck, 
         str.append(separator);
 
     str.append(flagName);
+}
+
+UpdateFieldDumper::UpdateFieldDumper(HANDLE source, Data* input, FileVersionInfo const& version, std::uint32_t enumPadding) : _source(source), _input(input), _versionInfo(version)
+{
+    ObjectFields.SetPaddingAfterValueName(enumPadding);
+    ObjectDynamicFields.SetPaddingAfterValueName(enumPadding);
+    ItemFields.SetPaddingAfterValueName(enumPadding);
+    ItemDynamicFields.SetPaddingAfterValueName(enumPadding);
+    ContainerFields.SetPaddingAfterValueName(enumPadding);
+    ContainerDynamicFields.SetPaddingAfterValueName(enumPadding);
+    UnitFields.SetPaddingAfterValueName(enumPadding);
+    UnitDynamicFields.SetPaddingAfterValueName(enumPadding);
+    PlayerFields.SetPaddingAfterValueName(enumPadding);
+    PlayerDynamicFields.SetPaddingAfterValueName(enumPadding);
+    GameObjectFields.SetPaddingAfterValueName(enumPadding);
+    GameObjectDynamicFields.SetPaddingAfterValueName(enumPadding);
+    DynamicObjectFields.SetPaddingAfterValueName(enumPadding);
+    DynamicObjectDynamicFields.SetPaddingAfterValueName(enumPadding);
+    CorpseFields.SetPaddingAfterValueName(enumPadding);
+    CorpseDynamicFields.SetPaddingAfterValueName(enumPadding);
+    AreaTriggerFields.SetPaddingAfterValueName(enumPadding);
+    AreaTriggerDynamicFields.SetPaddingAfterValueName(enumPadding);
+    SceneObjectFields.SetPaddingAfterValueName(enumPadding);
+    SceneObjectDynamicFields.SetPaddingAfterValueName(enumPadding);
+    ConversationFields.SetPaddingAfterValueName(enumPadding);
+    ConversationDynamicFields.SetPaddingAfterValueName(enumPadding);
 }
 
 std::ostream& operator<<(std::ostream& stream, hex_number const& hex)

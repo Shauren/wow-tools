@@ -14,5 +14,6 @@
     <ClInclude Include="ProcessTools\ProcessTools.h">
       <Filter>ProcessTools</Filter>
     </ClInclude>
+    <ClInclude Include="Enum.h" />
   </ItemGroup>
 </Project>

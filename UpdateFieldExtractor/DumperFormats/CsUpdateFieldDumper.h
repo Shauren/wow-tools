@@ -6,22 +6,20 @@
 
 class CsUpdateFieldDumper : public UpdateFieldDumper
 {
+    enum
+    {
+        PaddingSize = 55
+    };
+
 public:
-    CsUpdateFieldDumper(HANDLE source, Data* input, FileVersionInfo const& version) : UpdateFieldDumper(source, input, version) { }
+    CsUpdateFieldDumper(HANDLE source, Data* input, FileVersionInfo const& version) : UpdateFieldDumper(source, input, version, PaddingSize) { }
 
     ~CsUpdateFieldDumper() { }
 
     void Dump();
 
 protected:
-    void DumpUpdateFields(std::ofstream& file, std::string const& name, UpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase) override;
-    void DumpDynamicFields(std::ofstream& file, std::string const& name, DynamicUpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase) override;
-
-private:
-    enum
-    {
-        PaddingSize = 55
-    };
+    void DumpEnum(std::ofstream& file, Enum const& enumData) override;
 };
 
 #endif // CsUpdateFieldDumper_h__

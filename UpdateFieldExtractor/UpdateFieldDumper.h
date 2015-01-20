@@ -6,13 +6,15 @@
 #include <string>
 #include <unordered_map>
 #include <fstream>
+#include <sstream>
 #include <iomanip>
 #include <Windows.h>
 #include "ProcessTools/ProcessTools.h"
+#include "Enum.h"
 
 #pragma pack(push,4)
 
-enum UpdateFieldSizes
+enum UpdateFieldSizes : std::uint32_t
 {
     OBJECT_COUNT                = 12,
     OBJECT_DYNAMIC_COUNT        = 0,
@@ -90,7 +92,7 @@ namespace Offsets
 class UpdateFieldDumper
 {
 public:
-    UpdateFieldDumper(HANDLE source, Data* input, FileVersionInfo const& version) : _source(source), _input(input), _versionInfo(version) { }
+    UpdateFieldDumper(HANDLE source, Data* input, FileVersionInfo const& version, std::uint32_t enumPadding);
     virtual ~UpdateFieldDumper() { }
 
     virtual void Dump() = 0;
@@ -98,14 +100,40 @@ public:
     static std::string const Tab;
 
 protected:
-    virtual void DumpUpdateFields(std::ofstream& file, std::string const& name, UpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase) = 0;
-    virtual void DumpDynamicFields(std::ofstream& file, std::string const& name, DynamicUpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase) = 0;
+    void BuildUpdateFieldEnum(Enum& enumData, std::string const& name, UpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase);
+    void BuildDynamicUpdateFieldEnum(Enum& enumData, std::string const& name, DynamicUpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase);
     std::string FormatVersion(std::string const& partSeparator) const;
+    static std::string FormatValue(std::uint32_t val, std::string const& valueBase);
 
+    void DumpEnums(std::ofstream& updateFieldsDump);
+    virtual void DumpEnum(std::ofstream& file, Enum const& enumData) = 0;
     Data* GetInputData() { return _input; }
     FileVersionInfo const& GetVersionInfo() const { return _versionInfo; }
     static std::string GetUpdateFieldFlagName(std::uint16_t flag);
     static std::string GetUpdateFieldFlagFullName(std::uint16_t flag);
+
+    Enum ObjectFields;
+    Enum ObjectDynamicFields;
+    Enum ItemFields;
+    Enum ItemDynamicFields;
+    Enum ContainerFields;
+    Enum ContainerDynamicFields;
+    Enum UnitFields;
+    Enum UnitDynamicFields;
+    Enum PlayerFields;
+    Enum PlayerDynamicFields;
+    Enum GameObjectFields;
+    Enum GameObjectDynamicFields;
+    Enum DynamicObjectFields;
+    Enum DynamicObjectDynamicFields;
+    Enum CorpseFields;
+    Enum CorpseDynamicFields;
+    Enum AreaTriggerFields;
+    Enum AreaTriggerDynamicFields;
+    Enum SceneObjectFields;
+    Enum SceneObjectDynamicFields;
+    Enum ConversationFields;
+    Enum ConversationDynamicFields;
 
 private:
     static void AppendIf(std::uint16_t flag, std::uint16_t flagToCheck, std::string& str, std::string const& flagName, std::string const& separator);

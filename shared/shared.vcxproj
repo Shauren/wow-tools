@@ -14,6 +14,7 @@
     <ClCompile Include="ProcessTools\ProcessTools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Enum.h" />
     <ClInclude Include="ProcessTools\ProcessTools.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

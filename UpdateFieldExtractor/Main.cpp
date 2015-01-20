@@ -8,7 +8,7 @@
 int main()
 {
     FileVersionInfo version;
-    HANDLE wow = ProcessTools::GetHandleByName(_T("Wow.exe"), &Offsets::BaseAddress, 19034, true, &version);
+    HANDLE wow = ProcessTools::GetHandleByName(_T("Wow.exe"), &Offsets::BaseAddress, 19342, true, &version);
     if (wow == INVALID_HANDLE_VALUE)
         return 1;
 
