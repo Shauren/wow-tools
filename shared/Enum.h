@@ -2,145 +2,75 @@
 #ifndef Enum_h__
 #define Enum_h__
 
-#include <string>
-#include <sstream>
-#include <list>
-#include <algorithm>
-#include <memory>
+#include "Structure.h"
 
-class Enum
+struct EnumMember : public StructureMember
 {
+    EnumMember(std::uint32_t ordinal, std::string const& name, std::string const& comment) : StructureMember(ordinal, name, comment),
+        Value(std::to_string(ordinal)) { }
+
+    EnumMember(std::uint32_t ordinal, std::string const& value, std::string const& name, std::string const& comment) : StructureMember(ordinal, name, comment),
+        Value(value) { }
+
+    std::string Value;
+};
+
+class Enum : public Structure < EnumMember >
+{
+    typedef Structure<EnumMember> Base;
+
 public:
-    struct Member
-    {
-        Member(std::uint32_t ordinal, std::string const& name, std::string const& comment)
-            : Ordinal(ordinal), Value(std::to_string(ordinal)), ValueName(name), Comment(comment) { }
-
-        Member(std::uint32_t ordinal, std::string const& value, std::string const& name, std::string const& comment)
-            : Ordinal(ordinal), Value(value), ValueName(name), Comment(comment) { }
-
-        std::uint32_t Ordinal;
-        std::string Value;
-        std::string ValueName;
-        std::string Comment;
-
-        bool operator<(Member const& right) const { return Ordinal < right.Ordinal; }
-    };
-
     Enum() { }
-    Enum(std::string const& name) : _name(name) { }
+    Enum(std::string const& name) : Base(name) { }
 
-    void SetName(std::string const& name) { _name = name; }
     void SetPaddingAfterValueName(std::uint32_t padding) { _paddingAfterName = padding; }
-    void AddMember(Member&& member) { _members.push_back(std::move(member)); }
-    void AddMemberSorted(Member&& member) { _members.push_back(std::move(member)); _members.sort(); }
-
-    std::string const& GetName() const { return _name; }
     std::uint32_t GetPadding() const { return _paddingAfterName; }
-    std::list<Member> const& GetMembers() const { return _members; }
-    Member const* GetMember(std::string const& memberName) const
-    {
-        auto itr = std::find_if(_members.begin(), _members.end(), [&memberName](Member const& member)
-        {
-            return member.ValueName == memberName;
-        });
-
-        if (itr != _members.end())
-            return &(*itr);
-
-        return nullptr;
-    }
 
 private:
-    std::string _name;
-    std::list<Member> _members;
     std::uint32_t _paddingAfterName;
 };
 
-class Language
+class EnumFormatter : public Formatter < Enum >
 {
 public:
-    virtual std::string FormatDefinition(std::string const& enumName, std::uint32_t enumIndent) = 0;
-    std::string FormatMember(Enum::Member const& member, std::uint32_t enumIndent, std::uint32_t valueIndent)
+    void FormatMember(std::ostream& stream, Enum const& enumData, Enum::Member const& member, std::uint32_t indent) override
     {
-        if (member.Comment.empty())
-            return static_cast<std::ostringstream&>(std::ostringstream() << std::string(enumIndent + 4, ' ')
-                << member.ValueName << std::string(std::max<std::size_t>(valueIndent - member.ValueName.length(), 1), ' ')
-                << "= " << member.Value << ',' << std::endl).str();
+        stream << std::string(indent + 4, ' ')
+            << member.ValueName << std::string(std::max<std::size_t>(enumData.GetPadding() - member.ValueName.length(), 1), ' ')
+            << "= " << member.Value << ',';
 
-        return static_cast<std::ostringstream&>(std::ostringstream() << std::string(enumIndent + 4, ' ')
-            << member.ValueName << std::string(std::max<std::size_t>(valueIndent - member.ValueName.length(), 1), ' ')
-            << "= " << member.Value << ", // " << member.Comment << std::endl).str();
+        if (!member.Comment.empty())
+            stream << " // " << member.Comment;
+
+        stream << std::endl;
     }
 
-    virtual std::string FormatEnd(std::uint32_t enumIndent) = 0;
-};
-
-class Cs : public Language
-{
-public:
-    std::string FormatDefinition(std::string const& enumName, std::uint32_t enumIndent) override
+    void FormatEnd(std::ostream& stream, std::uint32_t indent) override
     {
-        return static_cast<std::ostringstream&>(std::ostringstream() << std::string(enumIndent, ' ')
-            << "public enum " << enumName << std::endl << std::string(enumIndent, ' ')
-            << '{' << std::endl).str();
-    }
-
-    std::string FormatEnd(std::uint32_t enumIndent) override
-    {
-        return static_cast<std::ostringstream&>(std::ostringstream() << std::string(enumIndent, ' ')
-            << "}" << std::endl).str();
+        stream << std::string(indent, ' ') << "};" << std::endl;
     }
 };
 
-class Cpp : public Language
+class CsEnum : public EnumFormatter
 {
 public:
-    std::string FormatDefinition(std::string const& enumName, std::uint32_t enumIndent) override
+    void FormatDefinition(std::ostream& stream, std::string const& name, std::uint32_t indent) override
     {
-        return static_cast<std::ostringstream&>(std::ostringstream() << std::string(enumIndent, ' ')
-            << "enum " << enumName << std::endl << std::string(enumIndent, ' ')
-            << '{' << std::endl).str();
-    }
-
-    std::string FormatEnd(std::uint32_t enumIndent) override
-    {
-        return static_cast<std::ostringstream&>(std::ostringstream() << std::string(enumIndent, ' ')
-            << "};" << std::endl).str();
+        stream << std::string(indent, ' ')
+            << "public enum " << name << std::endl << std::string(indent, ' ')
+            << '{' << std::endl;
     }
 };
 
-class EnumOutput;
-
-inline std::ostream& operator<<(std::ostream& stream, EnumOutput const& enumData);
-
-class EnumOutput
+class CppEnum : public EnumFormatter
 {
-    friend std::ostream& operator<<(std::ostream& stream, EnumOutput const& enumData);
-
 public:
-    EnumOutput(std::unique_ptr<Language>&& lang, Enum const& enumData, std::uint32_t enumIndent) : _lang(std::move(lang)), _enum(enumData), _enumIndent(enumIndent) { }
-
-    std::ostream& Format(std::ostream& stream) const
+    void FormatDefinition(std::ostream& stream, std::string const& name, std::uint32_t indent) override
     {
-        stream << _lang->FormatDefinition(_enum.GetName(), _enumIndent);
-
-        for (Enum::Member const& m : _enum.GetMembers())
-            stream << _lang->FormatMember(m, _enumIndent, _enum.GetPadding());
-
-        stream << _lang->FormatEnd(_enumIndent) << std::endl;
-        return stream;
+        stream << std::string(indent, ' ')
+            << "enum " << name << std::endl << std::string(indent, ' ')
+            << '{' << std::endl;
     }
-
-private:
-    std::unique_ptr<Language> _lang;
-    Enum const& _enum;
-    std::uint32_t _enumIndent;
 };
-
-inline std::ostream& operator<<(std::ostream& stream, EnumOutput const& enumData)
-{
-    return enumData.Format(stream);
-}
 
 #endif // Enum_h__

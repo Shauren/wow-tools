@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enum.h" />
+    <ClInclude Include="Structure.h" />
     <ClInclude Include="ProcessTools\ProcessTools.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

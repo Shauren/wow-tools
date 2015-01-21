@@ -56,5 +56,5 @@ void CsUpdateFieldDumper::DumpEnum(std::ofstream& file, Enum const& enumData)
     if (enumData.GetMembers().empty())
         return;
 
-    file << EnumOutput(std::make_unique<Cs>(), enumData, 4);
+    file << StructureOutput<Enum>(std::make_unique<CsEnum>(), enumData, 4);
 }
