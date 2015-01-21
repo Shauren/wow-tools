@@ -1,5 +1,6 @@
 
 #include "ProcessTools/ProcessTools.h"
+#include "Structure.h"
 #include <cstdint>
 #include <unordered_map>
 #include <fstream>
@@ -144,40 +145,38 @@ int main(int argc, char* argv[])
 
     InitTypes();
 
-    std::ofstream structure("GameObjectTemplate.h");
-
-    std::string tab(4, ' ');
-    structure << "union GameObjectTemplateData" << std::endl;
-    structure << "{" << std::endl;
+    Structure templateUnion;
+    templateUnion.SetName("GameObjectTemplateData");
 
     for (std::uint32_t i = 0; i < typeData.size(); ++i)
     {
-        structure << tab << "// " << i << " " << TCEnumName[i] << std::endl;
-        structure << tab << "struct" << std::endl;
-        structure << tab << "{" << std::endl;
+        Structure typeStructure;
+        typeStructure.SetComment(std::to_string(i) + " " + TCEnumName[i]);
+        typeStructure.SetValueCommentPadding(40);
 
         std::uint32_t propCount = std::min<std::uint32_t>(MAX_GAMEOBJECT_DATA, typeData[i].Count);
         std::vector<std::uint32_t> propIndexes = wow->ReadArray<std::uint32_t>(typeData[i].List, propCount);
         for (std::size_t j = 0; j < propIndexes.size(); ++j)
         {
-            GameObjectPropertyTypeInfo* type = wow->Read<GameObjectPropertyTypeInfo*>(typeData[i].TypeInfo + j);
             std::string name = propertyNames[propIndexes[j]];
-            std::string normalizedName = FixName(name);
-            std::string pad(40 - normalizedName.length(), ' ');
-            structure << tab << tab << "uint32 " << normalizedName << ";" << pad << "// " << j << " " << name << ", " << FormatType(wow, props[propIndexes[j]].TypeIndex, wow->Read<GameObjectPropertyTypeInfo>(type)) << std::endl;
+            GameObjectPropertyTypeInfo* type = wow->Read<GameObjectPropertyTypeInfo*>(typeData[i].TypeInfo + j);
+            typeStructure.AddMember(Structure::Member(j, "uint32", FixName(name),
+                static_cast<std::ostringstream&>(std::ostringstream() << j << " " << name << ", "
+                    << FormatType(wow, props[propIndexes[j]].TypeIndex, wow->Read<GameObjectPropertyTypeInfo>(type))).str()));
         }
 
-        structure << tab << "} " << FixName(wow->Read<std::string>(typeData[i].TypeName)) << ";" << std::endl;
+        templateUnion.AddMember(Structure::Member(i,
+            static_cast<std::ostringstream&>(std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), typeStructure, 4)).str(), FixName(wow->Read<std::string>(typeData[i].TypeName)), ""));
     }
 
-    structure << tab << "struct" << std::endl;
-    structure << tab << "{" << std::endl;
-    structure << tab << tab << "uint32 data[MAX_GAMEOBJECT_DATA];" << std::endl;
-    structure << tab << "} raw;" << std::endl;
+    Structure raw;
+    raw.AddMember(Structure::Member(0, "uint32", "data[MAX_GAMEOBJECT_DATA]", ""));
 
-    structure << "};" << std::endl;
+    templateUnion.AddMember(Structure::Member(MAX_GAMEOBJECT_TYPE,
+        static_cast<std::ostringstream&>(std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), raw, 4)).str(), "raw", ""));
 
-    structure.close();
+    std::ofstream structure("GameObjectTemplate.h");
+    structure << SourceOutput<Structure>(std::make_unique<CppUnion>(false), templateUnion, 0);
     return 0;
 }
 

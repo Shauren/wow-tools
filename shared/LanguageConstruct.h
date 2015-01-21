@@ -1,6 +1,6 @@
 
-#ifndef Structure_h__
-#define Structure_h__
+#ifndef LanguageConstruct_h__
+#define LanguageConstruct_h__
 
 #include <cstdint>
 #include <string>
@@ -46,9 +46,9 @@ template<class ConstructType>
 class Formatter
 {
 public:
-    virtual void ProcessDefinition(std::ostream& stream, std::string const& name, std::uint32_t indent) = 0;
+    virtual void ProcessDefinition(std::ostream& stream, ConstructType const& structure, std::uint32_t indent) = 0;
     virtual void ProcessMember(std::ostream& stream, ConstructType const& structure, typename ConstructType::Member const& member, std::uint32_t indent) = 0;
-    virtual void ProcessEnd(std::ostream& stream, std::uint32_t indent) = 0;
+    virtual void ProcessEnd(std::ostream& stream, ConstructType const& structure, std::uint32_t indent) = 0;
 };
 
 template<class ConstructType>
@@ -59,13 +59,12 @@ public:
 
     std::ostream& Format(std::ostream& stream) const
     {
-        _formatter->ProcessDefinition(stream, _structure.GetName(), _indent);
+        _formatter->ProcessDefinition(stream, _structure, _indent);
 
         for (ConstructType::Member const& m : _structure.GetMembers())
             _formatter->ProcessMember(stream, _structure, m, _indent);
 
-        _formatter->ProcessEnd(stream, _indent);
-        stream << std::endl;
+        _formatter->ProcessEnd(stream, _structure, _indent);
         return stream;
     }
 
@@ -81,4 +80,4 @@ std::ostream& operator<<(std::ostream& stream, SourceOutput<ConstructType> const
     return output.Format(stream);
 }
 
-#endif // Structure_h__
+#endif // LanguageConstruct_h__
