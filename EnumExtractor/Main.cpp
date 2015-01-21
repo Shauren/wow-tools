@@ -20,22 +20,58 @@ struct UIErrorInfo
     std::uint32_t ChatMsgType;
 };
 
+void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
+{
+    std::ofstream dump(fileNameBase + ".h");
+    dump << SourceOutput<Enum>(std::make_unique<CppEnum>(), enumData, 0);
+    dump.close();
+
+    dump.open(fileNameBase + ".idc");
+    dump << SourceOutput<Enum>(std::make_unique<IdcEnum>(), enumData, 0);
+}
+
+void DumpUIErrors(std::shared_ptr<Process> wow)
+{
+    static std::uintptr_t const UIErrorsOffset = 0xBAD998;
+    static std::size_t const UIErrorsSize = 931;
+
+    Enum uiErrors;
+    uiErrors.SetName("GAME_ERROR_TYPE");
+    std::vector<UIErrorInfo> errors = wow->ReadArray<UIErrorInfo>(UIErrorsOffset, UIErrorsSize);
+    for (std::size_t i = 0; i < errors.size(); ++i)
+    {
+        std::string error = wow->Read<std::string>(errors[i].ErrorName);
+        if (!error.empty())
+            uiErrors.AddMember(Enum::Member(i, error, ""));
+    }
+
+    DumpEnum(uiErrors, "UIErrors");
+}
+
+void DumpFrameXML_Events(std::shared_ptr<Process> wow)
+{
+    static std::uintptr_t const FrameXML_EventsOffset = 0xD59E70;
+    static std::size_t const FrameXML_EventsSize = 1006;
+
+    Enum frameXML;
+    frameXML.SetName("FrameXML_Events");
+    std::vector<char const*> events = wow->ReadArray<char const*>(FrameXML_EventsOffset, FrameXML_EventsSize);
+    for (std::size_t i = 0; i < events.size(); ++i)
+    {
+        std::string evt = wow->Read<std::string>(events[i]);
+        if (!evt.empty())
+            frameXML.AddMember(Enum::Member(i, evt, ""));
+    }
+
+    DumpEnum(frameXML, "FrameXML_Events");
+}
+
 int main()
 {
     std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 19342, true);
     if (!wow)
         return 1;
 
-    Enum uiErrors;
-    uiErrors.SetName("GAME_ERROR_TYPE");
-    std::vector<UIErrorInfo> errors = wow->ReadArray<UIErrorInfo>(0xFAD998 - 0x400000, 931);
-    for (std::size_t i = 0; i < errors.size(); ++i)
-        uiErrors.AddMember(Enum::Member(i, wow->Read<std::string>(errors[i].ErrorName), ""));
-
-    std::ofstream uiErrorsDump("UIErrors.h");
-    uiErrorsDump << SourceOutput<Enum>(std::make_unique<CppEnum>(), uiErrors, 0);
-    uiErrorsDump.close();
-
-    uiErrorsDump.open("UIErrors.idc");
-    uiErrorsDump << SourceOutput<Enum>(std::make_unique<IdcEnum>(), uiErrors, 0);
+    DumpUIErrors(wow);
+    DumpFrameXML_Events(wow);
 }
