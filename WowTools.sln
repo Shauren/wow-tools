@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameObjectPropertyExtractor", "GameObjectPropertyExtractor\GameObjectPropertyExtractor.vcxproj", "{7D300FDE-554A-4C19-98D6-5BD87F6A9B81}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpcodeToConnectionGenerator
 	ProjectSection(ProjectDependencies) = postProject
 		{809CC30D-558F-46ED-87E9-06AF0BC63FB6} = {809CC30D-558F-46ED-87E9-06AF0BC63FB6}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnumExtractor", "EnumExtractor\EnumExtractor.vcxproj", "{0FC810F9-59CD-4F5F-8589-75DA6243E673}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,10 @@ Global
 		{1A52AB80-9486-4F5D-B247-031E8575C4E8}.Debug|Win32.Build.0 = Debug|Win32
 		{1A52AB80-9486-4F5D-B247-031E8575C4E8}.Release|Win32.ActiveCfg = Release|Win32
 		{1A52AB80-9486-4F5D-B247-031E8575C4E8}.Release|Win32.Build.0 = Release|Win32
+		{0FC810F9-59CD-4F5F-8589-75DA6243E673}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0FC810F9-59CD-4F5F-8589-75DA6243E673}.Debug|Win32.Build.0 = Debug|Win32
+		{0FC810F9-59CD-4F5F-8589-75DA6243E673}.Release|Win32.ActiveCfg = Release|Win32
+		{0FC810F9-59CD-4F5F-8589-75DA6243E673}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

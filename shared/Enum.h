@@ -25,8 +25,8 @@ class Enum : public LanguageConstruct<EnumMember>
     typedef LanguageConstruct<EnumMember> Base;
 
 public:
-    Enum() { }
-    Enum(std::string const& name) : Base(name) { }
+    Enum() : _paddingAfterName(0) { }
+    Enum(std::string const& name) : Base(name), _paddingAfterName(0) { }
 
     void SetPaddingAfterValueName(std::uint32_t padding) { _paddingAfterName = padding; }
     std::uint32_t GetPadding() const { return _paddingAfterName; }
@@ -40,10 +40,12 @@ class EnumFormatter : public Formatter<Enum>
 public:
     void ProcessMember(std::ostream& stream, Enum const& enumData, Enum::Member const& member, std::uint32_t indent) override
     {
-        stream << std::string(indent + 4, ' ')
-            << member.ValueName << std::string(std::max<std::size_t>(enumData.GetPadding() - member.ValueName.length(), 1), ' ')
-            << "= " << member.Value << ',';
+        stream << std::string(indent + 4, ' ') << member.ValueName;
 
+        if (enumData.GetPadding() > member.ValueName.length() + 1)
+            stream << std::string(enumData.GetPadding() - member.ValueName.length() - 1, ' ');
+
+        stream << " = " << member.Value << ',';
         if (!member.Comment.empty())
             stream << " // " << member.Comment;
 
