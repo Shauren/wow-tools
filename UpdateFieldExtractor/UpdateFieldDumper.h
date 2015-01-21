@@ -10,7 +10,6 @@
 #include <iomanip>
 #include <Windows.h>
 #include "ProcessTools/ProcessTools.h"
-#include "Structure.h"
 #include "Enum.h"
 
 #pragma pack(push,4)

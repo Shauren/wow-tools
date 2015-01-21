@@ -2,22 +2,27 @@
 #ifndef Enum_h__
 #define Enum_h__
 
-#include "Structure.h"
+#include "LanguageConstruct.h"
 
-struct EnumMember : public StructureMember
+struct EnumMember
 {
-    EnumMember(std::uint32_t ordinal, std::string const& name, std::string const& comment) : StructureMember(ordinal, name, comment),
-        Value(std::to_string(ordinal)) { }
+    EnumMember(std::uint32_t ordinal, std::string const& name, std::string const& comment)
+        : Offset(ordinal), ValueName(name), Value(std::to_string(ordinal)), Comment(comment) { }
 
-    EnumMember(std::uint32_t ordinal, std::string const& value, std::string const& name, std::string const& comment) : StructureMember(ordinal, name, comment),
-        Value(value) { }
+    EnumMember(std::uint32_t ordinal, std::string const& value, std::string const& name, std::string const& comment)
+        : Offset(ordinal), ValueName(name), Value(value), Comment(comment) { }
 
+    std::uint32_t Offset;
+    std::string ValueName;
     std::string Value;
+    std::string Comment;
+
+    bool operator<(EnumMember const& right) const { return Offset < right.Offset; }
 };
 
-class Enum : public Structure < EnumMember >
+class Enum : public LanguageConstruct<EnumMember>
 {
-    typedef Structure<EnumMember> Base;
+    typedef LanguageConstruct<EnumMember> Base;
 
 public:
     Enum() { }
@@ -33,7 +38,7 @@ private:
 class EnumFormatter : public Formatter < Enum >
 {
 public:
-    void FormatMember(std::ostream& stream, Enum const& enumData, Enum::Member const& member, std::uint32_t indent) override
+    void ProcessMember(std::ostream& stream, Enum const& enumData, Enum::Member const& member, std::uint32_t indent) override
     {
         stream << std::string(indent + 4, ' ')
             << member.ValueName << std::string(std::max<std::size_t>(enumData.GetPadding() - member.ValueName.length(), 1), ' ')
@@ -45,7 +50,7 @@ public:
         stream << std::endl;
     }
 
-    void FormatEnd(std::ostream& stream, std::uint32_t indent) override
+    void ProcessEnd(std::ostream& stream, std::uint32_t indent) override
     {
         stream << std::string(indent, ' ') << "};" << std::endl;
     }
@@ -54,7 +59,7 @@ public:
 class CsEnum : public EnumFormatter
 {
 public:
-    void FormatDefinition(std::ostream& stream, std::string const& name, std::uint32_t indent) override
+    void ProcessDefinition(std::ostream& stream, std::string const& name, std::uint32_t indent) override
     {
         stream << std::string(indent, ' ')
             << "public enum " << name << std::endl << std::string(indent, ' ')
@@ -65,7 +70,7 @@ public:
 class CppEnum : public EnumFormatter
 {
 public:
-    void FormatDefinition(std::ostream& stream, std::string const& name, std::uint32_t indent) override
+    void ProcessDefinition(std::ostream& stream, std::string const& name, std::uint32_t indent) override
     {
         stream << std::string(indent, ' ')
             << "enum " << name << std::endl << std::string(indent, ' ')

@@ -16,5 +16,6 @@
     </ClInclude>
     <ClInclude Include="Structure.h" />
     <ClInclude Include="Enum.h" />
+    <ClInclude Include="LanguageConstruct.h" />
   </ItemGroup>
 </Project>

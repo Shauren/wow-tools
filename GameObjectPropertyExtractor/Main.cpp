@@ -18,7 +18,7 @@ enum TypeType
 
 union GameObjectPropertyTypeInfo
 {
-    struct  
+    struct
     {
         std::int32_t Data[3];
     } Raw;
@@ -28,13 +28,13 @@ union GameObjectPropertyTypeInfo
         std::int32_t _;
         char const* Name;
     } DbRef;
-    struct  
+    struct
     {
         std::int32_t ValuesCount;
         char const** Values;
         std::int32_t DefaultValue;
     } Enum;
-    struct  
+    struct
     {
         std::int32_t MinValue;
         std::int32_t MaxValue;
