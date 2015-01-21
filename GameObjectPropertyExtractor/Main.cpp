@@ -50,38 +50,6 @@ struct GameObjectProperty
     std::uint32_t Unk2;
 };
 
-HANDLE wow;
-
-template <typename T>
-T const& Get(void const* address)
-{
-    static std::unordered_map<void const*, T> _cache;
-    std::unordered_map<void const*, T>::const_iterator itr = _cache.find(address);
-    if (itr != _cache.end())
-        return itr->second;
-
-
-    ReadProcessMemory(wow, address, &_cache[address], sizeof(T), NULL);
-    return _cache[address];
-}
-
-template <>
-std::string const& Get<std::string>(void const* address)
-{
-    static std::unordered_map<void const*, std::string> _cache;
-    std::unordered_map<void const*, std::string>::const_iterator itr = _cache.find(address);
-    if (itr != _cache.end())
-        return itr->second;
-
-    char buffer;
-    std::string& str = _cache[address];
-    std::uint8_t const* addr = reinterpret_cast<std::uint8_t const*>(address);
-    while (ReadProcessMemory(wow, addr++, &buffer, 1, NULL) && buffer != '\0')
-        str.append(1, buffer);
-
-    return str;
-}
-
 struct GameObjectPropertyInfo
 {
     char const* TypeName;
@@ -95,8 +63,8 @@ TypeType PropTypes[54];
 #define MAX_GAMEOBJECT_TYPE 47
 #define MAX_PROPERTY_INDEX 203
 
-#define GO_TYPE_DATA 0xFA47C0
-#define PROPERTY_DATA 0xD9C9E0
+#define GO_TYPE_DATA 0xFA5900
+#define PROPERTY_DATA 0xD9DEC8
 #define MAX_GAMEOBJECT_DATA 33
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
@@ -151,7 +119,7 @@ char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
 };
 
 void InitTypes();
-std::string FormatType(std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type);
+std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type);
 
 std::string FixName(std::string name)
 {
@@ -163,20 +131,16 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    DWORD_PTR base;
-    FileVersionInfo version;
-    wow = ProcessTools::GetHandleByName(_T("Wow.exe"), &base, 19103, true, &version);
-    if (wow == INVALID_HANDLE_VALUE)
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 19342, true);
+    if (!wow)
         return 1;
 
-    GameObjectProperty props[MAX_PROPERTY_INDEX];
-    ReadProcessMemory(wow, reinterpret_cast<LPCVOID>(base + PROPERTY_DATA - 0x400000), &props, sizeof(GameObjectProperty) * MAX_PROPERTY_INDEX, NULL);
+    std::vector<GameObjectProperty> props = wow->ReadArray<GameObjectProperty>(PROPERTY_DATA - 0x400000, MAX_PROPERTY_INDEX);
     std::string propertyNames[MAX_PROPERTY_INDEX];
-    for (std::uint32_t i = 0; i < MAX_PROPERTY_INDEX; ++i)
-        propertyNames[i] = Get<std::string>(props[i].Name);
+    for (std::uint32_t i = 0; i < props.size(); ++i)
+        propertyNames[i] = wow->Read<std::string>(props[i].Name);
 
-    GameObjectPropertyInfo typeData[MAX_GAMEOBJECT_TYPE];
-    ReadProcessMemory(wow, reinterpret_cast<LPCVOID>(base + GO_TYPE_DATA - 0x400000), &typeData, sizeof(GameObjectPropertyInfo) * MAX_GAMEOBJECT_TYPE, NULL);
+    std::vector<GameObjectPropertyInfo> typeData = wow->ReadArray<GameObjectPropertyInfo>(GO_TYPE_DATA - 0x400000, MAX_GAMEOBJECT_TYPE);
 
     InitTypes();
 
@@ -186,25 +150,24 @@ int main(int argc, char* argv[])
     structure << "union GameObjectTemplateData" << std::endl;
     structure << "{" << std::endl;
 
-    std::uint32_t propIndexes[MAX_GAMEOBJECT_DATA];
-    for (std::uint32_t i = 0; i < MAX_GAMEOBJECT_TYPE; ++i)
+    for (std::uint32_t i = 0; i < typeData.size(); ++i)
     {
         structure << tab << "// " << i << " " << TCEnumName[i] << std::endl;
         structure << tab << "struct" << std::endl;
         structure << tab << "{" << std::endl;
 
         std::uint32_t propCount = std::min<std::uint32_t>(MAX_GAMEOBJECT_DATA, typeData[i].Count);
-        ReadProcessMemory(wow, typeData[i].List, propIndexes, propCount * sizeof(std::uint32_t), NULL);
-        for (std::size_t j = 0; j < propCount; ++j)
+        std::vector<std::uint32_t> propIndexes = wow->ReadArray<std::uint32_t>(typeData[i].List, propCount);
+        for (std::size_t j = 0; j < propIndexes.size(); ++j)
         {
-            GameObjectPropertyTypeInfo* type = Get<GameObjectPropertyTypeInfo*>(typeData[i].TypeInfo + j);
+            GameObjectPropertyTypeInfo* type = wow->Read<GameObjectPropertyTypeInfo*>(typeData[i].TypeInfo + j);
             std::string name = propertyNames[propIndexes[j]];
             std::string normalizedName = FixName(name);
             std::string pad(40 - normalizedName.length(), ' ');
-            structure << tab << tab << "uint32 " << normalizedName << ";" << pad << "// " << j << " " << name << ", " << FormatType(props[propIndexes[j]].TypeIndex, Get<GameObjectPropertyTypeInfo>(type)) << std::endl;
+            structure << tab << tab << "uint32 " << normalizedName << ";" << pad << "// " << j << " " << name << ", " << FormatType(wow, props[propIndexes[j]].TypeIndex, wow->Read<GameObjectPropertyTypeInfo>(type)) << std::endl;
         }
 
-        structure << tab << "} " << FixName(Get<std::string>(typeData[i].TypeName)) << ";" << std::endl;
+        structure << tab << "} " << FixName(wow->Read<std::string>(typeData[i].TypeName)) << ";" << std::endl;
     }
 
     structure << tab << "struct" << std::endl;
@@ -264,25 +227,25 @@ void InitTypes()
     PropTypes[53] = DB_REF;
 }
 
-std::string FormatType(std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type)
+std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type)
 {
     std::ostringstream stream;
     switch (PropTypes[typeIndex])
     {
         case DB_REF:
-            stream << "References: " << Get<std::string>(type.DbRef.Name) << ", NoValue = " << type.DbRef.InvalidRefValue;
+            stream << "References: " << wow->Read<std::string>(type.DbRef.Name) << ", NoValue = " << type.DbRef.InvalidRefValue;
             break;
         case ENUM:
         {
-            char const* values;;
+            void const* values;;
             stream << "enum {";
             for (std::int32_t i = 0; i < type.Enum.ValuesCount; ++i)
             {
-                values = Get<char const*>(type.Enum.Values + i);
-                stream << " " << Get<std::string>(values) << ",";
+                values = wow->Read<void const*>(type.Enum.Values + i);
+                stream << " " << wow->Read<std::string>(values) << ",";
             }
-            values = Get<char const*>(type.Enum.Values + type.Enum.DefaultValue);
-            stream << " }; Default: " << Get<std::string>(values);
+            values = wow->Read<void const*>(type.Enum.Values + type.Enum.DefaultValue);
+            stream << " }; Default: " << wow->Read<std::string>(values);
             break;
         }
         case INTEGER:

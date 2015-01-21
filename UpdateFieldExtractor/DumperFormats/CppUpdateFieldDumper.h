@@ -12,7 +12,7 @@ class CppUpdateFieldDumper : public UpdateFieldDumper
     };
 
 public:
-    CppUpdateFieldDumper(HANDLE source, Data* input, FileVersionInfo const& version) : UpdateFieldDumper(source, input, version, PaddingSize) { }
+    CppUpdateFieldDumper(std::shared_ptr<Data> input) : UpdateFieldDumper(input, PaddingSize) { }
 
     ~CppUpdateFieldDumper() { }
 
@@ -20,8 +20,8 @@ public:
 
 protected:
     void DumpEnum(std::ofstream& file, Enum const& enumData) override;
-    void DumpFlags(std::ofstream& file, std::string const& varName, std::vector<UpdateField*> const& fields, std::vector<UpdateFieldSizes> const& counts);
-    void DumpDynamicFlags(std::ofstream& file, std::string const& varName, std::vector<DynamicUpdateField*> const& fields, std::vector<UpdateFieldSizes> const& counts);
+    void DumpFlags(std::ofstream& file, std::string const& varName, std::vector<std::vector<UpdateField>*> const& fields);
+    void DumpDynamicFlags(std::ofstream& file, std::string const& varName, std::vector<std::vector<DynamicUpdateField>*> const& fields);
 };
 
 #endif // CppUpdateFieldDumper_h__

@@ -14,6 +14,9 @@
     <ClInclude Include="ProcessTools\ProcessTools.h">
       <Filter>ProcessTools</Filter>
     </ClInclude>
+    <ClInclude Include="ProcessTools\Cache.h">
+      <Filter>ProcessTools</Filter>
+    </ClInclude>
     <ClInclude Include="Structure.h" />
     <ClInclude Include="Enum.h" />
     <ClInclude Include="LanguageConstruct.h" />

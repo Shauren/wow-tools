@@ -35,7 +35,7 @@ private:
     std::uint32_t _paddingAfterName;
 };
 
-class EnumFormatter : public Formatter < Enum >
+class EnumFormatter : public Formatter<Enum>
 {
 public:
     void ProcessMember(std::ostream& stream, Enum const& enumData, Enum::Member const& member, std::uint32_t indent) override

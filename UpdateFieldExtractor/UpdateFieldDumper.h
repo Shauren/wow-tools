@@ -58,28 +58,29 @@ struct DynamicUpdateField
 class Data
 {
 public:
-    Data(HANDLE wow);
-    std::string ReadProcessMemoryCString(DWORD_PTR address);
+    Data(std::shared_ptr<Process> wow);
+    std::string const& GetString(std::uintptr_t address) { return _process->Read<std::string>(address, false); }
 
-    UpdateField ObjectFields[OBJECT_COUNT];
-    UpdateField ItemFields[ITEM_COUNT];
-    DynamicUpdateField ItemDynamicFields[ITEM_DYNAMIC_COUNT];
-    UpdateField ContainerFields[CONTAINER_COUNT];
-    UpdateField UnitFields[UNIT_COUNT];
-    DynamicUpdateField UnitDynamicFields[UNIT_DYNAMIC_COUNT];
-    UpdateField PlayerFields[PLAYER_COUNT];
-    DynamicUpdateField PlayerDynamicFields[PLAYER_DYNAMIC_COUNT];
-    UpdateField GameObjectFields[GAMEOBJECT_COUNT];
-    UpdateField DynamicObjectFields[DYNAMICOBJECT_COUNT];
-    UpdateField CorpseFields[CORPSE_COUNT];
-    UpdateField AreaTriggerFields[AREATRIGGER_COUNT];
-    UpdateField SceneObjectFields[SCENEOBJECT_COUNT];
-    UpdateField ConversationFields[CONVERSATION_COUNT];
-    DynamicUpdateField ConversationDynamicFields[CONVERSATION_DYNAMIC_COUNT];
+    std::vector<UpdateField> ObjectFields;
+    std::vector<UpdateField> ItemFields;
+    std::vector<DynamicUpdateField> ItemDynamicFields;
+    std::vector<UpdateField> ContainerFields;
+    std::vector<UpdateField> UnitFields;
+    std::vector<DynamicUpdateField> UnitDynamicFields;
+    std::vector<UpdateField> PlayerFields;
+    std::vector<DynamicUpdateField> PlayerDynamicFields;
+    std::vector<UpdateField> GameObjectFields;
+    std::vector<UpdateField> DynamicObjectFields;
+    std::vector<UpdateField> CorpseFields;
+    std::vector<UpdateField> AreaTriggerFields;
+    std::vector<UpdateField> SceneObjectFields;
+    std::vector<UpdateField> ConversationFields;
+    std::vector<DynamicUpdateField> ConversationDynamicFields;
+
+    std::shared_ptr<Process> GetProcess() { return _process; }
 
 private:
-    std::unordered_map<DWORD_PTR, std::string> _stringCache;
-    HANDLE _process;
+    std::shared_ptr<Process> _process;
 };
 
 namespace Offsets
@@ -92,7 +93,7 @@ namespace Offsets
 class UpdateFieldDumper
 {
 public:
-    UpdateFieldDumper(HANDLE source, Data* input, FileVersionInfo const& version, std::uint32_t enumPadding);
+    UpdateFieldDumper(std::shared_ptr<Data> input, std::uint32_t enumPadding);
     virtual ~UpdateFieldDumper() { }
 
     virtual void Dump() = 0;
@@ -100,15 +101,15 @@ public:
     static std::string const Tab;
 
 protected:
-    void BuildUpdateFieldEnum(Enum& enumData, std::string const& name, UpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase);
-    void BuildDynamicUpdateFieldEnum(Enum& enumData, std::string const& name, DynamicUpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase);
+    void BuildUpdateFieldEnum(Enum& enumData, std::string const& name, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase);
+    void BuildDynamicUpdateFieldEnum(Enum& enumData, std::string const& name, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase);
     std::string FormatVersion(std::string const& partSeparator) const;
     static std::string FormatValue(std::uint32_t val, std::string const& valueBase);
 
     void DumpEnums(std::ofstream& updateFieldsDump);
     virtual void DumpEnum(std::ofstream& file, Enum const& enumData) = 0;
-    Data* GetInputData() { return _input; }
-    FileVersionInfo const& GetVersionInfo() const { return _versionInfo; }
+    std::shared_ptr<Data> GetInputData() { return _input; }
+    FileVersionInfo const& GetVersionInfo() const { return _input->GetProcess()->GetFileVersionInfo(); }
     static std::string GetUpdateFieldFlagName(std::uint16_t flag);
     static std::string GetUpdateFieldFlagFullName(std::uint16_t flag);
 
@@ -138,9 +139,7 @@ protected:
 private:
     static void AppendIf(std::uint16_t flag, std::uint16_t flagToCheck, std::string& str, std::string const& flagName, std::string const& separator);
 
-    HANDLE _source;
-    Data* _input;
-    FileVersionInfo _versionInfo;
+    std::shared_ptr<Data> _input;
 };
 
 struct hex_number

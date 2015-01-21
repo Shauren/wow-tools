@@ -12,7 +12,7 @@ class CsUpdateFieldDumper : public UpdateFieldDumper
     };
 
 public:
-    CsUpdateFieldDumper(HANDLE source, Data* input, FileVersionInfo const& version) : UpdateFieldDumper(source, input, version, PaddingSize) { }
+    CsUpdateFieldDumper(std::shared_ptr<Data> input) : UpdateFieldDumper(input, PaddingSize) { }
 
     ~CsUpdateFieldDumper() { }
 

@@ -8,7 +8,7 @@ struct NameMapping
     char const* OldName;
 };
 
-#define NUM_NAMES 278
+#define NUM_NAMES 277
 
 NameMapping NameMap[NUM_NAMES] =
 {

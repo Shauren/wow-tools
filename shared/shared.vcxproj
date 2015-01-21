@@ -18,6 +18,7 @@
     <ClInclude Include="Structure.h" />
     <ClInclude Include="LanguageConstruct.h" />
     <ClInclude Include="ProcessTools\ProcessTools.h" />
+    <ClInclude Include="ProcessTools\Cache.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{809CC30D-558F-46ED-87E9-06AF0BC63FB6}</ProjectGuid>

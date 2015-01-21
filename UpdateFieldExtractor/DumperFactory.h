@@ -9,12 +9,12 @@
 class UpdateFieldDumper;
 
 template<class T>
-UpdateFieldDumper* Create(HANDLE source, Data* input, FileVersionInfo const& version)
+std::unique_ptr<UpdateFieldDumper> Create(std::shared_ptr<Data> input)
 {
-    return new T(source, input, version);
+    return std::make_unique<T>(input);
 }
 
-typedef UpdateFieldDumper*(*FactoryMethod)(HANDLE, Data*, FileVersionInfo const&);
+typedef std::unique_ptr<UpdateFieldDumper>(*FactoryMethod)(std::shared_ptr<Data>);
 
 class DumperFactory
 {
@@ -27,7 +27,7 @@ public:
         _creators.insert(&Create<T>);
     }
 
-    std::unordered_set<UpdateFieldDumper*> CreateDumpers(HANDLE source, Data* input, FileVersionInfo const& version) const;
+    std::unordered_set<std::unique_ptr<UpdateFieldDumper>> CreateDumpers(std::shared_ptr<Data> input) const;
 
 private:
     std::unordered_set<FactoryMethod> _creators;

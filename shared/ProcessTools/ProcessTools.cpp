@@ -3,6 +3,35 @@
 #include <cstdio>
 #include <TlHelp32.h>
 
+template<>
+std::string const& Process::Read<std::string>(std::uintptr_t address, bool relative /*= true*/)
+{
+    if (relative)
+        address += _baseAddress;
+
+    if (std::string const* str = _stringCache.Retrieve<std::string>(address))
+        return *str;
+
+    char buffer;
+    std::string uncached;
+    std::uint8_t const* addr = reinterpret_cast<std::uint8_t const*>(address);
+    while (ReadProcessMemory(_handle, addr++, &buffer, sizeof(buffer), nullptr) && buffer != '\0')
+        uncached.append(1, buffer);
+
+    return _stringCache.Store(address, uncached);
+}
+
+std::shared_ptr<Process> ProcessTools::Open(TCHAR* name, DWORD build, bool log)
+{
+    DWORD_PTR baseAddress;
+    FileVersionInfo ver;
+    HANDLE hnd = GetHandleByName(name, &baseAddress, build, log, &ver);
+    if (hnd == INVALID_HANDLE_VALUE)
+        return std::shared_ptr<Process>();
+
+    return std::make_shared<Process>(hnd, baseAddress, ver);
+}
+
 HANDLE ProcessTools::GetHandleByName(TCHAR* name, DWORD_PTR* baseAddress, DWORD build, bool log, FileVersionInfo* versionInfo)
 {
     PROCESSENTRY32 entry;

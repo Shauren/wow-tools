@@ -22,74 +22,51 @@ enum UpdatefieldFlags
 
 namespace Offsets
 {
-    DWORD_PTR const ObjectFields = 0xD221D0;
-    DWORD_PTR const ItemFields = 0xD21DF8;
-    DWORD_PTR const ItemDynamicFields = 0xD21A10;
-    DWORD_PTR const ContainerFields = 0xD21300;
-    DWORD_PTR const UnitFields = 0xD1FF60;
-    DWORD_PTR const UnitDynamicFields = 0xD1F5C4;
-    DWORD_PTR const PlayerFields = 0xD181C8;
-    DWORD_PTR const PlayerDynamicFields = 0xD10428;
-    DWORD_PTR const GameObjectFields = 0xD102E8;
-    DWORD_PTR const DynamicObjectFields = 0xD100E8;
-    DWORD_PTR const CorpseFields = 0xD0FE68;
-    DWORD_PTR const AreaTriggerFields = 0xD0FBE8;
-    DWORD_PTR const SceneObjectFields = 0xD0FAA0;
-    DWORD_PTR const ConversationFields = 0xD0F9AC;
-    DWORD_PTR const ConversationDynamicFields = 0xD0F900;
-
-    DWORD_PTR BaseAddress;
+    std::uintptr_t const ObjectFields = 0xD221D0;
+    std::uintptr_t const ItemFields = 0xD21DF8;
+    std::uintptr_t const ItemDynamicFields = 0xD21A10;
+    std::uintptr_t const ContainerFields = 0xD21300;
+    std::uintptr_t const UnitFields = 0xD1FF60;
+    std::uintptr_t const UnitDynamicFields = 0xD1F5C4;
+    std::uintptr_t const PlayerFields = 0xD181C8;
+    std::uintptr_t const PlayerDynamicFields = 0xD10428;
+    std::uintptr_t const GameObjectFields = 0xD102E8;
+    std::uintptr_t const DynamicObjectFields = 0xD100E8;
+    std::uintptr_t const CorpseFields = 0xD0FE68;
+    std::uintptr_t const AreaTriggerFields = 0xD0FBE8;
+    std::uintptr_t const SceneObjectFields = 0xD0FAA0;
+    std::uintptr_t const ConversationFields = 0xD0F9AC;
+    std::uintptr_t const ConversationDynamicFields = 0xD0F900;
 }
 
-Data::Data(HANDLE wow) : _process(wow)
+Data::Data(std::shared_ptr<Process> wow) : _process(wow)
 {
-#define READ_UPDATE_FIELDS(fields) \
-    if (!ReadProcessMemory(wow, reinterpret_cast<LPCVOID>(Offsets::BaseAddress + Offsets::fields), this->fields, sizeof(this->fields), NULL)) \
-        printf("Failed to read %s\n", #fields); \
-
-    READ_UPDATE_FIELDS(ObjectFields);
-    READ_UPDATE_FIELDS(ItemFields);
-    READ_UPDATE_FIELDS(ItemDynamicFields);
-    READ_UPDATE_FIELDS(ContainerFields);
-    READ_UPDATE_FIELDS(UnitFields);
-    READ_UPDATE_FIELDS(UnitDynamicFields);
-    READ_UPDATE_FIELDS(PlayerFields);
-    READ_UPDATE_FIELDS(PlayerDynamicFields);
-    READ_UPDATE_FIELDS(GameObjectFields);
-    READ_UPDATE_FIELDS(DynamicObjectFields);
-    READ_UPDATE_FIELDS(CorpseFields);
-    READ_UPDATE_FIELDS(AreaTriggerFields);
-    READ_UPDATE_FIELDS(SceneObjectFields);
-    READ_UPDATE_FIELDS(ConversationFields);
-    READ_UPDATE_FIELDS(ConversationDynamicFields);
-
-#undef READ_UPDATE_FIELDS
+    ObjectFields = _process->ReadArray<UpdateField>(Offsets::ObjectFields, OBJECT_COUNT);
+    ItemFields = _process->ReadArray<UpdateField>(Offsets::ItemFields, ITEM_COUNT);
+    ItemDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::ItemDynamicFields, ITEM_DYNAMIC_COUNT);
+    ContainerFields = _process->ReadArray<UpdateField>(Offsets::ContainerFields, CONTAINER_COUNT);
+    UnitFields = _process->ReadArray<UpdateField>(Offsets::UnitFields, UNIT_COUNT);
+    UnitDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::UnitDynamicFields, UNIT_DYNAMIC_COUNT);
+    PlayerFields = _process->ReadArray<UpdateField>(Offsets::PlayerFields, PLAYER_COUNT);
+    PlayerDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::PlayerDynamicFields, PLAYER_DYNAMIC_COUNT);
+    GameObjectFields = _process->ReadArray<UpdateField>(Offsets::GameObjectFields, GAMEOBJECT_COUNT);
+    DynamicObjectFields = _process->ReadArray<UpdateField>(Offsets::DynamicObjectFields, DYNAMICOBJECT_COUNT);
+    CorpseFields = _process->ReadArray<UpdateField>(Offsets::CorpseFields, CORPSE_COUNT);
+    AreaTriggerFields = _process->ReadArray<UpdateField>(Offsets::AreaTriggerFields, AREATRIGGER_COUNT);
+    SceneObjectFields = _process->ReadArray<UpdateField>(Offsets::SceneObjectFields, SCENEOBJECT_COUNT);
+    ConversationFields = _process->ReadArray<UpdateField>(Offsets::ConversationFields, CONVERSATION_COUNT);
+    ConversationDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::ConversationDynamicFields, CONVERSATION_DYNAMIC_COUNT);
 }
 
-std::string Data::ReadProcessMemoryCString(DWORD_PTR address)
-{
-    std::unordered_map<DWORD_PTR, std::string>::const_iterator itr = _stringCache.find(address);
-    if (itr != _stringCache.end())
-        return itr->second;
-
-    char buffer;
-    std::string str;
-    DWORD_PTR orig_address = address;
-    while (ReadProcessMemory(_process, reinterpret_cast<LPCVOID>(address++), &buffer, 1, NULL) && buffer != '\0')
-        str.append(1, buffer);
-
-    return _stringCache[orig_address] = str;
-}
-
-void UpdateFieldDumper::BuildUpdateFieldEnum(Enum& enumData, std::string const& name, UpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase)
+void UpdateFieldDumper::BuildUpdateFieldEnum(Enum& enumData, std::string const& name, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase)
 {
     enumData.SetName(name);
 
     std::uint32_t i = 0;
-    while (i < count)
+    while (i < data.size())
     {
-        UpdateField* field = &data[i];
-        std::string name = GetInputData()->ReadProcessMemoryCString(data[i].NameAddress);
+        UpdateField const* field = &data[i];
+        std::string name = GetInputData()->GetString(data[i].NameAddress);
         if (name == "CGUnitData::npcFlags[UMNW0]")
         {
             name = "CGUnitData::npcFlags";
@@ -109,15 +86,15 @@ void UpdateFieldDumper::BuildUpdateFieldEnum(Enum& enumData, std::string const& 
     enumData.AddMember(Enum::Member(i, FormatValue(i, fieldBase), end, ""));
 }
 
-void UpdateFieldDumper::BuildDynamicUpdateFieldEnum(Enum& enumData, std::string const& name, DynamicUpdateField* data, UpdateFieldSizes count, std::string const& end, std::string const& fieldBase)
+void UpdateFieldDumper::BuildDynamicUpdateFieldEnum(Enum& enumData, std::string const& name, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase)
 {
     enumData.SetName(name);
 
     std::uint32_t i = 0;
-    while (i < count)
+    while (i < data.size())
     {
-        DynamicUpdateField* field = &data[i];
-        std::string name = GetInputData()->ReadProcessMemoryCString(data[i].NameAddress);
+        DynamicUpdateField const* field = &data[i];
+        std::string name = GetInputData()->GetString(data[i].NameAddress);
         std::string oldName = GetOldName(name.c_str());
         if (!oldName.empty())
             name = oldName;
@@ -134,9 +111,10 @@ std::string const UpdateFieldDumper::Tab = std::string(4, ' ');
 
 std::string UpdateFieldDumper::FormatVersion(std::string const& partSeparator) const
 {
+    FileVersionInfo const& version = GetVersionInfo();
     std::ostringstream str;
-    str << _versionInfo.FileMajorPart << partSeparator << _versionInfo.FileMinorPart << partSeparator
-        << _versionInfo.FileBuildPart << partSeparator << _versionInfo.FilePrivatePart;
+    str << version.FileMajorPart << partSeparator << version.FileMinorPart << partSeparator
+        << version.FileBuildPart << partSeparator << version.FilePrivatePart;
 
     return str.str();
 }
@@ -229,7 +207,7 @@ void UpdateFieldDumper::AppendIf(std::uint16_t flag, std::uint16_t flagToCheck, 
     str.append(flagName);
 }
 
-UpdateFieldDumper::UpdateFieldDumper(HANDLE source, Data* input, FileVersionInfo const& version, std::uint32_t enumPadding) : _source(source), _input(input), _versionInfo(version)
+UpdateFieldDumper::UpdateFieldDumper(std::shared_ptr<Data> input, std::uint32_t enumPadding) : _input(input)
 {
     ObjectFields.SetPaddingAfterValueName(enumPadding);
     ObjectDynamicFields.SetPaddingAfterValueName(enumPadding);

@@ -7,24 +7,16 @@
 
 int main()
 {
-    FileVersionInfo version;
-    HANDLE wow = ProcessTools::GetHandleByName(_T("Wow.exe"), &Offsets::BaseAddress, 19342, true, &version);
-    if (wow == INVALID_HANDLE_VALUE)
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 19342, true);
+    if (!wow)
         return 1;
-
-    Data* data = new Data(wow);
 
     DumperFactory factory;
     factory.Register<CppUpdateFieldDumper>();
     factory.Register<CsUpdateFieldDumper>();
 
-    std::unordered_set<UpdateFieldDumper*> dumpers = factory.CreateDumpers(wow, data, version);
-    for (std::unordered_set<UpdateFieldDumper*>::iterator itr = dumpers.begin(); itr != dumpers.end(); ++itr)
-    {
-        (*itr)->Dump();
-        delete *itr;
-    }
-
-    delete data;
-    CloseHandle(wow);
+    std::shared_ptr<Data> data = std::make_shared<Data>(wow);
+    std::unordered_set<std::unique_ptr<UpdateFieldDumper>> dumpers = factory.CreateDumpers(data);
+    for (auto& dumper : dumpers)
+        dumper->Dump();
 }
