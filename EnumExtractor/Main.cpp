@@ -34,4 +34,8 @@ int main()
 
     std::ofstream uiErrorsDump("UIErrors.h");
     uiErrorsDump << SourceOutput<Enum>(std::make_unique<CppEnum>(), uiErrors, 0);
+    uiErrorsDump.close();
+
+    uiErrorsDump.open("UIErrors.idc");
+    uiErrorsDump << SourceOutput<Enum>(std::make_unique<IdcEnum>(), uiErrors, 0);
 }
