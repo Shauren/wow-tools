@@ -182,6 +182,7 @@ int main(int argc, char* argv[])
 
 void InitTypes()
 {
+    PropTypes[4] = INTEGER;
     PropTypes[7] = ENUM;
     PropTypes[8] = ENUM;
     PropTypes[9] = ENUM;
