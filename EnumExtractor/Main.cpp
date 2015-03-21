@@ -32,8 +32,8 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 
 void DumpUIErrors(std::shared_ptr<Process> wow)
 {
-    static std::uintptr_t const UIErrorsOffset = 0xBAD998;
-    static std::size_t const UIErrorsSize = 931;
+    static std::uintptr_t const UIErrorsOffset = 0xC549A8;
+    static std::size_t const UIErrorsSize = 950;
 
     Enum uiErrors;
     uiErrors.SetName("GAME_ERROR_TYPE");
@@ -50,8 +50,8 @@ void DumpUIErrors(std::shared_ptr<Process> wow)
 
 void DumpFrameXML_Events(std::shared_ptr<Process> wow)
 {
-    static std::uintptr_t const FrameXML_EventsOffset = 0xD59E70;
-    static std::size_t const FrameXML_EventsSize = 1006;
+    static std::uintptr_t const FrameXML_EventsOffset = 0xDF6070;
+    static std::size_t const FrameXML_EventsSize = 1021;
 
     Enum frameXML;
     frameXML.SetName("FrameXML_Events");
@@ -68,7 +68,7 @@ void DumpFrameXML_Events(std::shared_ptr<Process> wow)
 
 int main()
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 19342, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 19702, true);
     if (!wow)
         return 1;
 

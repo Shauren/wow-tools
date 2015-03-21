@@ -91,12 +91,12 @@ public:
                << "enumId = AddEnum(GetEnumQty() + 1, \"" << enumData.GetName() << "\", FF_0NUMD);" << std::endl;
     }
 
-    void ProcessMember(std::ostream& stream, Enum const& enumData, Enum::Member const& member, std::uint32_t indent) override
+    void ProcessMember(std::ostream& stream, Enum const& /*enumData*/, Enum::Member const& member, std::uint32_t /*indent*/) override
     {
         stream << "AddConstEx(enumId, \"" << member.ValueName << "\", " << member.Offset << ", -1);" << std::endl;
     }
 
-    void ProcessEnd(std::ostream& stream, Enum const& /*enumData*/, std::uint32_t indent) override
+    void ProcessEnd(std::ostream& /*stream*/, Enum const& /*enumData*/, std::uint32_t /*indent*/) override
     {
     }
 };

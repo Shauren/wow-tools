@@ -7,7 +7,7 @@
 
 int main()
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 19342, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 19702, true);
     if (!wow)
         return 1;
 

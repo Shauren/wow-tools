@@ -8,7 +8,7 @@ struct NameMapping
     char const* OldName;
 };
 
-#define NUM_NAMES 277
+#define NUM_NAMES 281
 
 NameMapping NameMap[NUM_NAMES] =
 {
@@ -134,6 +134,8 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGUnitData::scaleDuration", "UNIT_FIELD_SCALE_DURATION" },
     { "CGUnitData::looksLikeMountID", "UNIT_FIELD_LOOKS_LIKE_MOUNT_ID" },
     { "CGUnitData::looksLikeCreatureID", "UNIT_FIELD_LOOKS_LIKE_CREATURE_ID" },
+    { "CGUnitData::lookAtControllerID", "UNIT_FIELD_LOOK_AT_CONTROLLER_ID" },
+    { "CGUnitData::lookAtControllerTarget", "UNIT_FIELD_LOOK_AT_CONTROLLER_TARGET" },
 
     { "CGUnitDynamicData::passiveSpells", "UNIT_DYNAMIC_FIELD_PASSIVE_SPELLS" },
     { "CGUnitDynamicData::worldEffects", "UNIT_DYNAMIC_FIELD_WORLD_EFFECTS" },
@@ -251,12 +253,14 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::local.bankAutoSortDisabled", "PLAYER_FIELD_BANK_AUTOSORT_DISABLED" },
     { "CGPlayerData::local.bankBagSlotAutoSortDisabled", "PLAYER_FIELD_BANK_BAG_AUTOSORT_DISABLED" },
     { "CGPlayerData::local.insertItemsLeftToRight", "PLAYER_FIELD_INSERT_ITEMS_LEFT_TO_RIGHT" },
+    { "CGPlayerData::local.questCompleted", "PLAYER_FIELD_QUEST_COMPLETED" },
 
     { "CGPlayerDynamicData::researchSites", "PLAYER_DYNAMIC_FIELD_RESERACH_SITE" },
     { "CGPlayerDynamicData::researchSiteProgress", "PLAYER_DYNAMIC_FIELD_RESEARCH_SITE_PROGRESS" },
     { "CGPlayerDynamicData::dailyQuestsCompleted", "PLAYER_DYNAMIC_FIELD_DAILY_QUESTS" },
     { "CGPlayerDynamicData::availableQuestLineXQuestIDs", "PLAYER_DYNAMIC_FIELD_AVAILABLE_QUEST_LINE_X_QUEST_ID" },
     { "CGPlayerDynamicData::heirlooms", "PLAYER_DYNAMIC_FIELD_HEIRLOOMS" },
+    { "CGPlayerDynamicData::heirloomFlags", "PLAYER_DYNAMIC_FIELD_HEIRLOOM_FLAGS" },
     { "CGPlayerDynamicData::toys", "PLAYER_DYNAMIC_FIELD_TOYS" },
 
     { "CGGameObjectData::m_createdBy", "GAMEOBJECT_FIELD_CREATED_BY" },

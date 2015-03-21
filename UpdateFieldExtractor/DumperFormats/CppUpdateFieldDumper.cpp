@@ -135,7 +135,7 @@ void CppUpdateFieldDumper::DumpEnum(std::ofstream& file, Enum const& enumData)
     if (enumData.GetMembers().empty())
         return;
 
-    file << SourceOutput<Enum>(std::make_unique<CppEnum>(), enumData, 0);
+    file << SourceOutput<Enum>(std::make_unique<CppEnum>(), enumData, 0) << std::endl;
 }
 
 void CppUpdateFieldDumper::DumpFlags(std::ofstream& file, std::string const& varName, std::vector<std::vector<UpdateField>*> const& fields)
