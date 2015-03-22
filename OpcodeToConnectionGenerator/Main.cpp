@@ -4,6 +4,7 @@
 #include "ServerOpcodes.h"
 #include "Enum.h"
 #include <fstream>
+#include <map>
 
 typedef bool(__cdecl *JamCheckFn)(WORD);
 
@@ -12,107 +13,6 @@ struct JamGroup
     JamCheckFn BelongsToGroup;
     JamCheckFn RequiresInstanceConnection;
 };
-
-/*
-char __cdecl sub_5F4D86(int a1, int a2, int a3, void *a4, size_t a5)
-{
-  char result; // al@4
-
-  if ( (((_WORD)a2 - 1) & 0x1508) != 5376
-    || (unsigned __int8)sub_5F534B(a2) && NetClient::GetWowConnectionIndex(a3) != 1 )
-  {
-    result = 0;
-  }
-  else
-  {
-    sub_653B0B(a1, 23, a3, a4, a5);
-    result = 1;
-  }
-  return result;
-}
-
-char __cdecl sub_5FF895(int a1, int a2, int a3, void *a4, size_t a5)
-{
-  __int16 v5; // ax@1
-  int v6; // ecx@3
-  int v7; // ecx@13
-  int v8; // ecx@16
-  int v9; // eax@18
-  char result; // al@22
-
-  v5 = a2 - 1;
-  if ( (((_WORD)a2 - 1) & 0x1F54) != 4608
-    && (v5 & 0x1DDC) != 208
-    && (v6 = v5 & 0xDDC, v6 != 256)
-    && v6 != 2304
-    && (v5 & 0x5D4) != 384
-    && (v5 & 0x5D6) != 272
-    && (v5 & 0x76C) != 832
-    && (v5 & 0x5F4) != 480
-    && (v5 & 0x15D4) != 4
-    && (v5 & 0x15C4) != 260
-    && (v5 & 0x15BE) != 5256
-    && (v5 & 0x174E) != 1288
-    && (v7 = v5 & 0x74E, v7 != 1292)
-    && v7 != 1294
-    && (v5 & 0x74A) != 1800
-    && (v8 = v5 & 0xFCE, v8 != 1352)
-    && v8 != 1480
-    && (v9 = v5 & 0xDCE, v9 != 1354)
-    && v9 != 1482
-    || (unsigned __int8)sub_5FA8D3(a2) && NetClient::GetWowConnectionIndex(a3) != 1 )
-  {
-    result = 0;
-  }
-  else
-  {
-    sub_653B0B(a1, 23, a3, a4, a5);
-    result = 1;
-  }
-  return result;
-}
-
-char __cdecl sub_61F2FF(int a1, int a2, int a3, void *a4, size_t a5)
-{
-  char result; // al@4
-
-  if ( (((_WORD)a2 - 1) & 0x158C) != 4100
-    || (unsigned __int8)sub_61F832(a2) && NetClient::GetWowConnectionIndex((void *)a1, a3) != 1 )
-  {
-    result = 0;
-  }
-  else
-  {
-    sub_653B0B(a1, 23, a3, a4, a5);
-    result = 1;
-  }
-  return result;
-}
-
-char __cdecl sub_CAE52D(int a1, int a2, int a3, void *a4, size_t a5)
-{
-  __int16 v5; // ax@1
-  char result; // al@9
-
-  v5 = a2 - 1;
-  if ( (((_WORD)a2 - 1) & 0xD54) != 2048
-    && (v5 & 0x5D6) != 274
-    && (v5 & 0x56E) != 330
-    && (v5 & 0xDE4) != 352
-    && (v5 & 0x5F4) != 496
-    && (v5 & 0x74A) != 1802
-    || (unsigned __int8)sub_CAE4CB(a2) && NetClient::GetWowConnectionIndex(a3) != 1 )
-  {
-    result = 0;
-  }
-  else
-  {
-    sub_653B0B(a1, 23, a3, a4, a5);
-    result = 1;
-  }
-  return result;
-}
-*/
 
 void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 {
@@ -147,9 +47,50 @@ void DumpSpellFailures()
     DumpEnum(spellFailures, "SpellCastResult");
 }
 
+void DumpInventoryErrors()
+{
+    struct UIErrorInfo
+    {
+        char const* ErrorName;
+        int z;
+        void* a;
+        int b[2];
+    };
+
+    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0xC549A8);
+
+    typedef int(__cdecl* GetGameErrorFn)(int);
+    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0x33C53D);
+
+    Enum spellFailures;
+    spellFailures.SetName("InventoryResult");
+    spellFailures.SetPaddingAfterValueName(55);
+    int err = 0;
+    int error = CGBag_C_GetGameError(err);
+    std::multimap<std::string, int> duplicates;
+    while (err <= 96)
+    {
+        std::string err_name = std::string("EQUIP_");
+        if (error < 950)
+            err_name += uis[error].ErrorName;
+        else
+            err_name += "NONE";
+
+        duplicates.emplace(err_name, err);
+        if (duplicates.count(err_name) > 1)
+            err_name += "_" + std::to_string(duplicates.count(err_name));
+
+        spellFailures.AddMember(Enum::Member(std::size_t(err), err_name, ""));
+        error = CGBag_C_GetGameError(++err);
+    }
+
+    DumpEnum(spellFailures, "InventoryResult");
+}
+
 void DumpSwitchedEnums()
 {
     DumpSpellFailures();
+    DumpInventoryErrors();
 }
 
 BOOL WINAPI DllMain(HANDLE hDllHandle, DWORD dwReason, LPVOID lpreserved)
