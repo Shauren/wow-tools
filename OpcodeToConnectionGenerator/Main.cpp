@@ -27,12 +27,12 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 void DumpSpellFailures()
 {
     typedef char*(__cdecl* pGetErrorString)(int);
-    pGetErrorString GetErrorString = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0x23ABDB);
+    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0x23C10B);
 
     Enum spellFailures;
     spellFailures.SetName("SPELL_FAILED_REASON");
     int err = 0;
-    std::string error = GetErrorString(err);
+    std::string error = GetStringReason(err);
     while (true)
     {
         if (!error.empty())
@@ -41,7 +41,7 @@ void DumpSpellFailures()
         if (error == "SPELL_FAILED_UNKNOWN")
             break;
 
-        error = GetErrorString(++err);
+        error = GetStringReason(++err);
     }
 
     DumpEnum(spellFailures, "SpellCastResult");
@@ -57,10 +57,10 @@ void DumpInventoryErrors()
         int b[2];
     };
 
-    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0xC549A8);
+    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0xC58A60);
 
     typedef int(__cdecl* GetGameErrorFn)(int);
-    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0x33C53D);
+    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0x33D965);
 
     Enum spellFailures;
     spellFailures.SetName("InventoryResult");
