@@ -38,7 +38,7 @@ void CsUpdateFieldDumper::Dump()
 
     std::ofstream updateFieldsDump("UpdateFields.cs");
 
-    updateFieldsDump << "WowPacketParserModule.V" << FormatVersion("_") << ".Enums" << std::endl;
+    updateFieldsDump << "namespace WowPacketParserModule.V" << FormatVersion("_") << ".Enums" << std::endl;
     updateFieldsDump << "{" << std::endl;
     updateFieldsDump << Tab << "// ReSharper disable InconsistentNaming" << std::endl;
     updateFieldsDump << Tab << "// " << FormatVersion(".") << std::endl;
