@@ -41,10 +41,15 @@ void CppUpdateFieldDumper::Dump()
     BuildUpdateFieldEnum(ConversationFields, "ConversationFields", GetInputData()->ConversationFields, "CONVERSATION_END", "OBJECT_END");
     BuildDynamicUpdateFieldEnum(ConversationDynamicFields, "ConversationDynamicFields", GetInputData()->ConversationDynamicFields, "CONVERSATION_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
+    time_t now = time(nullptr);
+    tm date;
+    localtime_s(&date, &now);
+    date.tm_year += 1900;
+
     std::ofstream updateFieldsDump("UpdateFields.h");
 
     updateFieldsDump << "/*" << std::endl;
-    updateFieldsDump << " * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>" << std::endl;
+    updateFieldsDump << " * Copyright (C) 2008-" << date.tm_year << " TrinityCore <http://www.trinitycore.org/>" << std::endl;
     updateFieldsDump << " * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>" << std::endl;
     updateFieldsDump << " *" << std::endl;
     updateFieldsDump << " * This program is free software; you can redistribute it and/or modify it" << std::endl;
@@ -75,7 +80,7 @@ void CppUpdateFieldDumper::Dump()
     std::ofstream updateFieldFlags("UpdateFieldFlags.cpp");
 
     updateFieldFlags << "/*" << std::endl;
-    updateFieldFlags << " * Copyright (C) 2008-2014 TrinityCore <http://www.trinitycore.org/>" << std::endl;
+    updateFieldFlags << " * Copyright (C) 2008-" << date.tm_year << " TrinityCore <http://www.trinitycore.org/>" << std::endl;
     updateFieldFlags << " *" << std::endl;
     updateFieldFlags << " * This program is free software; you can redistribute it and/or modify it" << std::endl;
     updateFieldFlags << " * under the terms of the GNU General Public License as published by the" << std::endl;

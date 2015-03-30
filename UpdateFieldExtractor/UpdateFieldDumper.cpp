@@ -22,21 +22,21 @@ enum UpdatefieldFlags
 
 namespace Offsets
 {
-    std::uintptr_t const ObjectFields = 0xDB83B0;
-    std::uintptr_t const ItemFields = 0xDB7FD8;
-    std::uintptr_t const ItemDynamicFields = 0xDB7BF0;
-    std::uintptr_t const ContainerFields = 0xDB74D8;
-    std::uintptr_t const UnitFields = 0xDB6100;
-    std::uintptr_t const UnitDynamicFields = 0xDB5730;
-    std::uintptr_t const PlayerFields = 0xDAC5E8;
-    std::uintptr_t const PlayerDynamicFields = 0xDA2AB8;
-    std::uintptr_t const GameObjectFields = 0xDA2970;
-    std::uintptr_t const DynamicObjectFields = 0xDA2770;
-    std::uintptr_t const CorpseFields = 0xDA24F0;
-    std::uintptr_t const AreaTriggerFields = 0xDA2270;
-    std::uintptr_t const SceneObjectFields = 0xDA2128;
-    std::uintptr_t const ConversationFields = 0xDA2034;
-    std::uintptr_t const ConversationDynamicFields = 0xDA1F88;
+    std::uintptr_t const ObjectFields = 0xDBC570;
+    std::uintptr_t const ItemFields = 0xDBC198;
+    std::uintptr_t const ItemDynamicFields = 0xDBBDB0;
+    std::uintptr_t const ContainerFields = 0xDBB698;
+    std::uintptr_t const UnitFields = 0xDBA2C0;
+    std::uintptr_t const UnitDynamicFields = 0xDB98F0;
+    std::uintptr_t const PlayerFields = 0xDB07A8;
+    std::uintptr_t const PlayerDynamicFields = 0xDA6C78;
+    std::uintptr_t const GameObjectFields = 0xDA6B30;
+    std::uintptr_t const DynamicObjectFields = 0xDA6930;
+    std::uintptr_t const CorpseFields = 0xDA66B0;
+    std::uintptr_t const AreaTriggerFields = 0xDA6430;
+    std::uintptr_t const SceneObjectFields = 0xDA62E8;
+    std::uintptr_t const ConversationFields = 0xDA61F4;
+    std::uintptr_t const ConversationDynamicFields = 0xDA6148;
 }
 
 Data::Data(std::shared_ptr<Process> wow) : _process(wow)
