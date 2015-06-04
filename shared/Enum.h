@@ -51,11 +51,6 @@ public:
 
         stream << std::endl;
     }
-
-    void ProcessEnd(std::ostream& stream, Enum const& /*enumData*/, std::uint32_t indent) override
-    {
-        stream << std::string(indent, ' ') << "};" << std::endl;
-    }
 };
 
 class CsEnum : public EnumFormatter
@@ -67,6 +62,11 @@ public:
             << "public enum " << enumData.GetName() << std::endl << std::string(indent, ' ')
             << '{' << std::endl;
     }
+
+    void ProcessEnd(std::ostream& stream, Enum const& /*enumData*/, std::uint32_t indent) override
+    {
+        stream << std::string(indent, ' ') << "}" << std::endl;
+    }
 };
 
 class CppEnum : public EnumFormatter
@@ -77,6 +77,11 @@ public:
         stream << std::string(indent, ' ')
             << "enum " << enumData.GetName() << std::endl << std::string(indent, ' ')
             << '{' << std::endl;
+    }
+
+    void ProcessEnd(std::ostream& stream, Enum const& /*enumData*/, std::uint32_t indent) override
+    {
+        stream << std::string(indent, ' ') << "};" << std::endl;
     }
 };
 

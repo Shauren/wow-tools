@@ -19,7 +19,7 @@ public:
     void Dump();
 
 protected:
-    void DumpEnum(std::ofstream& file, Enum const& enumData) override;
+    void DumpEnum(std::ofstream& file, Outputs const& enumData) override;
     void DumpFlags(std::ofstream& file, std::string const& varName, std::vector<std::vector<UpdateField>*> const& fields);
     void DumpDynamicFlags(std::ofstream& file, std::string const& varName, std::vector<std::vector<DynamicUpdateField>*> const& fields);
 };

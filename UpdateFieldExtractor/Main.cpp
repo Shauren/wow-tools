@@ -4,6 +4,7 @@
 #include "ProcessTools/ProcessTools.h"
 #include "DumperFormats/CppUpdateFieldDumper.h"
 #include "DumperFormats/CsUpdateFieldDumper.h"
+#include "DumperFormats/StructureUpdateFieldDumper.h"
 
 int main()
 {
@@ -14,6 +15,7 @@ int main()
     DumperFactory factory;
     factory.Register<CppUpdateFieldDumper>();
     factory.Register<CsUpdateFieldDumper>();
+    factory.Register<StructureUpdateFieldDumper>();
 
     std::shared_ptr<Data> data = std::make_shared<Data>(wow);
     std::unordered_set<std::unique_ptr<UpdateFieldDumper>> dumpers = factory.CreateDumpers(data);

@@ -11,6 +11,7 @@
 #include <Windows.h>
 #include "ProcessTools/ProcessTools.h"
 #include "Enum.h"
+#include "Structure.h"
 
 #pragma pack(push,4)
 
@@ -101,40 +102,48 @@ public:
     static std::string const Tab;
 
 protected:
-    void BuildUpdateFieldEnum(Enum& enumData, std::string const& name, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase);
-    void BuildDynamicUpdateFieldEnum(Enum& enumData, std::string const& name, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase);
+    struct Outputs
+    {
+        Enum E;
+        Structure S;
+
+        void SetName(std::string const& name) { E.SetName(name); S.SetName(name); }
+    };
+
+    void BuildUpdateFields(Outputs& enumData, std::string const& name, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase);
+    void BuildDynamicUpdateFields(Outputs& enumData, std::string const& name, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase);
     std::string FormatVersion(std::string const& partSeparator) const;
     static std::string FormatValue(std::uint32_t val, std::string const& valueBase);
 
     void DumpEnums(std::ofstream& updateFieldsDump);
-    virtual void DumpEnum(std::ofstream& file, Enum const& enumData) = 0;
+    virtual void DumpEnum(std::ofstream& file, Outputs const& enumData) = 0;
     std::shared_ptr<Data> GetInputData() { return _input; }
     FileVersionInfo const& GetVersionInfo() const { return _input->GetProcess()->GetFileVersionInfo(); }
     static std::string GetUpdateFieldFlagName(std::uint16_t flag);
     static std::string GetUpdateFieldFlagFullName(std::uint16_t flag);
 
-    Enum ObjectFields;
-    Enum ObjectDynamicFields;
-    Enum ItemFields;
-    Enum ItemDynamicFields;
-    Enum ContainerFields;
-    Enum ContainerDynamicFields;
-    Enum UnitFields;
-    Enum UnitDynamicFields;
-    Enum PlayerFields;
-    Enum PlayerDynamicFields;
-    Enum GameObjectFields;
-    Enum GameObjectDynamicFields;
-    Enum DynamicObjectFields;
-    Enum DynamicObjectDynamicFields;
-    Enum CorpseFields;
-    Enum CorpseDynamicFields;
-    Enum AreaTriggerFields;
-    Enum AreaTriggerDynamicFields;
-    Enum SceneObjectFields;
-    Enum SceneObjectDynamicFields;
-    Enum ConversationFields;
-    Enum ConversationDynamicFields;
+    Outputs ObjectFields;
+    Outputs ObjectDynamicFields;
+    Outputs ItemFields;
+    Outputs ItemDynamicFields;
+    Outputs ContainerFields;
+    Outputs ContainerDynamicFields;
+    Outputs UnitFields;
+    Outputs UnitDynamicFields;
+    Outputs PlayerFields;
+    Outputs PlayerDynamicFields;
+    Outputs GameObjectFields;
+    Outputs GameObjectDynamicFields;
+    Outputs DynamicObjectFields;
+    Outputs DynamicObjectDynamicFields;
+    Outputs CorpseFields;
+    Outputs CorpseDynamicFields;
+    Outputs AreaTriggerFields;
+    Outputs AreaTriggerDynamicFields;
+    Outputs SceneObjectFields;
+    Outputs SceneObjectDynamicFields;
+    Outputs ConversationFields;
+    Outputs ConversationDynamicFields;
 
 private:
     static void AppendIf(std::uint16_t flag, std::uint16_t flagToCheck, std::string& str, std::string const& flagName, std::string const& separator);

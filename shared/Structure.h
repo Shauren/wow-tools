@@ -69,7 +69,7 @@ public:
         stream << std::endl;
     }
 
-    void ProcessEnd(std::ostream& stream, Structure const& structure, std::uint32_t indent) override
+    void ProcessEnd(std::ostream& stream, Structure const& /*structure*/, std::uint32_t indent) override
     {
         stream << std::string(indent, ' ') << '}';
 

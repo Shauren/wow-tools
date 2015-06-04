@@ -4,42 +4,42 @@
 
 void CppUpdateFieldDumper::Dump()
 {
-    BuildUpdateFieldEnum(ObjectFields, "ObjectFields", GetInputData()->ObjectFields, "OBJECT_END", "");
-    BuildDynamicUpdateFieldEnum(ObjectDynamicFields, "ObjectDynamicFields", std::vector<DynamicUpdateField>(), "OBJECT_DYNAMIC_END", "");
+    BuildUpdateFields(ObjectFields, "ObjectFields", GetInputData()->ObjectFields, "OBJECT_END", "");
+    BuildDynamicUpdateFields(ObjectDynamicFields, "ObjectDynamicFields", std::vector<DynamicUpdateField>(), "OBJECT_DYNAMIC_END", "");
 
-    BuildUpdateFieldEnum(ItemFields, "ItemFields", GetInputData()->ItemFields, "ITEM_END", "OBJECT_END");
-    BuildDynamicUpdateFieldEnum(ItemDynamicFields, "ItemDynamicFields", GetInputData()->ItemDynamicFields, "ITEM_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    BuildUpdateFields(ItemFields, "ItemFields", GetInputData()->ItemFields, "ITEM_END", "OBJECT_END");
+    BuildDynamicUpdateFields(ItemDynamicFields, "ItemDynamicFields", GetInputData()->ItemDynamicFields, "ITEM_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
-    BuildUpdateFieldEnum(ContainerFields, "ContainerFields", GetInputData()->ContainerFields, "CONTAINER_END", "ITEM_END");
-    BuildDynamicUpdateFieldEnum(ContainerDynamicFields, "ContainerDynamicFields", std::vector<DynamicUpdateField>(), "CONTAINER_DYNAMIC_END", "ITEM_DYNAMIC_END");
+    BuildUpdateFields(ContainerFields, "ContainerFields", GetInputData()->ContainerFields, "CONTAINER_END", "ITEM_END");
+    BuildDynamicUpdateFields(ContainerDynamicFields, "ContainerDynamicFields", std::vector<DynamicUpdateField>(), "CONTAINER_DYNAMIC_END", "ITEM_DYNAMIC_END");
 
-    BuildUpdateFieldEnum(UnitFields, "UnitFields", GetInputData()->UnitFields, "UNIT_END", "OBJECT_END");
-    BuildDynamicUpdateFieldEnum(UnitDynamicFields, "UnitDynamicFields", GetInputData()->UnitDynamicFields, "UNIT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    BuildUpdateFields(UnitFields, "UnitFields", GetInputData()->UnitFields, "UNIT_END", "OBJECT_END");
+    BuildDynamicUpdateFields(UnitDynamicFields, "UnitDynamicFields", GetInputData()->UnitDynamicFields, "UNIT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
-    BuildUpdateFieldEnum(PlayerFields, "PlayerFields", GetInputData()->PlayerFields, "PLAYER_END", "UNIT_END");
-    Enum::Member head = *(PlayerFields.GetMember("PLAYER_FIELD_INV_SLOT_HEAD"));
+    BuildUpdateFields(PlayerFields, "PlayerFields", GetInputData()->PlayerFields, "PLAYER_END", "UNIT_END");
+    Enum::Member head = *(PlayerFields.E.GetMember("PLAYER_FIELD_INV_SLOT_HEAD"));
     head.ValueName = "PLAYER_FIELD_END_NOT_SELF";
     head.Comment = "";
-    PlayerFields.AddMemberSorted(std::move(head));
-    BuildDynamicUpdateFieldEnum(PlayerDynamicFields, "PlayerDynamicFields", GetInputData()->PlayerDynamicFields, "PLAYER_DYNAMIC_END", "UNIT_DYNAMIC_END");
+    PlayerFields.E.AddMemberSorted(std::move(head));
+    BuildDynamicUpdateFields(PlayerDynamicFields, "PlayerDynamicFields", GetInputData()->PlayerDynamicFields, "PLAYER_DYNAMIC_END", "UNIT_DYNAMIC_END");
 
-    BuildUpdateFieldEnum(GameObjectFields, "GameObjectFields", GetInputData()->GameObjectFields, "GAMEOBJECT_END", "OBJECT_END");
-    BuildDynamicUpdateFieldEnum(GameObjectDynamicFields, "GameObjectDynamicFields", std::vector<DynamicUpdateField>(), "GAMEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    BuildUpdateFields(GameObjectFields, "GameObjectFields", GetInputData()->GameObjectFields, "GAMEOBJECT_END", "OBJECT_END");
+    BuildDynamicUpdateFields(GameObjectDynamicFields, "GameObjectDynamicFields", std::vector<DynamicUpdateField>(), "GAMEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
-    BuildUpdateFieldEnum(DynamicObjectFields, "DynamicObjectFields", GetInputData()->DynamicObjectFields, "DYNAMICOBJECT_END", "OBJECT_END");
-    BuildDynamicUpdateFieldEnum(DynamicObjectDynamicFields, "DynamicObjectDynamicFields", std::vector<DynamicUpdateField>(), "DYNAMICOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    BuildUpdateFields(DynamicObjectFields, "DynamicObjectFields", GetInputData()->DynamicObjectFields, "DYNAMICOBJECT_END", "OBJECT_END");
+    BuildDynamicUpdateFields(DynamicObjectDynamicFields, "DynamicObjectDynamicFields", std::vector<DynamicUpdateField>(), "DYNAMICOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
-    BuildUpdateFieldEnum(CorpseFields, "CorpseFields", GetInputData()->CorpseFields, "CORPSE_END", "OBJECT_END");
-    BuildDynamicUpdateFieldEnum(CorpseDynamicFields, "CorpseDynamicFields", std::vector<DynamicUpdateField>(), "CORPSE_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    BuildUpdateFields(CorpseFields, "CorpseFields", GetInputData()->CorpseFields, "CORPSE_END", "OBJECT_END");
+    BuildDynamicUpdateFields(CorpseDynamicFields, "CorpseDynamicFields", std::vector<DynamicUpdateField>(), "CORPSE_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
-    BuildUpdateFieldEnum(AreaTriggerFields, "AreaTriggerFields", GetInputData()->AreaTriggerFields, "AREATRIGGER_END", "OBJECT_END");
-    BuildDynamicUpdateFieldEnum(AreaTriggerDynamicFields, "AreaTriggerDynamicFields", std::vector<DynamicUpdateField>(), "AREATRIGGER_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    BuildUpdateFields(AreaTriggerFields, "AreaTriggerFields", GetInputData()->AreaTriggerFields, "AREATRIGGER_END", "OBJECT_END");
+    BuildDynamicUpdateFields(AreaTriggerDynamicFields, "AreaTriggerDynamicFields", std::vector<DynamicUpdateField>(), "AREATRIGGER_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
-    BuildUpdateFieldEnum(SceneObjectFields, "SceneObjectFields", GetInputData()->SceneObjectFields, "SCENEOBJECT_END", "OBJECT_END");
-    BuildDynamicUpdateFieldEnum(SceneObjectDynamicFields, "SceneObjectDynamicFields", std::vector<DynamicUpdateField>(), "SCENEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    BuildUpdateFields(SceneObjectFields, "SceneObjectFields", GetInputData()->SceneObjectFields, "SCENEOBJECT_END", "OBJECT_END");
+    BuildDynamicUpdateFields(SceneObjectDynamicFields, "SceneObjectDynamicFields", std::vector<DynamicUpdateField>(), "SCENEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
-    BuildUpdateFieldEnum(ConversationFields, "ConversationFields", GetInputData()->ConversationFields, "CONVERSATION_END", "OBJECT_END");
-    BuildDynamicUpdateFieldEnum(ConversationDynamicFields, "ConversationDynamicFields", GetInputData()->ConversationDynamicFields, "CONVERSATION_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    BuildUpdateFields(ConversationFields, "ConversationFields", GetInputData()->ConversationFields, "CONVERSATION_END", "OBJECT_END");
+    BuildDynamicUpdateFields(ConversationDynamicFields, "ConversationDynamicFields", GetInputData()->ConversationDynamicFields, "CONVERSATION_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
     time_t now = time(nullptr);
     tm date;
@@ -135,12 +135,12 @@ void CppUpdateFieldDumper::Dump()
     updateFieldFlags.close();
 }
 
-void CppUpdateFieldDumper::DumpEnum(std::ofstream& file, Enum const& enumData)
+void CppUpdateFieldDumper::DumpEnum(std::ofstream& file, Outputs const& enumData)
 {
-    if (enumData.GetMembers().empty())
+    if (enumData.E.GetMembers().empty())
         return;
 
-    file << SourceOutput<Enum>(std::make_unique<CppEnum>(), enumData, 0) << std::endl;
+    file << SourceOutput<Enum>(std::make_unique<CppEnum>(), enumData.E, 0) << std::endl;
 }
 
 void CppUpdateFieldDumper::DumpFlags(std::ofstream& file, std::string const& varName, std::vector<std::vector<UpdateField>*> const& fields)

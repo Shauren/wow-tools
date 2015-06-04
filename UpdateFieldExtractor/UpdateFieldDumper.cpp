@@ -58,9 +58,9 @@ Data::Data(std::shared_ptr<Process> wow) : _process(wow)
     ConversationDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::ConversationDynamicFields, CONVERSATION_DYNAMIC_COUNT);
 }
 
-void UpdateFieldDumper::BuildUpdateFieldEnum(Enum& enumData, std::string const& name, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase)
+void UpdateFieldDumper::BuildUpdateFields(Outputs& outputs, std::string const& name, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase)
 {
-    enumData.SetName(name);
+    outputs.SetName(name);
 
     std::uint32_t i = 0;
     while (i < data.size())
@@ -77,18 +77,23 @@ void UpdateFieldDumper::BuildUpdateFieldEnum(Enum& enumData, std::string const& 
         if (!oldName.empty())
             name = oldName;
 
-        enumData.AddMember(Enum::Member(i, FormatValue(i, fieldBase), name,
+        outputs.E.AddMember(Enum::Member(i, FormatValue(i, fieldBase), name,
             static_cast<std::ostringstream&>(std::ostringstream() << "Size: " << field->Size << ", Flags: " << GetUpdateFieldFlagName(field->Flags)).str()));
+
+        if (field->Size > 1)
+            name += "[" + std::to_string(field->Size) + "]";
+
+        outputs.S.AddMember(Structure::Member(i, "_DWORD", name, ""));
 
         i += field->Size;
     }
 
-    enumData.AddMember(Enum::Member(i, FormatValue(i, fieldBase), end, ""));
+    outputs.E.AddMember(Enum::Member(i, FormatValue(i, fieldBase), end, ""));
 }
 
-void UpdateFieldDumper::BuildDynamicUpdateFieldEnum(Enum& enumData, std::string const& name, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase)
+void UpdateFieldDumper::BuildDynamicUpdateFields(Outputs& outputs, std::string const& name, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase)
 {
-    enumData.SetName(name);
+    outputs.SetName(name);
 
     std::uint32_t i = 0;
     while (i < data.size())
@@ -99,12 +104,12 @@ void UpdateFieldDumper::BuildDynamicUpdateFieldEnum(Enum& enumData, std::string 
         if (!oldName.empty())
             name = oldName;
 
-        enumData.AddMember(Enum::Member(i, FormatValue(i, fieldBase), name,
+        outputs.E.AddMember(Enum::Member(i, FormatValue(i, fieldBase), name,
             static_cast<std::ostringstream&>(std::ostringstream() << "Flags: " << GetUpdateFieldFlagName(field->Flags)).str()));
         ++i;
     }
 
-    enumData.AddMember(Enum::Member(i, FormatValue(i, fieldBase), end, ""));
+    outputs.E.AddMember(Enum::Member(i, FormatValue(i, fieldBase), end, ""));
 }
 
 std::string const UpdateFieldDumper::Tab = std::string(4, ' ');
@@ -209,28 +214,28 @@ void UpdateFieldDumper::AppendIf(std::uint16_t flag, std::uint16_t flagToCheck, 
 
 UpdateFieldDumper::UpdateFieldDumper(std::shared_ptr<Data> input, std::uint32_t enumPadding) : _input(input)
 {
-    ObjectFields.SetPaddingAfterValueName(enumPadding);
-    ObjectDynamicFields.SetPaddingAfterValueName(enumPadding);
-    ItemFields.SetPaddingAfterValueName(enumPadding);
-    ItemDynamicFields.SetPaddingAfterValueName(enumPadding);
-    ContainerFields.SetPaddingAfterValueName(enumPadding);
-    ContainerDynamicFields.SetPaddingAfterValueName(enumPadding);
-    UnitFields.SetPaddingAfterValueName(enumPadding);
-    UnitDynamicFields.SetPaddingAfterValueName(enumPadding);
-    PlayerFields.SetPaddingAfterValueName(enumPadding);
-    PlayerDynamicFields.SetPaddingAfterValueName(enumPadding);
-    GameObjectFields.SetPaddingAfterValueName(enumPadding);
-    GameObjectDynamicFields.SetPaddingAfterValueName(enumPadding);
-    DynamicObjectFields.SetPaddingAfterValueName(enumPadding);
-    DynamicObjectDynamicFields.SetPaddingAfterValueName(enumPadding);
-    CorpseFields.SetPaddingAfterValueName(enumPadding);
-    CorpseDynamicFields.SetPaddingAfterValueName(enumPadding);
-    AreaTriggerFields.SetPaddingAfterValueName(enumPadding);
-    AreaTriggerDynamicFields.SetPaddingAfterValueName(enumPadding);
-    SceneObjectFields.SetPaddingAfterValueName(enumPadding);
-    SceneObjectDynamicFields.SetPaddingAfterValueName(enumPadding);
-    ConversationFields.SetPaddingAfterValueName(enumPadding);
-    ConversationDynamicFields.SetPaddingAfterValueName(enumPadding);
+    ObjectFields.E.SetPaddingAfterValueName(enumPadding);
+    ObjectDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    ItemFields.E.SetPaddingAfterValueName(enumPadding);
+    ItemDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    ContainerFields.E.SetPaddingAfterValueName(enumPadding);
+    ContainerDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    UnitFields.E.SetPaddingAfterValueName(enumPadding);
+    UnitDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    PlayerFields.E.SetPaddingAfterValueName(enumPadding);
+    PlayerDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    GameObjectFields.E.SetPaddingAfterValueName(enumPadding);
+    GameObjectDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    DynamicObjectFields.E.SetPaddingAfterValueName(enumPadding);
+    DynamicObjectDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    CorpseFields.E.SetPaddingAfterValueName(enumPadding);
+    CorpseDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    AreaTriggerFields.E.SetPaddingAfterValueName(enumPadding);
+    AreaTriggerDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    SceneObjectFields.E.SetPaddingAfterValueName(enumPadding);
+    SceneObjectDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    ConversationFields.E.SetPaddingAfterValueName(enumPadding);
+    ConversationDynamicFields.E.SetPaddingAfterValueName(enumPadding);
 }
 
 std::ostream& operator<<(std::ostream& stream, hex_number const& hex)

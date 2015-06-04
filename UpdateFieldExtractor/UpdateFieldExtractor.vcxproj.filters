@@ -11,6 +11,9 @@
       <Filter>DumperFormats</Filter>
     </ClCompile>
     <ClCompile Include="DumperFactory.cpp" />
+    <ClCompile Include="DumperFormats\StructureUpdateFieldDumper.cpp">
+      <Filter>DumperFormats</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UpdateFieldNameMap.h" />
@@ -22,6 +25,9 @@
       <Filter>DumperFormats</Filter>
     </ClInclude>
     <ClInclude Include="DumperFactory.h" />
+    <ClInclude Include="DumperFormats\StructureUpdateFieldDumper.h">
+      <Filter>DumperFormats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DumperFormats">

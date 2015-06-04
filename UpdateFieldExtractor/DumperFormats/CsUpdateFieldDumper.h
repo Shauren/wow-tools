@@ -19,7 +19,7 @@ public:
     void Dump();
 
 protected:
-    void DumpEnum(std::ofstream& file, Enum const& enumData) override;
+    void DumpEnum(std::ofstream& file, Outputs const& enumData) override;
 };
 
 #endif // CsUpdateFieldDumper_h__
