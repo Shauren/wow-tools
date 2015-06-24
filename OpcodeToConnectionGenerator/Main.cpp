@@ -27,7 +27,7 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 void DumpSpellFailures()
 {
     typedef char*(__cdecl* pGetErrorString)(int);
-    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0x23C10B);
+    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0x2641A2);
 
     Enum spellFailures;
     spellFailures.SetName("SPELL_FAILED_REASON");
@@ -57,10 +57,10 @@ void DumpInventoryErrors()
         int b[2];
     };
 
-    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0xC58A60);
+    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0xCB01D0);
 
     typedef int(__cdecl* GetGameErrorFn)(int);
-    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0x33D965);
+    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0x36E950);
 
     Enum spellFailures;
     spellFailures.SetName("InventoryResult");
@@ -71,7 +71,7 @@ void DumpInventoryErrors()
     while (err <= 96)
     {
         std::string err_name = std::string("EQUIP_");
-        if (error < 950)
+        if (error < 945)
             err_name += uis[error].ErrorName;
         else
             err_name += "NONE";
@@ -95,74 +95,74 @@ void DumpSwitchedEnums()
 
 BOOL WINAPI DllMain(HANDLE hDllHandle, DWORD dwReason, LPVOID lpreserved)
 {
-    initopcodes();
+    //initopcodes();
 
-    DWORD_PTR BaseAddress = (DWORD_PTR)GetModuleHandle(NULL);
-    BaseAddress -= 0x400000; // because im lazy and use not rebased offsets
+    //DWORD_PTR BaseAddress = (DWORD_PTR)GetModuleHandle(NULL);
+    //BaseAddress -= 0x400000; // because im lazy and use not rebased offsets
 
-    JamGroup grp[4];
-    grp[0].BelongsToGroup = ((JamCheckFn)(BaseAddress + 0x6030C7));
-    grp[0].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x603077));
-    grp[1].BelongsToGroup = ((JamCheckFn)(BaseAddress + 0x6073AA));
-    grp[1].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x60811C));
-    grp[2].BelongsToGroup = ((JamCheckFn)(BaseAddress + 0x62D089));
-    grp[2].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x62D02D));
-    grp[3].BelongsToGroup = ((JamCheckFn)(BaseAddress + 0xCDC3CF));
-    grp[3].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0xCDC27E));
+    //JamGroup grp[4];
+    //grp[0].BelongsToGroup = ((JamCheckFn)(BaseAddress + 0x6030C7));
+    //grp[0].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x603077));
+    //grp[1].BelongsToGroup = ((JamCheckFn)(BaseAddress + 0x6073AA));
+    //grp[1].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x60811C));
+    //grp[2].BelongsToGroup = ((JamCheckFn)(BaseAddress + 0x62D089));
+    //grp[2].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0x62D02D));
+    //grp[3].BelongsToGroup = ((JamCheckFn)(BaseAddress + 0xCDC3CF));
+    //grp[3].RequiresInstanceConnection = ((JamCheckFn)(BaseAddress + 0xCDC27E));
 
-    FILE* dump = nullptr;
-    fopen_s(&dump, "dump.txt", "w");
-    if (!dump)
-        return FALSE;
+    //FILE* dump = nullptr;
+    //fopen_s(&dump, "dump.txt", "w");
+    //if (!dump)
+    //    return FALSE;
 
-    for (WORD opc = 0; opc < 0x1FFF; ++opc)
-    {
-        if (((opc - 1) & 0x17CE) == 1026 || ((opc - 1) & 0x17BC) == 1672) // auth
-            continue;
+    //for (WORD opc = 0; opc < 0x1FFF; ++opc)
+    //{
+    //    if (((opc - 1) & 0x17CE) == 1026 || ((opc - 1) & 0x17BC) == 1672) // auth
+    //        continue;
 
-        if (grp[0].BelongsToGroup(opc))
-        {
-            if (grp[0].RequiresInstanceConnection(opc))
-            {
-                if (OpcodeNames[opc])
-                    fprintf(dump, "        case %s: // ClientQuest\n", OpcodeNames[opc]);
-                else
-                    fprintf(dump, "        case 0x%04X: // ClientQuest\n", opc);
-            }
-        }
-        else if (grp[1].BelongsToGroup(opc))
-        {
-            if (grp[1].RequiresInstanceConnection(opc))
-            {
-                if (OpcodeNames[opc])
-                    fprintf(dump, "        case %s: // Client\n", OpcodeNames[opc]);
-                else
-                    fprintf(dump, "        case 0x%04X: // Client\n", opc);
-            }
-        }
-        else if (grp[2].BelongsToGroup(opc))
-        {
-            if (grp[2].RequiresInstanceConnection(opc))
-            {
-                if (OpcodeNames[opc])
-                    fprintf(dump, "        case %s: // ClientGuild\n", OpcodeNames[opc]);
-                else
-                    fprintf(dump, "        case 0x%04X: // ClientGuild\n", opc);
-            }
-        }
-        else if (grp[3].BelongsToGroup(opc))
-        {
-            if (grp[3].RequiresInstanceConnection(opc))
-            {
-                if (OpcodeNames[opc])
-                    fprintf(dump, "        case %s: // ClientSpell\n", OpcodeNames[opc]);
-                else
-                    fprintf(dump, "        case 0x%04X: // ClientSpell\n", opc);
-            }
-        }
-    }
+    //    if (grp[0].BelongsToGroup(opc))
+    //    {
+    //        if (grp[0].RequiresInstanceConnection(opc))
+    //        {
+    //            if (OpcodeNames[opc])
+    //                fprintf(dump, "        case %s: // ClientQuest\n", OpcodeNames[opc]);
+    //            else
+    //                fprintf(dump, "        case 0x%04X: // ClientQuest\n", opc);
+    //        }
+    //    }
+    //    else if (grp[1].BelongsToGroup(opc))
+    //    {
+    //        if (grp[1].RequiresInstanceConnection(opc))
+    //        {
+    //            if (OpcodeNames[opc])
+    //                fprintf(dump, "        case %s: // Client\n", OpcodeNames[opc]);
+    //            else
+    //                fprintf(dump, "        case 0x%04X: // Client\n", opc);
+    //        }
+    //    }
+    //    else if (grp[2].BelongsToGroup(opc))
+    //    {
+    //        if (grp[2].RequiresInstanceConnection(opc))
+    //        {
+    //            if (OpcodeNames[opc])
+    //                fprintf(dump, "        case %s: // ClientGuild\n", OpcodeNames[opc]);
+    //            else
+    //                fprintf(dump, "        case 0x%04X: // ClientGuild\n", opc);
+    //        }
+    //    }
+    //    else if (grp[3].BelongsToGroup(opc))
+    //    {
+    //        if (grp[3].RequiresInstanceConnection(opc))
+    //        {
+    //            if (OpcodeNames[opc])
+    //                fprintf(dump, "        case %s: // ClientSpell\n", OpcodeNames[opc]);
+    //            else
+    //                fprintf(dump, "        case 0x%04X: // ClientSpell\n", opc);
+    //        }
+    //    }
+    //}
 
-    fclose(dump);
+    //fclose(dump);
 
     DumpSwitchedEnums();
 

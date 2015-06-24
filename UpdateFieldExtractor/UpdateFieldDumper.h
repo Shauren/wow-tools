@@ -23,12 +23,12 @@ enum UpdateFieldSizes : std::uint32_t
     ITEM_DYNAMIC_COUNT          = 2,
     CONTAINER_COUNT             = 145,
     CONTAINER_DYNAMIC_COUNT     = 0,
-    UNIT_COUNT                  = 196,
+    UNIT_COUNT                  = 200,
     UNIT_DYNAMIC_COUNT          = 2,
-    PLAYER_COUNT                = 3098,
+    PLAYER_COUNT                = 3387,
     PLAYER_DYNAMIC_COUNT        = 7,
     GAMEOBJECT_COUNT            = 21,
-    GAMEOBJECT_DYNAMIC_COUNT    = 0,
+    GAMEOBJECT_DYNAMIC_COUNT    = 1,
     DYNAMICOBJECT_COUNT         = 8,
     DYNAMICOBJECT_DYNAMIC_COUNT = 0,
     CORPSE_COUNT                = 33,
@@ -71,6 +71,7 @@ public:
     std::vector<UpdateField> PlayerFields;
     std::vector<DynamicUpdateField> PlayerDynamicFields;
     std::vector<UpdateField> GameObjectFields;
+    std::vector<DynamicUpdateField> GameObjectDynamicFields;
     std::vector<UpdateField> DynamicObjectFields;
     std::vector<UpdateField> CorpseFields;
     std::vector<UpdateField> AreaTriggerFields;

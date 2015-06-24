@@ -24,7 +24,7 @@ void CppUpdateFieldDumper::Dump()
     BuildDynamicUpdateFields(PlayerDynamicFields, "PlayerDynamicFields", GetInputData()->PlayerDynamicFields, "PLAYER_DYNAMIC_END", "UNIT_DYNAMIC_END");
 
     BuildUpdateFields(GameObjectFields, "GameObjectFields", GetInputData()->GameObjectFields, "GAMEOBJECT_END", "OBJECT_END");
-    BuildDynamicUpdateFields(GameObjectDynamicFields, "GameObjectDynamicFields", std::vector<DynamicUpdateField>(), "GAMEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
+    BuildDynamicUpdateFields(GameObjectDynamicFields, "GameObjectDynamicFields", GetInputData()->GameObjectDynamicFields, "GAMEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
     BuildUpdateFields(DynamicObjectFields, "DynamicObjectFields", GetInputData()->DynamicObjectFields, "DYNAMICOBJECT_END", "OBJECT_END");
     BuildDynamicUpdateFields(DynamicObjectDynamicFields, "DynamicObjectDynamicFields", std::vector<DynamicUpdateField>(), "DYNAMICOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
@@ -113,6 +113,9 @@ void CppUpdateFieldDumper::Dump()
 
     DumpFlags(updateFieldFlags, "GameObjectUpdateFieldFlags[GAMEOBJECT_END]",
         { &GetInputData()->ObjectFields, &GetInputData()->GameObjectFields });
+
+    DumpDynamicFlags(updateFieldFlags, "GameObjectDynamicUpdateFieldFlags[GAMEOBJECT_DYNAMIC_END]",
+        { &GetInputData()->GameObjectDynamicFields });
 
     DumpFlags(updateFieldFlags, "DynamicObjectUpdateFieldFlags[DYNAMICOBJECT_END]",
         { &GetInputData()->ObjectFields, &GetInputData()->DynamicObjectFields });

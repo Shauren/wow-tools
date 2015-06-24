@@ -22,21 +22,22 @@ enum UpdatefieldFlags
 
 namespace Offsets
 {
-    std::uintptr_t const ObjectFields = 0xDBC570;
-    std::uintptr_t const ItemFields = 0xDBC198;
-    std::uintptr_t const ItemDynamicFields = 0xDBBDB0;
-    std::uintptr_t const ContainerFields = 0xDBB698;
-    std::uintptr_t const UnitFields = 0xDBA2C0;
-    std::uintptr_t const UnitDynamicFields = 0xDB98F0;
-    std::uintptr_t const PlayerFields = 0xDB07A8;
-    std::uintptr_t const PlayerDynamicFields = 0xDA6C78;
-    std::uintptr_t const GameObjectFields = 0xDA6B30;
-    std::uintptr_t const DynamicObjectFields = 0xDA6930;
-    std::uintptr_t const CorpseFields = 0xDA66B0;
-    std::uintptr_t const AreaTriggerFields = 0xDA6430;
-    std::uintptr_t const SceneObjectFields = 0xDA62E8;
-    std::uintptr_t const ConversationFields = 0xDA61F4;
-    std::uintptr_t const ConversationDynamicFields = 0xDA6148;
+    std::uintptr_t const ObjectFields = 0xE26678;
+    std::uintptr_t const ItemFields = 0xE262A0;
+    std::uintptr_t const ItemDynamicFields = 0xE25EB8;
+    std::uintptr_t const ContainerFields = 0xE257A0;
+    std::uintptr_t const UnitFields = 0xE24398;
+    std::uintptr_t const UnitDynamicFields = 0xE23994;
+    std::uintptr_t const PlayerFields = 0xE19AC0;
+    std::uintptr_t const PlayerDynamicFields = 0xE0F1D0;
+    std::uintptr_t const GameObjectFields = 0xE0F088;
+    std::uintptr_t const GameObjectDynamicFields = 0xE0EEF0;
+    std::uintptr_t const DynamicObjectFields = 0xE0EE88;
+    std::uintptr_t const CorpseFields = 0xE0EC08;
+    std::uintptr_t const AreaTriggerFields = 0xE0E918;
+    std::uintptr_t const SceneObjectFields = 0xE0E760;
+    std::uintptr_t const ConversationFields = 0xE0E66C;
+    std::uintptr_t const ConversationDynamicFields = 0xE0E5C0;
 }
 
 Data::Data(std::shared_ptr<Process> wow) : _process(wow)
@@ -50,6 +51,7 @@ Data::Data(std::shared_ptr<Process> wow) : _process(wow)
     PlayerFields = _process->ReadArray<UpdateField>(Offsets::PlayerFields, PLAYER_COUNT);
     PlayerDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::PlayerDynamicFields, PLAYER_DYNAMIC_COUNT);
     GameObjectFields = _process->ReadArray<UpdateField>(Offsets::GameObjectFields, GAMEOBJECT_COUNT);
+    GameObjectDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::GameObjectDynamicFields, GAMEOBJECT_DYNAMIC_COUNT);
     DynamicObjectFields = _process->ReadArray<UpdateField>(Offsets::DynamicObjectFields, DYNAMICOBJECT_COUNT);
     CorpseFields = _process->ReadArray<UpdateField>(Offsets::CorpseFields, CORPSE_COUNT);
     AreaTriggerFields = _process->ReadArray<UpdateField>(Offsets::AreaTriggerFields, AREATRIGGER_COUNT);

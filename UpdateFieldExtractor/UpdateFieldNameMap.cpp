@@ -8,7 +8,7 @@ struct NameMapping
     char const* OldName;
 };
 
-#define NUM_NAMES 281
+#define NUM_NAMES 286
 
 NameMapping NameMap[NUM_NAMES] =
 {
@@ -55,6 +55,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGUnitData::battlePetDBID", "UNIT_FIELD_BATTLE_PET_DB_ID" },
     { "CGUnitData::channelObject", "UNIT_FIELD_CHANNEL_OBJECT" },
     { "CGUnitData::channelSpell", "UNIT_CHANNEL_SPELL" },
+    { "CGUnitData::channelSpellXSpellVisual", "UNIT_CHANNEL_SPELL_X_SPELL_VISUAL" },
     { "CGUnitData::summonedByHomeRealm", "UNIT_FIELD_SUMMONED_BY_HOME_REALM" },
     { "CGUnitData::sex", "UNIT_FIELD_BYTES_0" },
     { "CGUnitData::displayPower", "UNIT_FIELD_DISPLAY_POWER" },
@@ -69,6 +70,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGUnitData::effectiveLevel", "UNIT_FIELD_EFFECTIVE_LEVEL" },
     { "CGUnitData::factionTemplate", "UNIT_FIELD_FACTIONTEMPLATE" },
     { "CGUnitData::virtualItemID", "UNIT_VIRTUAL_ITEM_SLOT_ID" },
+    { "CGUnitData::virtualItems", "UNIT_VIRTUAL_ITEM_SLOT_ID" },
     { "CGUnitData::flags", "UNIT_FIELD_FLAGS" },
     { "CGUnitData::flags2", "UNIT_FIELD_FLAGS_2" },
     { "CGUnitData::flags3", "UNIT_FIELD_FLAGS_3" },
@@ -162,6 +164,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::taxiMountAnimKitID", "PLAYER_FIELD_TAXI_MOUNT_ANIM_KIT_ID" },
     { "CGPlayerData::avgItemLevelTotal", "PLAYER_FIELD_AVG_ITEM_LEVEL_TOTAL" },
     { "CGPlayerData::avgItemLevelEquipped", "PLAYER_FIELD_AVG_ITEM_LEVEL_EQUIPPED" },
+    { "CGPlayerData::avgItemLevel", "PLAYER_FIELD_AVG_ITEM_LEVEL" },
     { "CGPlayerData::currentBattlePetBreedQuality", "PLAYER_FIELD_CURRENT_BATTLE_PET_BREED_QUALITY" },
     { "CGPlayerData::local.invSlots", "PLAYER_FIELD_INV_SLOT_HEAD" },
     { "CGPlayerData::local.farsightObject", "PLAYER_FARSIGHT" },
@@ -276,6 +279,8 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGGameObjectData::m_stateAnimKitID", "GAMEOBJECT_STATE_ANIM_KIT_ID" },
     { "CGGameObjectData::m_stateWorldEffectID", "GAMEOBJECT_STATE_WORLD_EFFECT_ID" },
 
+    { "CGGameObjectDynamicData::enableDoodadSets", "GAMEOBJECT_DYNAMIC_ENABLE_DOODAD_SETS" },
+
     { "CGDynamicObjectData::m_caster", "DYNAMICOBJECT_CASTER" },
     { "CGDynamicObjectData::m_typeAndVisualID", "DYNAMICOBJECT_BYTES" },
     { "CGDynamicObjectData::m_spellID", "DYNAMICOBJECT_SPELLID" },
@@ -292,6 +297,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGCorpseData::m_dynamicFlags", "CORPSE_FIELD_DYNAMIC_FLAGS" },
     { "CGCorpseData::m_factionTemplate", "CORPSE_FIELD_FACTIONTEMPLATE" },
 
+    { "CGAreaTriggerData::m_overrideScaleCurve", "AREATRIGGER_OVERRIDE_SCALE_CURVE" },
     { "CGAreaTriggerData::m_caster", "AREATRIGGER_CASTER" },
     { "CGAreaTriggerData::m_duration", "AREATRIGGER_DURATION" },
     { "CGAreaTriggerData::m_spellID", "AREATRIGGER_SPELLID" },

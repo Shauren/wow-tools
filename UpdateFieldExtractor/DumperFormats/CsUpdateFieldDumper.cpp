@@ -19,7 +19,7 @@ void CsUpdateFieldDumper::Dump()
     BuildDynamicUpdateFields(PlayerDynamicFields, "PlayerDynamicField", GetInputData()->PlayerDynamicFields, "PLAYER_DYNAMIC_END", "UnitDynamicField.UNIT_DYNAMIC_END");
 
     BuildUpdateFields(GameObjectFields, "GameObjectField", GetInputData()->GameObjectFields, "GAMEOBJECT_END", "ObjectField.OBJECT_END");
-    BuildDynamicUpdateFields(GameObjectDynamicFields, "GameObjectDynamicField", std::vector<DynamicUpdateField>(), "GAMEOBJECT_DYNAMIC_END", "ObjectDynamicField.OBJECT_DYNAMIC_END");
+    BuildDynamicUpdateFields(GameObjectDynamicFields, "GameObjectDynamicField", GetInputData()->GameObjectDynamicFields, "GAMEOBJECT_DYNAMIC_END", "ObjectDynamicField.OBJECT_DYNAMIC_END");
 
     BuildUpdateFields(DynamicObjectFields, "DynamicObjectField", GetInputData()->DynamicObjectFields, "DYNAMICOBJECT_END", "ObjectField.OBJECT_END");
     BuildDynamicUpdateFields(DynamicObjectDynamicFields, "DynamicObjectDynamicField", std::vector<DynamicUpdateField>(), "DYNAMICOBJECT_DYNAMIC_END", "ObjectDynamicField.OBJECT_DYNAMIC_END");
