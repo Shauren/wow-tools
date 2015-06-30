@@ -68,7 +68,7 @@ void DumpFrameXML_Events(std::shared_ptr<Process> wow)
 
 int main()
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 20173, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 20182, true);
     if (!wow)
         return 1;
 

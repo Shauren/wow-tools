@@ -8,7 +8,7 @@ struct NameMapping
     char const* OldName;
 };
 
-#define NUM_NAMES 286
+#define NUM_NAMES 288
 
 NameMapping NameMap[NUM_NAMES] =
 {
@@ -300,8 +300,10 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGAreaTriggerData::m_overrideScaleCurve", "AREATRIGGER_OVERRIDE_SCALE_CURVE" },
     { "CGAreaTriggerData::m_caster", "AREATRIGGER_CASTER" },
     { "CGAreaTriggerData::m_duration", "AREATRIGGER_DURATION" },
+    { "CGAreaTriggerData::m_timeToTargetScale", "AREATRIGGER_TIME_TO_TARGET_SCALE" },
     { "CGAreaTriggerData::m_spellID", "AREATRIGGER_SPELLID" },
     { "CGAreaTriggerData::m_spellVisualID", "AREATRIGGER_SPELLVISUALID" },
+    { "CGAreaTriggerData::m_boundsRadius2D", "AREATRIGGER_BOUNDS_RADIUS_2D" },
     { "CGAreaTriggerData::m_explicitScale", "AREATRIGGER_EXPLICIT_SCALE" },
 
     { "CGSceneObjectData::m_scriptPackageID", "SCENEOBJECT_FIELD_SCRIPT_PACKAGE_ID" },
