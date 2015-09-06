@@ -58,6 +58,7 @@
     <Compile Include="PayloadVersions\ClientConnectionPayload434.cs" />
     <Compile Include="PayloadVersions\ClientConnectionPayload530.cs" />
     <Compile Include="PayloadVersions\ClientConnectionPayload603.cs" />
+    <Compile Include="PayloadVersions\ClientConnectionPayload620.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

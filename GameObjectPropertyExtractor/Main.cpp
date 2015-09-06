@@ -59,13 +59,13 @@ struct GameObjectPropertyInfo
     GameObjectPropertyTypeInfo** TypeInfo;
 };
 
-TypeType PropTypes[54];
+TypeType PropTypes[55];
 
 #define MAX_GAMEOBJECT_TYPE 49
 #define MAX_PROPERTY_INDEX 207
 
-#define GO_TYPE_DATA 0x10A8008
-#define PROPERTY_DATA 0xE275C0
+#define GO_TYPE_DATA 0x10B4078
+#define PROPERTY_DATA 0xE318C0
 #define MAX_GAMEOBJECT_DATA 33
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
@@ -134,7 +134,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 20182, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 20444, true);
     if (!wow)
         return 1;
 
@@ -189,6 +189,7 @@ void InitTypes()
     PropTypes[8] = ENUM;
     PropTypes[9] = ENUM;
     PropTypes[12] = INTEGER;
+    PropTypes[13] = INTEGER;
     PropTypes[15] = DB_REF;
     PropTypes[16] = DB_REF;
     PropTypes[17] = DB_REF;
@@ -198,6 +199,7 @@ void InitTypes()
     PropTypes[21] = DB_REF;
     PropTypes[22] = DB_REF;
     PropTypes[23] = DB_REF;
+    PropTypes[24] = DB_REF;
     PropTypes[25] = DB_REF;
     PropTypes[26] = DB_REF;
     PropTypes[27] = DB_REF;
@@ -227,6 +229,7 @@ void InitTypes()
     PropTypes[51] = DB_REF;
     PropTypes[52] = DB_REF;
     PropTypes[53] = DB_REF;
+    PropTypes[54] = DB_REF;
 }
 
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type)

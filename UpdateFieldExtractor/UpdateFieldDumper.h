@@ -25,7 +25,7 @@ enum UpdateFieldSizes : std::uint32_t
     CONTAINER_DYNAMIC_COUNT     = 0,
     UNIT_COUNT                  = 200,
     UNIT_DYNAMIC_COUNT          = 2,
-    PLAYER_COUNT                = 3387,
+    PLAYER_COUNT                = 3389,
     PLAYER_DYNAMIC_COUNT        = 7,
     GAMEOBJECT_COUNT            = 21,
     GAMEOBJECT_DYNAMIC_COUNT    = 1,
