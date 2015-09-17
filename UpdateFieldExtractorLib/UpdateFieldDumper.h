@@ -15,32 +15,6 @@
 
 #pragma pack(push,4)
 
-enum UpdateFieldSizes : std::uint32_t
-{
-    OBJECT_COUNT                = 12,
-    OBJECT_DYNAMIC_COUNT        = 0,
-    ITEM_COUNT                  = 70,
-    ITEM_DYNAMIC_COUNT          = 2,
-    CONTAINER_COUNT             = 145,
-    CONTAINER_DYNAMIC_COUNT     = 0,
-    UNIT_COUNT                  = 200,
-    UNIT_DYNAMIC_COUNT          = 2,
-    PLAYER_COUNT                = 3389,
-    PLAYER_DYNAMIC_COUNT        = 7,
-    GAMEOBJECT_COUNT            = 21,
-    GAMEOBJECT_DYNAMIC_COUNT    = 1,
-    DYNAMICOBJECT_COUNT         = 8,
-    DYNAMICOBJECT_DYNAMIC_COUNT = 0,
-    CORPSE_COUNT                = 33,
-    CORPSE_DYNAMIC_COUNT        = 0,
-    AREATRIGGER_COUNT           = 17,
-    AREATRIGGER_DYNAMIC_COUNT   = 0,
-    SCENEOBJECT_COUNT           = 7,
-    SCENEOBJECT_DYNAMIC_COUNT   = 0,
-    CONVERSATION_COUNT          = 1,
-    CONVERSATION_DYNAMIC_COUNT  = 2
-};
-
 struct UpdateField
 {
     std::uint32_t NameAddress;
@@ -56,10 +30,12 @@ struct DynamicUpdateField
     std::uint16_t __PADDING__;
 };
 
+struct UpdateFieldOffsets;
+
 class Data
 {
 public:
-    Data(std::shared_ptr<Process> wow);
+    Data(std::shared_ptr<Process> wow, UpdateFieldOffsets const* offsets);
     std::string const& GetString(std::uintptr_t address) { return _process->Read<std::string>(address, false); }
 
     std::vector<UpdateField> ObjectFields;
@@ -111,8 +87,8 @@ protected:
         void SetName(std::string const& name) { E.SetName(name); S.SetName(name); }
     };
 
-    void BuildUpdateFields(Outputs& enumData, std::string const& name, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase);
-    void BuildDynamicUpdateFields(Outputs& enumData, std::string const& name, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase);
+    void BuildUpdateFields(Outputs& enumData, std::string const& outputName, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase);
+    void BuildDynamicUpdateFields(Outputs& enumData, std::string const& outputName, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase);
     std::string FormatVersion(std::string const& partSeparator) const;
     static std::string FormatValue(std::uint32_t val, std::string const& valueBase);
 

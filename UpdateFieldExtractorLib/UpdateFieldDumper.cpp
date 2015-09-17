@@ -1,6 +1,7 @@
 
 #include "UpdateFieldDumper.h"
 #include "UpdateFieldNameMap.h"
+#include "Export.h"
 #include <sstream>
 #include <cstdio>
 
@@ -40,29 +41,29 @@ namespace Offsets
     std::uintptr_t const ConversationDynamicFields = 0xE1AFB0;
 }
 
-Data::Data(std::shared_ptr<Process> wow) : _process(wow)
+Data::Data(std::shared_ptr<Process> wow, UpdateFieldOffsets const* offsets) : _process(wow)
 {
-    ObjectFields = _process->ReadArray<UpdateField>(Offsets::ObjectFields, OBJECT_COUNT);
-    ItemFields = _process->ReadArray<UpdateField>(Offsets::ItemFields, ITEM_COUNT);
-    ItemDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::ItemDynamicFields, ITEM_DYNAMIC_COUNT);
-    ContainerFields = _process->ReadArray<UpdateField>(Offsets::ContainerFields, CONTAINER_COUNT);
-    UnitFields = _process->ReadArray<UpdateField>(Offsets::UnitFields, UNIT_COUNT);
-    UnitDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::UnitDynamicFields, UNIT_DYNAMIC_COUNT);
-    PlayerFields = _process->ReadArray<UpdateField>(Offsets::PlayerFields, PLAYER_COUNT);
-    PlayerDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::PlayerDynamicFields, PLAYER_DYNAMIC_COUNT);
-    GameObjectFields = _process->ReadArray<UpdateField>(Offsets::GameObjectFields, GAMEOBJECT_COUNT);
-    GameObjectDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::GameObjectDynamicFields, GAMEOBJECT_DYNAMIC_COUNT);
-    DynamicObjectFields = _process->ReadArray<UpdateField>(Offsets::DynamicObjectFields, DYNAMICOBJECT_COUNT);
-    CorpseFields = _process->ReadArray<UpdateField>(Offsets::CorpseFields, CORPSE_COUNT);
-    AreaTriggerFields = _process->ReadArray<UpdateField>(Offsets::AreaTriggerFields, AREATRIGGER_COUNT);
-    SceneObjectFields = _process->ReadArray<UpdateField>(Offsets::SceneObjectFields, SCENEOBJECT_COUNT);
-    ConversationFields = _process->ReadArray<UpdateField>(Offsets::ConversationFields, CONVERSATION_COUNT);
-    ConversationDynamicFields = _process->ReadArray<DynamicUpdateField>(Offsets::ConversationDynamicFields, CONVERSATION_DYNAMIC_COUNT);
+    ObjectFields = _process->ReadArray<UpdateField>(offsets->ObjectFields, offsets->ObjectCount);
+    ItemFields = _process->ReadArray<UpdateField>(offsets->ItemFields, offsets->ItemCount);
+    ItemDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->ItemDynamicFields, offsets->ItemDynamicCount);
+    ContainerFields = _process->ReadArray<UpdateField>(offsets->ContainerFields, offsets->ContainerCount);
+    UnitFields = _process->ReadArray<UpdateField>(offsets->UnitFields, offsets->UnitCount);
+    UnitDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->UnitDynamicFields, offsets->UnitDynamicCount);
+    PlayerFields = _process->ReadArray<UpdateField>(offsets->PlayerFields, offsets->PlayerCount);
+    PlayerDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->PlayerDynamicFields, offsets->PlayerDynamicCount);
+    GameObjectFields = _process->ReadArray<UpdateField>(offsets->GameObjectFields, offsets->GameObjectCount);
+    GameObjectDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->GameObjectDynamicFields, offsets->GameObjectDynamicCount);
+    DynamicObjectFields = _process->ReadArray<UpdateField>(offsets->DynamicObjectFields, offsets->DynamicObjectCount);
+    CorpseFields = _process->ReadArray<UpdateField>(offsets->CorpseFields, offsets->CorpseCount);
+    AreaTriggerFields = _process->ReadArray<UpdateField>(offsets->AreaTriggerFields, offsets->AreaTriggerCount);
+    SceneObjectFields = _process->ReadArray<UpdateField>(offsets->SceneObjectFields, offsets->SceneObjectCount);
+    ConversationFields = _process->ReadArray<UpdateField>(offsets->ConversationFields, offsets->ConversationCount);
+    ConversationDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->ConversationDynamicFields, offsets->ConversationDynamicCount);
 }
 
-void UpdateFieldDumper::BuildUpdateFields(Outputs& outputs, std::string const& name, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase)
+void UpdateFieldDumper::BuildUpdateFields(Outputs& outputs, std::string const& outputName, std::vector<UpdateField> const& data, std::string const& end, std::string const& fieldBase)
 {
-    outputs.SetName(name);
+    outputs.SetName(outputName);
 
     std::uint32_t i = 0;
     while (i < data.size())
@@ -93,9 +94,9 @@ void UpdateFieldDumper::BuildUpdateFields(Outputs& outputs, std::string const& n
     outputs.E.AddMember(Enum::Member(i, FormatValue(i, fieldBase), end, ""));
 }
 
-void UpdateFieldDumper::BuildDynamicUpdateFields(Outputs& outputs, std::string const& name, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase)
+void UpdateFieldDumper::BuildDynamicUpdateFields(Outputs& outputs, std::string const& outputName, std::vector<DynamicUpdateField> const& data, std::string const& end, std::string const& fieldBase)
 {
-    outputs.SetName(name);
+    outputs.SetName(outputName);
 
     std::uint32_t i = 0;
     while (i < data.size())

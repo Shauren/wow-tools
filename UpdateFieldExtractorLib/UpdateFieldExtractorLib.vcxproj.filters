@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="UpdateFieldNameMap.cpp" />
+    <ClCompile Include="UpdateFieldDumper.cpp" />
+    <ClCompile Include="DumperFormats\CppUpdateFieldDumper.cpp">
+      <Filter>DumperFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="DumperFormats\CsUpdateFieldDumper.cpp">
+      <Filter>DumperFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="DumperFactory.cpp" />
+    <ClCompile Include="DumperFormats\StructureUpdateFieldDumper.cpp">
+      <Filter>DumperFormats</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UpdateFieldNameMap.h" />
+    <ClInclude Include="UpdateFieldDumper.h" />
+    <ClInclude Include="DumperFormats\CppUpdateFieldDumper.h">
+      <Filter>DumperFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="DumperFormats\CsUpdateFieldDumper.h">
+      <Filter>DumperFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="DumperFactory.h" />
+    <ClInclude Include="DumperFormats\StructureUpdateFieldDumper.h">
+      <Filter>DumperFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="Export.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="DumperFormats">
+      <UniqueIdentifier>{40cb9e63-a5af-4f2b-94e9-cf8434ae2d1b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
