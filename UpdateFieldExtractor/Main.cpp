@@ -56,7 +56,10 @@ int main()
 
     ExportFn export = (ExportFn)GetProcAddress(dll, "Extract");
     if (!export)
+    {
+        FreeLibrary(dll);
         return 1;
+    }
 
     UpdateFieldOffsets offsets;
     memset(&offsets, 0, sizeof(offsets));
@@ -94,4 +97,5 @@ int main()
     offsets.ConversationDynamicCount = CONVERSATION_DYNAMIC_COUNT;
 
     export(&offsets);
+    FreeLibrary(dll);
 }
