@@ -188,6 +188,7 @@ void InitTypes()
     PropTypes[7] = ENUM;
     PropTypes[8] = ENUM;
     PropTypes[9] = ENUM;
+    PropTypes[10] = ENUM;
     PropTypes[12] = INTEGER;
     PropTypes[13] = INTEGER;
     PropTypes[15] = DB_REF;
