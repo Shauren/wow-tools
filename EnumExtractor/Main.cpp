@@ -51,7 +51,7 @@ void DumpUIErrors(std::shared_ptr<Process> wow)
 void DumpFrameXML_Events(std::shared_ptr<Process> wow)
 {
     static std::uintptr_t const FrameXML_EventsOffset = 0xE730D8;
-    static std::size_t const FrameXML_EventsSize = 1058;
+    std::size_t const FrameXML_EventsSize = wow->Read<std::uint32_t>(FrameXML_EventsOffset - 4);
 
     Enum frameXML;
     frameXML.SetName("FrameXML_Events");
