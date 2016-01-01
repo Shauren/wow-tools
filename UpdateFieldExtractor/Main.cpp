@@ -6,21 +6,21 @@ enum UpdateFieldSizes : std::uint32_t
 {
     OBJECT_COUNT                = 12,
     OBJECT_DYNAMIC_COUNT        = 0,
-    ITEM_COUNT                  = 70,
-    ITEM_DYNAMIC_COUNT          = 2,
+    ITEM_COUNT                  = 72,
+    ITEM_DYNAMIC_COUNT          = 4,
     CONTAINER_COUNT             = 145,
     CONTAINER_DYNAMIC_COUNT     = 0,
-    UNIT_COUNT                  = 200,
+    UNIT_COUNT                  = 203,
     UNIT_DYNAMIC_COUNT          = 2,
-    PLAYER_COUNT                = 3389,
-    PLAYER_DYNAMIC_COUNT        = 7,
+    PLAYER_COUNT                = 3381,
+    PLAYER_DYNAMIC_COUNT        = 9,
     GAMEOBJECT_COUNT            = 21,
     GAMEOBJECT_DYNAMIC_COUNT    = 1,
     DYNAMICOBJECT_COUNT         = 8,
     DYNAMICOBJECT_DYNAMIC_COUNT = 0,
-    CORPSE_COUNT                = 33,
+    CORPSE_COUNT                = 34,
     CORPSE_DYNAMIC_COUNT        = 0,
-    AREATRIGGER_COUNT           = 17,
+    AREATRIGGER_COUNT           = 26,
     AREATRIGGER_DYNAMIC_COUNT   = 0,
     SCENEOBJECT_COUNT           = 7,
     SCENEOBJECT_DYNAMIC_COUNT   = 0,
@@ -30,22 +30,22 @@ enum UpdateFieldSizes : std::uint32_t
 
 namespace Offsets
 {
-    std::uintptr_t const ObjectFields = 0xE33118;
-    std::uintptr_t const ItemFields = 0xE32D40;
-    std::uintptr_t const ItemDynamicFields = 0xE32958;
-    std::uintptr_t const ContainerFields = 0xE32240;
-    std::uintptr_t const UnitFields = 0xE30E38;
-    std::uintptr_t const UnitDynamicFields = 0xE30434;
-    std::uintptr_t const PlayerFields = 0xE26548;
-    std::uintptr_t const PlayerDynamicFields = 0xE1BC40;
-    std::uintptr_t const GameObjectFields = 0xE1BAF8;
-    std::uintptr_t const GameObjectDynamicFields = 0xE1B960;
-    std::uintptr_t const DynamicObjectFields = 0xE1B8F8;
-    std::uintptr_t const CorpseFields = 0xE1B678;
-    std::uintptr_t const AreaTriggerFields = 0xE1B388;
-    std::uintptr_t const SceneObjectFields = 0xE1B1D0;
-    std::uintptr_t const ConversationFields = 0xE1B0DC;
-    std::uintptr_t const ConversationDynamicFields = 0xE1B030;
+    std::uintptr_t const ObjectFields = 0xF99918;
+    std::uintptr_t const ItemFields = 0xF999A8;
+    std::uintptr_t const ItemDynamicFields = 0xF99D08;
+    std::uintptr_t const ContainerFields = 0xF99D28;
+    std::uintptr_t const UnitFields = 0xF9A3F8;
+    std::uintptr_t const UnitDynamicFields = 0xF9AD7C;
+    std::uintptr_t const PlayerFields = 0xF9AD90;
+    std::uintptr_t const PlayerDynamicFields = 0xFA4C10;
+    std::uintptr_t const GameObjectFields = 0xFA4C58;
+    std::uintptr_t const GameObjectDynamicFields = 0xFA4D54;
+    std::uintptr_t const DynamicObjectFields = 0xFA4D60;
+    std::uintptr_t const CorpseFields = 0xF8CB20;
+    std::uintptr_t const AreaTriggerFields = 0xF8CCB8;
+    std::uintptr_t const SceneObjectFields = 0xF8CDF0;
+    std::uintptr_t const ConversationFields = 0xF8CE44;
+    std::uintptr_t const ConversationDynamicFields = 0xF8CE50;
 }
 
 int main()

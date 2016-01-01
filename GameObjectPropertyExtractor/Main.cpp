@@ -59,13 +59,13 @@ struct GameObjectPropertyInfo
     GameObjectPropertyTypeInfo** TypeInfo;
 };
 
-TypeType PropTypes[55];
+TypeType PropTypes[57];
 
-#define MAX_GAMEOBJECT_TYPE 49
-#define MAX_PROPERTY_INDEX 207
+#define MAX_GAMEOBJECT_TYPE 50
+#define MAX_PROPERTY_INDEX 209
 
-#define GO_TYPE_DATA 0x10B4078
-#define PROPERTY_DATA 0xE318C8
+#define GO_TYPE_DATA 0x11E3BA8
+#define PROPERTY_DATA 0xF14258
 #define MAX_GAMEOBJECT_DATA 33
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
@@ -117,8 +117,9 @@ char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
     "GAMEOBJECT_TYPE_GARRISON_MONUMENT",
     "GAMEOBJECT_TYPE_GARRISON_SHIPMENT",
     "GAMEOBJECT_TYPE_GARRISON_MONUMENT_PLAQUE",
-    "GAMEOBJECT_TYPE_DO_NOT_USE_3",
-    "GAMEOBJECT_TYPE_UI_LINK"
+    "GAMEOBJECT_TYPE_ARTIFACT_FORGE",
+    "GAMEOBJECT_TYPE_UI_LINK",
+    "GAMEOBJECT_TYPE_KEYSTONE_RECEPTACLE"
 };
 
 void InitTypes();
@@ -134,7 +135,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 20726, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowB.exe"), 20756, true);
     if (!wow)
         return 1;
 
@@ -185,12 +186,14 @@ int main(int argc, char* argv[])
 void InitTypes()
 {
     PropTypes[4] = INTEGER;
+    PropTypes[6] = ENUM;
     PropTypes[7] = ENUM;
     PropTypes[8] = ENUM;
     PropTypes[9] = ENUM;
     PropTypes[10] = ENUM;
     PropTypes[12] = INTEGER;
     PropTypes[13] = INTEGER;
+    PropTypes[14] = INTEGER;
     PropTypes[15] = DB_REF;
     PropTypes[16] = DB_REF;
     PropTypes[17] = DB_REF;
@@ -231,6 +234,8 @@ void InitTypes()
     PropTypes[52] = DB_REF;
     PropTypes[53] = DB_REF;
     PropTypes[54] = DB_REF;
+    PropTypes[55] = DB_REF;
+    PropTypes[56] = DB_REF;
 }
 
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type)

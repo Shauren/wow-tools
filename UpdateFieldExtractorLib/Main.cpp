@@ -9,7 +9,7 @@
 
 void Extract(UpdateFieldOffsets const* offsets)
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 20726, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowB.exe"), 20756, true);
     if (!wow)
         return;
 

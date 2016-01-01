@@ -8,7 +8,7 @@ struct NameMapping
     char const* OldName;
 };
 
-#define NUM_NAMES 288
+#define NUM_NAMES 311
 
 NameMapping NameMap[NUM_NAMES] =
 {
@@ -36,9 +36,13 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGItemData::m_modifiersMask", "ITEM_FIELD_MODIFIERS_MASK" },
     { "CGItemData::m_contextID", "ITEM_FIELD_CONTEXT_ID" },
     { "CGItemData::m_context", "ITEM_FIELD_CONTEXT" },
+    { "CGItemData::m_artifactXP", "ITEM_FIELD_ARTIFACT_XP" },
+    { "CGItemData::m_itemAppearanceModID", "ITEM_FIELD_APPEARANCE_MOD_ID" },
 
     { "CGItemDynamicData::m_modifiers", "ITEM_DYNAMIC_FIELD_MODIFIERS" },
     { "CGItemDynamicData::m_bonusListIDs", "ITEM_DYNAMIC_FIELD_BONUSLIST_IDS" },
+    { "CGItemDynamicData::m_artifactPowers", "ITEM_DYNAMIC_FIELD_ARTIFACT_POWERS" },
+    { "CGItemDynamicData::m_gems", "ITEM_DYNAMIC_FIELD_GEMS" },
 
     { "CGContainerData::m_slots", "CONTAINER_FIELD_SLOT_1" },
     { "CGContainerData::m_numSlots", "CONTAINER_FIELD_NUM_SLOTS" },
@@ -138,6 +142,9 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGUnitData::looksLikeCreatureID", "UNIT_FIELD_LOOKS_LIKE_CREATURE_ID" },
     { "CGUnitData::lookAtControllerID", "UNIT_FIELD_LOOK_AT_CONTROLLER_ID" },
     { "CGUnitData::lookAtControllerTarget", "UNIT_FIELD_LOOK_AT_CONTROLLER_TARGET" },
+    { "CGUnitData::scalingLevelMin", "UNIT_FIELD_SCALING_LEVEL_MIN" },
+    { "CGUnitData::scalingLevelMax", "UNIT_FIELD_SCALING_LEVEL_MAX" },
+    { "CGUnitData::scalingLevelDelta", "UNIT_FIELD_SCALING_LEVEL_DELTA" },
 
     { "CGUnitDynamicData::passiveSpells", "UNIT_DYNAMIC_FIELD_PASSIVE_SPELLS" },
     { "CGUnitDynamicData::worldEffects", "UNIT_DYNAMIC_FIELD_WORLD_EFFECTS" },
@@ -151,8 +158,9 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::guildDeleteDate", "PLAYER_GUILDDELETE_DATE" },
     { "CGPlayerData::guildLevel", "PLAYER_GUILDLEVEL" },
     { "CGPlayerData::hairColorID", "PLAYER_BYTES" },
-    { "CGPlayerData::restState", "PLAYER_BYTES_2" },
-    { "CGPlayerData::arenaFaction", "PLAYER_BYTES_3" },
+    { "CGPlayerData::customDisplayOption", "PLAYER_BYTES_2" },
+    { "CGPlayerData::inebriation", "PLAYER_BYTES_3" },
+    { "CGPlayerData::arenaFaction", "PLAYER_BYTES_4" },
     { "CGPlayerData::duelTeam", "PLAYER_DUEL_TEAM" },
     { "CGPlayerData::guildTimeStamp", "PLAYER_GUILD_TIMESTAMP" },
     { "CGPlayerData::questLog", "PLAYER_QUEST_LOG" },
@@ -166,6 +174,8 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::avgItemLevelEquipped", "PLAYER_FIELD_AVG_ITEM_LEVEL_EQUIPPED" },
     { "CGPlayerData::avgItemLevel", "PLAYER_FIELD_AVG_ITEM_LEVEL" },
     { "CGPlayerData::currentBattlePetBreedQuality", "PLAYER_FIELD_CURRENT_BATTLE_PET_BREED_QUALITY" },
+    { "CGPlayerData::prestige", "PLAYER_FIELD_PRESTIGE" },
+    { "CGPlayerData::honorLevel", "PLAYER_FIELD_HONOR_LEVEL" },
     { "CGPlayerData::local.invSlots", "PLAYER_FIELD_INV_SLOT_HEAD" },
     { "CGPlayerData::local.farsightObject", "PLAYER_FARSIGHT" },
     { "CGPlayerData::local.knownTitles", "PLAYER__FIELD_KNOWN_TITLES" },
@@ -205,6 +215,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::local.pvpPowerDamage", "PLAYER_FIELD_PVP_POWER_DAMAGE" },
     { "CGPlayerData::local.pvpPowerHealing", "PLAYER_FIELD_PVP_POWER_HEALING" },
     { "CGPlayerData::local.exploredZones", "PLAYER_EXPLORED_ZONES_1" },
+    { "CGPlayerData::local.restInfo", "PLAYER_FIELD_REST_INFO" },
     { "CGPlayerData::local.restStateBonusPool", "PLAYER_REST_STATE_EXPERIENCE" },
     { "CGPlayerData::local.modDamageDonePos", "PLAYER_FIELD_MOD_DAMAGE_DONE_POS" },
     { "CGPlayerData::local.modDamageDoneNeg", "PLAYER_FIELD_MOD_DAMAGE_DONE_NEG" },
@@ -222,7 +233,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::local.modTargetResistance", "PLAYER_FIELD_MOD_TARGET_RESISTANCE" },
     { "CGPlayerData::local.modTargetPhysicalResistance", "PLAYER_FIELD_MOD_TARGET_PHYSICAL_RESISTANCE" },
     { "CGPlayerData::local.localFlags", "PLAYER_FIELD_LOCAL_FLAGS" },
-    { "CGPlayerData::local.lifetimeMaxRank", "PLAYER_FIELD_BYTES" },
+    { "CGPlayerData::local.maxArtifactPowerRanks", "PLAYER_FIELD_BYTES" },
     { "CGPlayerData::local.selfResSpell", "PLAYER_SELF_RES_SPELL" },
     { "CGPlayerData::local.pvpMedals", "PLAYER_FIELD_PVP_MEDALS" },
     { "CGPlayerData::local.buybackPrice", "PLAYER_FIELD_BUYBACK_PRICE_1" },
@@ -233,6 +244,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::local.combatRatings", "PLAYER_FIELD_COMBAT_RATING_1" },
     { "CGPlayerData::local.pvpInfo", "PLAYER_FIELD_ARENA_TEAM_INFO_1_1" },
     { "CGPlayerData::local.maxLevel", "PLAYER_FIELD_MAX_LEVEL" },
+    { "CGPlayerData::local.scalingPlayerLevelDelta", "PLAYER_FIELD_SCALING_PLAYER_LEVEL_DELTA" },
     { "CGPlayerData::local.runeRegen", "PLAYER_RUNE_REGEN_1" },
     { "CGPlayerData::local.noReagentCostMask", "PLAYER_NO_REAGENT_COST_1" },
     { "CGPlayerData::local.glyphSlots", "PLAYER_FIELD_GLYPH_SLOTS_1" },
@@ -257,6 +269,8 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::local.bankBagSlotAutoSortDisabled", "PLAYER_FIELD_BANK_BAG_AUTOSORT_DISABLED" },
     { "CGPlayerData::local.insertItemsLeftToRight", "PLAYER_FIELD_INSERT_ITEMS_LEFT_TO_RIGHT" },
     { "CGPlayerData::local.questCompleted", "PLAYER_FIELD_QUEST_COMPLETED" },
+    { "CGPlayerData::local.honor", "PLAYER_FIELD_HONOR" },
+    { "CGPlayerData::local.honorNextLevel", "PLAYER_FIELD_HONOR_NEXT_LEVEL" },
 
     { "CGPlayerDynamicData::researchSites", "PLAYER_DYNAMIC_FIELD_RESERACH_SITE" },
     { "CGPlayerDynamicData::researchSiteProgress", "PLAYER_DYNAMIC_FIELD_RESEARCH_SITE_PROGRESS" },
@@ -265,6 +279,8 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerDynamicData::heirlooms", "PLAYER_DYNAMIC_FIELD_HEIRLOOMS" },
     { "CGPlayerDynamicData::heirloomFlags", "PLAYER_DYNAMIC_FIELD_HEIRLOOM_FLAGS" },
     { "CGPlayerDynamicData::toys", "PLAYER_DYNAMIC_FIELD_TOYS" },
+    { "CGPlayerDynamicData::transmog", "PLAYER_DYNAMIC_FIELD_TRANSMOG" },
+    { "CGPlayerDynamicData::conditionalTransmog", "PLAYER_DYNAMIC_FIELD_CONDITIONAL_TRANSMOG" },
 
     { "CGGameObjectData::m_createdBy", "GAMEOBJECT_FIELD_CREATED_BY" },
     { "CGGameObjectData::m_displayID", "GAMEOBJECT_DISPLAYID" },
@@ -296,6 +312,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGCorpseData::m_flags", "CORPSE_FIELD_FLAGS" },
     { "CGCorpseData::m_dynamicFlags", "CORPSE_FIELD_DYNAMIC_FLAGS" },
     { "CGCorpseData::m_factionTemplate", "CORPSE_FIELD_FACTIONTEMPLATE" },
+    { "CGCorpseData::m_customDisplayOption", "CORPSE_FIELD_CUSTOM_DISPLAY_OPTION" },
 
     { "CGAreaTriggerData::m_overrideScaleCurve", "AREATRIGGER_OVERRIDE_SCALE_CURVE" },
     { "CGAreaTriggerData::m_caster", "AREATRIGGER_CASTER" },
@@ -305,6 +322,10 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGAreaTriggerData::m_spellVisualID", "AREATRIGGER_SPELLVISUALID" },
     { "CGAreaTriggerData::m_boundsRadius2D", "AREATRIGGER_BOUNDS_RADIUS_2D" },
     { "CGAreaTriggerData::m_explicitScale", "AREATRIGGER_EXPLICIT_SCALE" },
+    { "CGAreaTriggerData::m_extraScaleCurve", "AREATRIGGER_EXTRA_SCALE_CURVE" },
+    { "CGAreaTriggerData::m_timeToTarget", "AREATRIGGER_TIME_TO_TARGET" },
+    { "CGAreaTriggerData::m_timeToTargetExtraScale", "AREATRIGGER_TIME_TO_TARGET_EXTRA_SCALE" },
+    { "CGAreaTriggerData::m_decalPropertiesID", "AREATRIGGER_DECAL_PROPERTIES_ID" },
 
     { "CGSceneObjectData::m_scriptPackageID", "SCENEOBJECT_FIELD_SCRIPT_PACKAGE_ID" },
     { "CGSceneObjectData::m_rndSeedVal", "SCENEOBJECT_FIELD_RND_SEED_VAL" },
@@ -312,6 +333,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGSceneObjectData::m_sceneType", "SCENEOBJECT_FIELD_SCENE_TYPE" },
 
     { "CGConversationData::dummy", "CONVERSATION_FIELD_DUMMY" },
+    { "CGConversationData::m_lastLineDuration", "CONVERSATION_FIELD_LAST_LINE_DURATION" },
 
     { "CGConversationDynamicData::m_actors", "CONVERSATION_DYNAMIC_FIELD_ACTORS" },
     { "CGConversationDynamicData::m_lines", "CONVERSATION_DYNAMIC_FIELD_LINES" }
