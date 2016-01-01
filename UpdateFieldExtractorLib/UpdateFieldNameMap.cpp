@@ -100,6 +100,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGUnitData::modHaste", "UNIT_FIELD_MOD_HASTE" },
     { "CGUnitData::modRangedHaste", "UNIT_FIELD_MOD_RANGED_HASTE" },
     { "CGUnitData::modHasteRegen", "UNIT_FIELD_MOD_HASTE_REGEN" },
+    { "CGUnitData::modTimeRate", "UNIT_FIELD_MOD_TIME_RATE" },
     { "CGUnitData::createdBySpell", "UNIT_CREATED_BY_SPELL" },
     { "CGUnitData::npcFlags", "UNIT_NPC_FLAGS" },
     { "CGUnitData::emoteState", "UNIT_NPC_EMOTESTATE" },

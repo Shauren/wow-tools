@@ -10,7 +10,7 @@ enum UpdateFieldSizes : std::uint32_t
     ITEM_DYNAMIC_COUNT          = 4,
     CONTAINER_COUNT             = 145,
     CONTAINER_DYNAMIC_COUNT     = 0,
-    UNIT_COUNT                  = 203,
+    UNIT_COUNT                  = 204,
     UNIT_DYNAMIC_COUNT          = 2,
     PLAYER_COUNT                = 3381,
     PLAYER_DYNAMIC_COUNT        = 9,
@@ -30,22 +30,22 @@ enum UpdateFieldSizes : std::uint32_t
 
 namespace Offsets
 {
-    std::uintptr_t const ObjectFields = 0xF99918;
-    std::uintptr_t const ItemFields = 0xF999A8;
-    std::uintptr_t const ItemDynamicFields = 0xF99D08;
-    std::uintptr_t const ContainerFields = 0xF99D28;
-    std::uintptr_t const UnitFields = 0xF9A3F8;
-    std::uintptr_t const UnitDynamicFields = 0xF9AD7C;
-    std::uintptr_t const PlayerFields = 0xF9AD90;
-    std::uintptr_t const PlayerDynamicFields = 0xFA4C10;
-    std::uintptr_t const GameObjectFields = 0xFA4C58;
-    std::uintptr_t const GameObjectDynamicFields = 0xFA4D54;
-    std::uintptr_t const DynamicObjectFields = 0xFA4D60;
-    std::uintptr_t const CorpseFields = 0xF8CB20;
-    std::uintptr_t const AreaTriggerFields = 0xF8CCB8;
-    std::uintptr_t const SceneObjectFields = 0xF8CDF0;
-    std::uintptr_t const ConversationFields = 0xF8CE44;
-    std::uintptr_t const ConversationDynamicFields = 0xF8CE50;
+    std::uintptr_t const ObjectFields = 0xF97E78;
+    std::uintptr_t const ItemFields = 0xF97F08;
+    std::uintptr_t const ItemDynamicFields = 0xF98268;
+    std::uintptr_t const ContainerFields = 0xF98288;
+    std::uintptr_t const UnitFields = 0xF98960;
+    std::uintptr_t const UnitDynamicFields = 0xF992F0;
+    std::uintptr_t const PlayerFields = 0xF99300;
+    std::uintptr_t const PlayerDynamicFields = 0xFA3180;
+    std::uintptr_t const GameObjectFields = 0xFA31C8;
+    std::uintptr_t const GameObjectDynamicFields = 0xFA32C4;
+    std::uintptr_t const DynamicObjectFields = 0xFA32D0;
+    std::uintptr_t const CorpseFields = 0xFA3330;
+    std::uintptr_t const AreaTriggerFields = 0xFA34C8;
+    std::uintptr_t const SceneObjectFields = 0xFA3600;
+    std::uintptr_t const ConversationFields = 0xF98954;
+    std::uintptr_t const ConversationDynamicFields = 0xFA3654;
 }
 
 int main()
@@ -54,8 +54,8 @@ int main()
     if (!dll)
         return 1;
 
-    ExportFn export = (ExportFn)GetProcAddress(dll, "Extract");
-    if (!export)
+    ExportFn extract = (ExportFn)GetProcAddress(dll, "Extract");
+    if (!extract)
     {
         FreeLibrary(dll);
         return 1;
@@ -96,6 +96,6 @@ int main()
     offsets.ConversationCount = CONVERSATION_COUNT;
     offsets.ConversationDynamicCount = CONVERSATION_DYNAMIC_COUNT;
 
-    export(&offsets);
+    extract(&offsets);
     FreeLibrary(dll);
 }
