@@ -12,7 +12,7 @@ enum UpdateFieldSizes : std::uint32_t
     CONTAINER_DYNAMIC_COUNT     = 0,
     UNIT_COUNT                  = 204,
     UNIT_DYNAMIC_COUNT          = 2,
-    PLAYER_COUNT                = 3381,
+    PLAYER_COUNT                = 3382,
     PLAYER_DYNAMIC_COUNT        = 9,
     GAMEOBJECT_COUNT            = 21,
     GAMEOBJECT_DYNAMIC_COUNT    = 1,
@@ -30,22 +30,22 @@ enum UpdateFieldSizes : std::uint32_t
 
 namespace Offsets
 {
-    std::uintptr_t const ObjectFields = 0xFA3450;
-    std::uintptr_t const ItemFields = 0xFA34E0;
-    std::uintptr_t const ItemDynamicFields = 0xFA3840;
-    std::uintptr_t const ContainerFields = 0xFA3860;
-    std::uintptr_t const UnitFields = 0xFA3F38;
-    std::uintptr_t const UnitDynamicFields = 0xFA48C8;
-    std::uintptr_t const PlayerFields = 0xFA48D8;
-    std::uintptr_t const PlayerDynamicFields = 0xFAE758;
-    std::uintptr_t const GameObjectFields = 0xFAE7A0;
-    std::uintptr_t const GameObjectDynamicFields = 0xFAE89C;
-    std::uintptr_t const DynamicObjectFields = 0xFAE8A8;
-    std::uintptr_t const CorpseFields = 0xFAE908;
-    std::uintptr_t const AreaTriggerFields = 0xFAEAA0;
-    std::uintptr_t const SceneObjectFields = 0xFAEBD8;
-    std::uintptr_t const ConversationFields = 0xFA3F2C;
-    std::uintptr_t const ConversationDynamicFields = 0xFAEC2C;
+    std::uintptr_t const ObjectFields = 0xFAC398;
+    std::uintptr_t const ItemFields = 0xFAC428;
+    std::uintptr_t const ItemDynamicFields = 0xFAC788;
+    std::uintptr_t const ContainerFields = 0xFAC7A8;
+    std::uintptr_t const UnitFields = 0xFACE80;
+    std::uintptr_t const UnitDynamicFields = 0xFAD810;
+    std::uintptr_t const PlayerFields = 0xFAD820;
+    std::uintptr_t const PlayerDynamicFields = 0xFB76A8;
+    std::uintptr_t const GameObjectFields = 0xFB76F0;
+    std::uintptr_t const GameObjectDynamicFields = 0xFB77EC;
+    std::uintptr_t const DynamicObjectFields = 0xFB77F8;
+    std::uintptr_t const CorpseFields = 0xFB7858;
+    std::uintptr_t const AreaTriggerFields = 0xFB79F0;
+    std::uintptr_t const SceneObjectFields = 0xFB7B28;
+    std::uintptr_t const ConversationFields = 0xFACE74;
+    std::uintptr_t const ConversationDynamicFields = 0xFB7B7C;
 }
 
 int main()

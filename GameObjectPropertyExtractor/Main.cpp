@@ -61,11 +61,11 @@ struct GameObjectPropertyInfo
 
 TypeType PropTypes[57];
 
-#define MAX_GAMEOBJECT_TYPE 50
-#define MAX_PROPERTY_INDEX 209
+#define MAX_GAMEOBJECT_TYPE 51
+#define MAX_PROPERTY_INDEX 214
 
-#define GO_TYPE_DATA 0x11F79C8
-#define PROPERTY_DATA 0xF24C40
+#define GO_TYPE_DATA 0x11FFA80
+#define PROPERTY_DATA 0xF2BF50
 #define MAX_GAMEOBJECT_DATA 33
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
@@ -119,7 +119,8 @@ char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
     "GAMEOBJECT_TYPE_GARRISON_MONUMENT_PLAQUE",
     "GAMEOBJECT_TYPE_ARTIFACT_FORGE",
     "GAMEOBJECT_TYPE_UI_LINK",
-    "GAMEOBJECT_TYPE_KEYSTONE_RECEPTACLE"
+    "GAMEOBJECT_TYPE_KEYSTONE_RECEPTACLE",
+    "GAMEOBJECT_TYPE_GATHERING_NODE"
 };
 
 void InitTypes();
@@ -135,7 +136,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowB.exe"), 20914, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowB.exe"), 20994, true);
     if (!wow)
         return 1;
 
@@ -240,6 +241,9 @@ void InitTypes()
 
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type)
 {
+    if (typeIndex >= 57)
+        return "ERROR TOO LARGE TYPEINDEX";
+
     std::ostringstream stream;
     switch (PropTypes[typeIndex])
     {

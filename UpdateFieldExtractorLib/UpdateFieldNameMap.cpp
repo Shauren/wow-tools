@@ -8,7 +8,7 @@ struct NameMapping
     char const* OldName;
 };
 
-#define NUM_NAMES 311
+#define NUM_NAMES 312
 
 NameMapping NameMap[NUM_NAMES] =
 {
@@ -246,6 +246,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::local.pvpInfo", "PLAYER_FIELD_ARENA_TEAM_INFO_1_1" },
     { "CGPlayerData::local.maxLevel", "PLAYER_FIELD_MAX_LEVEL" },
     { "CGPlayerData::local.scalingPlayerLevelDelta", "PLAYER_FIELD_SCALING_PLAYER_LEVEL_DELTA" },
+    { "CGPlayerData::local.maxCreatureScalingLevel", "PLAYER_FIELD_MAX_CREATURE_SCALING_LEVEL" },
     { "CGPlayerData::local.runeRegen", "PLAYER_RUNE_REGEN_1" },
     { "CGPlayerData::local.noReagentCostMask", "PLAYER_NO_REAGENT_COST_1" },
     { "CGPlayerData::local.glyphSlots", "PLAYER_FIELD_GLYPH_SLOTS_1" },
