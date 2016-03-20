@@ -8,7 +8,7 @@ struct NameMapping
     char const* OldName;
 };
 
-#define NUM_NAMES 304
+#define NUM_NAMES 303
 
 NameMapping NameMap[NUM_NAMES] =
 {
@@ -260,7 +260,7 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGPlayerData::local.honor", "PLAYER_FIELD_HONOR" },
     { "CGPlayerData::local.honorNextLevel", "PLAYER_FIELD_HONOR_NEXT_LEVEL" },
     { "CGPlayerData::local.numRespecs" , "PLAYER_FIELD_NUM_RESPECS" },
-    { "CGPlayerData::local.overrideSpellsID", "PLAYER_FIELD_OVERRID_SPELLS"},
+    { "CGPlayerData::local.overrideSpellsID", "PLAYER_FIELD_OVERRIDE_SPELLS"},
 
     { "CGPlayerDynamicData::researchSites", "PLAYER_DYNAMIC_FIELD_RESERACH_SITE" },
     { "CGPlayerDynamicData::researchSiteProgress", "PLAYER_DYNAMIC_FIELD_RESEARCH_SITE_PROGRESS" },
@@ -326,7 +326,6 @@ NameMapping NameMap[NUM_NAMES] =
     { "CGSceneObjectData::m_createdBy", "SCENEOBJECT_FIELD_CREATEDBY" },
     { "CGSceneObjectData::m_sceneType", "SCENEOBJECT_FIELD_SCENE_TYPE" },
 
-    { "CGConversationData::dummy", "CONVERSATION_FIELD_DUMMY" },
     { "CGConversationData::m_lastLineDuration", "CONVERSATION_FIELD_LAST_LINE_DURATION" },
 
     { "CGConversationDynamicData::m_actors", "CONVERSATION_DYNAMIC_FIELD_ACTORS" },
