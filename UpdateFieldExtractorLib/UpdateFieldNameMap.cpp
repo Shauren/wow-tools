@@ -1,4 +1,5 @@
 
+#include <type_traits>
 #include <cstring>
 #include "UpdateFieldNameMap.h"
 
@@ -8,9 +9,7 @@ struct NameMapping
     char const* OldName;
 };
 
-#define NUM_NAMES 312
-
-NameMapping NameMap[NUM_NAMES] =
+NameMapping NameMap[] =
 {
     { "CGObjectData::m_guid", "OBJECT_FIELD_GUID" },
     { "CGObjectData::m_data", "OBJECT_FIELD_DATA" },
@@ -343,7 +342,9 @@ NameMapping NameMap[NUM_NAMES] =
 
 char const* GetOldName(char const* newName)
 {
-    for (int i = 0; i < NUM_NAMES; ++i)
+    using len = std::extent<decltype(NameMap)>;
+
+    for (int i = 0; i < len::value; ++i)
         if (!strcmp(NameMap[i].NewName, newName))
             return NameMap[i].OldName;
 
