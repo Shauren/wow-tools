@@ -4,3 +4,4 @@ Release/
 *.user
 *.sdf
 *.opensdf
+*.VC.*db
