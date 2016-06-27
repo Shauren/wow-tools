@@ -89,6 +89,8 @@ void UpdateFieldDumper::BuildDynamicUpdateFields(Outputs& outputs, std::string c
 
         outputs.E.AddMember(Enum::Member(i, FormatValue(i, fieldBase), name,
             static_cast<std::ostringstream&>(std::ostringstream() << "Flags: " << GetUpdateFieldFlagName(field->Flags)).str()));
+        outputs.S.AddMember(Structure::Member(i, "TSDynamicMirrorDataArray", name, ""));
+
         ++i;
     }
 
