@@ -10,13 +10,13 @@ void StructureUpdateFieldDumper::Dump()
     TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(2, "_DWORD (__thiscall* Count)(TSDynamicMirrorDataArray*)", "", ""));
     TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(3, "_DWORD (__thiscall* SetCountRaw)(TSDynamicMirrorDataArray*,unsigned int)", "", ""));
     TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(4, "_DWORD (__thiscall* func_10)(TSDynamicMirrorDataArray*,unsigned int,unsigned int const*)", "", ""));
-    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(0, "_DWORD (__thiscall* SetRaw)(TSDynamicMirrorDataArray*,unsigned int,unsigned int)", "", ""));
-    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(1, "_DWORD (__thiscall* AddRaw)(TSDynamicMirrorDataArray*,unsigned int,unsigned int const*)", "", ""));
-    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(2, "_DWORD (__thiscall* GetRaw)(TSDynamicMirrorDataArray*,unsigned int)", "", ""));
-    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(3, "_DWORD* (__thiscall* GetRawPtr)(TSDynamicMirrorDataArray*,unsigned int)", "", ""));
-    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(4, "_DWORD (__thiscall* ConvertRawIndexToRealIndex)(TSDynamicMirrorDataArray*,unsigned int)", "", ""));
-    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(0, "_DWORD (__thiscall* Bytes)(TSDynamicMirrorDataArray*)", "", ""));
-    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(1, "_DWORD* (__thiscall* Ptr)(TSDynamicMirrorDataArray*)", "", ""));
+    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(5, "_DWORD (__thiscall* SetRaw)(TSDynamicMirrorDataArray*,unsigned int,unsigned int)", "", ""));
+    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(6, "_DWORD (__thiscall* AddRaw)(TSDynamicMirrorDataArray*,unsigned int,unsigned int const*)", "", ""));
+    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(7, "_DWORD (__thiscall* GetRaw)(TSDynamicMirrorDataArray*,unsigned int)", "", ""));
+    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(8, "_DWORD* (__thiscall* GetRawPtr)(TSDynamicMirrorDataArray*,unsigned int)", "", ""));
+    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(9, "_DWORD (__thiscall* ConvertRawIndexToRealIndex)(TSDynamicMirrorDataArray*,unsigned int)", "", ""));
+    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(10, "_DWORD (__thiscall* Bytes)(TSDynamicMirrorDataArray*)", "", ""));
+    TSDynamicMirrorDataArray_vtable.AddMember(Structure::Member(11, "_DWORD* (__thiscall* Ptr)(TSDynamicMirrorDataArray*)", "", ""));
 
     Structure TSDynamicMirrorDataArray;
     TSDynamicMirrorDataArray.SetName("TSDynamicMirrorDataArray");
