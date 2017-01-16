@@ -64,8 +64,8 @@ TypeType PropTypes[57];
 #define MAX_GAMEOBJECT_TYPE 52
 #define MAX_PROPERTY_INDEX 216
 
-#define GO_TYPE_DATA 0x11BD328
-#define PROPERTY_DATA 0xF67598
+#define GO_TYPE_DATA 0x1081610
+#define PROPERTY_DATA 0xE4D5B8
 #define MAX_GAMEOBJECT_DATA 33
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
@@ -137,7 +137,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT.exe"), 22900, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 23360, true);
     if (!wow)
         return 1;
 
@@ -242,8 +242,8 @@ void InitTypes()
 
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type)
 {
-    if (typeIndex >= 57)
-        return "ERROR TOO LARGE TYPEINDEX";
+    if (typeIndex >= std::extent<decltype(PropTypes)>::value)
+        return "ERROR TOO LARGE TYPEINDEX " + std::to_string(typeIndex);
 
     std::ostringstream stream;
     switch (PropTypes[typeIndex])
@@ -253,15 +253,19 @@ std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, Ga
             break;
         case ENUM:
         {
-            void const* values;;
+            void const* values;
             stream << "enum {";
             for (std::int32_t i = 0; i < type.Enum.ValuesCount; ++i)
             {
                 values = wow->Read<void const*>(type.Enum.Values + i);
                 stream << " " << wow->Read<std::string>(values) << ",";
             }
-            values = wow->Read<void const*>(type.Enum.Values + type.Enum.DefaultValue);
-            stream << " }; Default: " << wow->Read<std::string>(values);
+            stream << " };";
+            if (type.Enum.ValuesCount)
+            {
+                values = wow->Read<void const*>(type.Enum.Values + type.Enum.DefaultValue);
+                stream << " Default: " << wow->Read<std::string>(values);
+            }
             break;
         }
         case INTEGER:
