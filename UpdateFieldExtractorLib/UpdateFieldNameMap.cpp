@@ -149,6 +149,7 @@ NameMapping NameMap[] =
 
     { "CGUnitDynamicData::passiveSpells", "UNIT_DYNAMIC_FIELD_PASSIVE_SPELLS" },
     { "CGUnitDynamicData::worldEffects", "UNIT_DYNAMIC_FIELD_WORLD_EFFECTS" },
+    { "CGUnitDynamicData::channelObjects", "UNIT_DYNAMIC_FIELD_CHANNEL_OBJECTS" },
 
     { "CGPlayerData::duelArbiter", "PLAYER_DUEL_ARBITER" },
     { "CGPlayerData::wowAccount", "PLAYER_WOW_ACCOUNT" },
@@ -289,6 +290,7 @@ NameMapping NameMap[] =
     { "CGPlayerDynamicData::characterRestrictions", "PLAYER_DYNAMIC_FIELD_CHARACTER_RESTRICTIONS" },
     { "CGPlayerDynamicData::spellPctModByLabel", "PLAYER_DYNAMIC_FIELD_SPELL_PCT_MOD_BY_LABEL" },
     { "CGPlayerDynamicData::spellFlatModByLabel", "PLAYER_DYNAMIC_FIELD_SPELL_FLAT_MOD_BY_LABEL" },
+    { "CGPlayerDynamicData::arenaCooldowns", "PLAYER_DYNAMIC_FIELD_ARENA_COOLDOWNS" },
 
     { "CGGameObjectData::m_createdBy", "GAMEOBJECT_FIELD_CREATED_BY" },
     { "CGGameObjectData::m_displayID", "GAMEOBJECT_DISPLAYID" },
@@ -329,6 +331,7 @@ NameMapping NameMap[] =
     { "CGAreaTriggerData::m_timeToTargetScale", "AREATRIGGER_TIME_TO_TARGET_SCALE" },
     { "CGAreaTriggerData::m_spellID", "AREATRIGGER_SPELLID" },
     { "CGAreaTriggerData::m_spellVisualID", "AREATRIGGER_SPELLVISUALID" },
+    { "CGAreaTriggerData::m_spellForVisuals", "AREATRIGGER_SPELL_FOR_VISUALS" },
     { "CGAreaTriggerData::m_spellXSpellVisualID", "AREATRIGGER_SPELL_X_SPELL_VISUAL_ID" },
     { "CGAreaTriggerData::m_boundsRadius2D", "AREATRIGGER_BOUNDS_RADIUS_2D" },
     { "CGAreaTriggerData::m_explicitScale", "AREATRIGGER_EXPLICIT_SCALE" },
@@ -346,6 +349,7 @@ NameMapping NameMap[] =
 
     { "CGConversationData::dummy", "CONVERSATION_FIELD_DUMMY" },
     { "CGConversationData::m_lastLineDuration", "CONVERSATION_FIELD_LAST_LINE_DURATION" },
+    { "CGConversationData::m_lastLineEndTime", "CONVERSATION_LAST_LINE_END_TIME" },
 
     { "CGConversationDynamicData::m_actors", "CONVERSATION_DYNAMIC_FIELD_ACTORS" },
     { "CGConversationDynamicData::m_lines", "CONVERSATION_DYNAMIC_FIELD_LINES" }

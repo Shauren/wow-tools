@@ -64,8 +64,8 @@ TypeType PropTypes[57];
 #define MAX_GAMEOBJECT_TYPE 52
 #define MAX_PROPERTY_INDEX 216
 
-#define GO_TYPE_DATA 0x1081610
-#define PROPERTY_DATA 0xE4D5B8
+#define GO_TYPE_DATA 0x12467A8
+#define PROPERTY_DATA 0xFE7998
 #define MAX_GAMEOBJECT_DATA 33
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
@@ -137,7 +137,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 23360, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT_23801_Patched.exe"), 23801, true);
     if (!wow)
         return 1;
 
