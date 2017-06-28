@@ -23,7 +23,7 @@ struct UIErrorInfo
 void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 {
     std::ofstream dump(fileNameBase + ".h");
-    dump << SourceOutput<Enum>(std::make_unique<CppEnum>(), enumData, 0);
+    dump << SourceOutput<Enum>(std::make_unique<CppEnum>("uint32"), enumData, 0);
     dump.close();
 
     dump.open(fileNameBase + ".idc");
@@ -32,11 +32,12 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 
 void DumpUIErrors(std::shared_ptr<Process> wow)
 {
-    static std::uintptr_t const UIErrorsOffset = 0xE4A638;
-    static std::size_t const UIErrorsSize = 984;
+    static std::uintptr_t const UIErrorsOffset = 0xE6DB90;
+    static std::size_t const UIErrorsSize = 985;
 
     Enum uiErrors;
     uiErrors.SetName("GAME_ERROR_TYPE");
+    uiErrors.SetPaddingAfterValueName(56);
     std::vector<UIErrorInfo> errors = wow->ReadArray<UIErrorInfo>(UIErrorsOffset, UIErrorsSize);
     for (std::size_t i = 0; i < errors.size(); ++i)
     {
@@ -50,8 +51,8 @@ void DumpUIErrors(std::shared_ptr<Process> wow)
 
 void DumpFrameXML_Events(std::shared_ptr<Process> wow)
 {
-    static std::uintptr_t const FrameXML_EventsOffset = 0x106A548;
-    std::size_t const FrameXML_EventsSize = 1144;
+    static std::uintptr_t const FrameXML_EventsOffset = 0x108EE90;
+    std::size_t const FrameXML_EventsSize = 1148;
 
     Enum frameXML;
     frameXML.SetName("FrameXML_Events");
@@ -68,7 +69,7 @@ void DumpFrameXML_Events(std::shared_ptr<Process> wow)
 
 int main()
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT_23801_Patched.exe"), 23801, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT_24236_Patched.exe"), 24236, true);
     if (!wow)
         return 1;
 

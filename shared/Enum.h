@@ -49,7 +49,7 @@ public:
         if (!member.Comment.empty())
             stream << " // " << member.Comment;
 
-        stream << std::endl;
+        stream << '\n';
     }
 };
 
@@ -59,30 +59,39 @@ public:
     void ProcessDefinition(std::ostream& stream, Enum const& enumData, std::uint32_t indent) override
     {
         stream << std::string(indent, ' ')
-            << "public enum " << enumData.GetName() << std::endl << std::string(indent, ' ')
-            << '{' << std::endl;
+            << "public enum " << enumData.GetName() << '\n' << std::string(indent, ' ')
+            << "{\n";
     }
 
     void ProcessEnd(std::ostream& stream, Enum const& /*enumData*/, std::uint32_t indent) override
     {
-        stream << std::string(indent, ' ') << "}" << std::endl;
+        stream << std::string(indent, ' ') << "}\n";
     }
 };
 
 class CppEnum : public EnumFormatter
 {
 public:
+    explicit CppEnum(std::string const& underlyingType = "")
+    {
+        if (!underlyingType.empty())
+            _underlyingType = " : " + underlyingType;
+    }
+
     void ProcessDefinition(std::ostream& stream, Enum const& enumData, std::uint32_t indent) override
     {
         stream << std::string(indent, ' ')
-            << "enum " << enumData.GetName() << std::endl << std::string(indent, ' ')
-            << '{' << std::endl;
+            << "enum " << enumData.GetName() << _underlyingType << '\n' << std::string(indent, ' ')
+            << "{\n";
     }
 
     void ProcessEnd(std::ostream& stream, Enum const& /*enumData*/, std::uint32_t indent) override
     {
-        stream << std::string(indent, ' ') << "};" << std::endl;
+        stream << std::string(indent, ' ') << "};" << '\n';
     }
+
+private:
+    std::string _underlyingType;
 };
 
 class IdcEnum : public Formatter<Enum>
@@ -90,15 +99,15 @@ class IdcEnum : public Formatter<Enum>
 public:
     void ProcessDefinition(std::ostream& stream, Enum const& enumData, std::uint32_t /*indent*/) override
     {
-        stream << "auto enumId;" << std::endl
-               << "if ((enumId = GetEnum(\"" << enumData.GetName() << "\")) != -1)" << std::endl
-               << "    DelEnum(enumId);" << std::endl << std::endl
-               << "enumId = AddEnum(GetEnumQty() + 1, \"" << enumData.GetName() << "\", FF_0NUMD);" << std::endl;
+        stream << "auto enumId;\n"
+               << "if ((enumId = GetEnum(\"" << enumData.GetName() << "\")) != -1)\n"
+               << "    DelEnum(enumId);\n\n"
+               << "enumId = AddEnum(GetEnumQty() + 1, \"" << enumData.GetName() << "\", FF_0NUMD);\n";
     }
 
     void ProcessMember(std::ostream& stream, Enum const& /*enumData*/, Enum::Member const& member, std::uint32_t /*indent*/) override
     {
-        stream << "AddConstEx(enumId, \"" << member.ValueName << "\", " << member.Offset << ", -1);" << std::endl;
+        stream << "AddConstEx(enumId, \"" << member.ValueName << "\", " << member.Offset << ", -1);\n";
     }
 
     void ProcessEnd(std::ostream& /*stream*/, Enum const& /*enumData*/, std::uint32_t /*indent*/) override
