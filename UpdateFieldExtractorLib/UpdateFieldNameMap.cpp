@@ -42,6 +42,7 @@ NameMapping NameMap[] =
     { "CGItemDynamicData::m_bonusListIDs", "ITEM_DYNAMIC_FIELD_BONUSLIST_IDS" },
     { "CGItemDynamicData::m_artifactPowers", "ITEM_DYNAMIC_FIELD_ARTIFACT_POWERS" },
     { "CGItemDynamicData::m_gems", "ITEM_DYNAMIC_FIELD_GEMS" },
+    { "CGItemDynamicData::m_relicTalentData", "ITEM_DYNAMIC_FIELD_RELIC_TALENT_DATA" },
 
     { "CGContainerData::m_slots", "CONTAINER_FIELD_SLOT_1" },
     { "CGContainerData::m_numSlots", "CONTAINER_FIELD_NUM_SLOTS" },
@@ -59,6 +60,7 @@ NameMapping NameMap[] =
     { "CGUnitData::channelObject", "UNIT_FIELD_CHANNEL_OBJECT" },
     { "CGUnitData::channelSpell", "UNIT_CHANNEL_SPELL" },
     { "CGUnitData::channelSpellXSpellVisual", "UNIT_CHANNEL_SPELL_X_SPELL_VISUAL" },
+    { "CGUnitData::channelData", "UNIT_FIELD_CHANNEL_DATA" },
     { "CGUnitData::summonedByHomeRealm", "UNIT_FIELD_SUMMONED_BY_HOME_REALM" },
     { "CGUnitData::sex", "UNIT_FIELD_BYTES_0" },
     { "CGUnitData::displayPower", "UNIT_FIELD_DISPLAY_POWER" },
