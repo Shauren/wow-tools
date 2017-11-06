@@ -14,7 +14,7 @@
     <ProjectGuid>{85A7502E-E6A3-4638-B369-5831629C24E1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>UpdateFieldExtractor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

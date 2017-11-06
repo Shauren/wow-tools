@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameObjectPropertyExtractor", "GameObjectPropertyExtractor\GameObjectPropertyExtractor.vcxproj", "{7D300FDE-554A-4C19-98D6-5BD87F6A9B81}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -23,6 +23,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpcodeToConnectionGenerator
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnumExtractor", "EnumExtractor\EnumExtractor.vcxproj", "{0FC810F9-59CD-4F5F-8589-75DA6243E673}"
+	ProjectSection(ProjectDependencies) = postProject
+		{809CC30D-558F-46ED-87E9-06AF0BC63FB6} = {809CC30D-558F-46ED-87E9-06AF0BC63FB6}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateFieldExtractor", "UpdateFieldExtractor\UpdateFieldExtractor.vcxproj", "{85A7502E-E6A3-4638-B369-5831629C24E1}"
 EndProject
@@ -63,5 +66,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {28042419-14A7-4FDC-8636-01DA75AF2065}
 	EndGlobalSection
 EndGlobal

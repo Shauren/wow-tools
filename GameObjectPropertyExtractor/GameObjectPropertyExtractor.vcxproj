@@ -14,7 +14,7 @@
     <ProjectGuid>{7D300FDE-554A-4C19-98D6-5BD87F6A9B81}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GameObjectPropertyExtractor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
