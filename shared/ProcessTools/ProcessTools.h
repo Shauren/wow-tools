@@ -65,6 +65,15 @@ public:
     template<typename T>
     std::vector<T> ReadArray(void const* address, std::size_t arraySize) { return ReadArray<T>(reinterpret_cast<std::uintptr_t>(address), arraySize, false); }
 
+    bool IsValidAddress(void const* address)
+    {
+        MEMORY_BASIC_INFORMATION mbi;
+        if (!VirtualQueryEx(_handle, address, &mbi, sizeof(mbi)))
+            return false;
+
+        return mbi.Protect != PAGE_NOACCESS;
+    }
+
     FileVersionInfo const& GetFileVersionInfo() const { return _version; }
 
 private:

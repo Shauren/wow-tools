@@ -60,8 +60,14 @@ public:
         stream << ';';
         if (!member.Comment.empty())
         {
-            if (member.ValueName.length() < structure.GetValueCommentPadding())
-                stream << std::string(structure.GetValueCommentPadding() - member.ValueName.length(), ' ');
+            std::int32_t commentPaddingLength = structure.GetValueCommentPadding();
+            --commentPaddingLength; // ;
+            commentPaddingLength -= member.ValueName.length();
+            --commentPaddingLength; // space between type and name
+            commentPaddingLength -= member.TypeName.length();
+            commentPaddingLength -= indent + 4;
+            if (commentPaddingLength > 0)
+                stream << std::string(commentPaddingLength, ' ');
 
             stream << "// " << member.Comment;
         }

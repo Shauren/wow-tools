@@ -11,7 +11,7 @@
 
 enum TypeType
 {
-    UNKNONW,
+    UNKNOWN,
     DB_REF,
     ENUM,
     INTEGER
@@ -43,6 +43,37 @@ union GameObjectPropertyTypeInfo
     } Int;
 };
 
+TypeType GuessType(std::shared_ptr<Process> wow, GameObjectPropertyTypeInfo const& type)
+{
+    if (wow->IsValidAddress(type.DbRef.Name))
+        return DB_REF;
+
+    if (wow->IsValidAddress(type.Enum.Values) && type.Enum.DefaultValue < type.Enum.ValuesCount)
+        return ENUM;
+
+    return INTEGER;
+}
+
+char const* GetIntType(TypeType typeType, GameObjectPropertyTypeInfo const& type)
+{
+    switch (typeType)
+    {
+        case DB_REF:
+            if (type.DbRef.InvalidRefValue < 0)
+                return "int32";
+            return "uint32";
+        case ENUM:
+            return "uint32";
+        case INTEGER:
+            if (std::uint32_t(type.Int.MinValue) > std::uint32_t(type.Int.MaxValue))
+                return "int32";
+            return "uint32";
+        default:
+            break;
+    }
+    return "uint32";
+}
+
 struct GameObjectProperty
 {
     std::uint32_t Index;
@@ -58,8 +89,6 @@ struct GameObjectPropertyInfo
     std::uint32_t* List;
     GameObjectPropertyTypeInfo** TypeInfo;
 };
-
-TypeType PropTypes[58];
 
 #define MAX_GAMEOBJECT_TYPE 52
 #define MAX_PROPERTY_INDEX 217
@@ -124,7 +153,6 @@ char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
     "GAMEOBJECT_TYPE_CHALLENGE_MODE_REWARD"
 };
 
-void InitTypes();
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type);
 
 std::string FixName(std::string name)
@@ -148,8 +176,6 @@ int main(int argc, char* argv[])
 
     std::vector<GameObjectPropertyInfo> typeData = wow->ReadArray<GameObjectPropertyInfo>(GO_TYPE_DATA - 0x400000, MAX_GAMEOBJECT_TYPE);
 
-    InitTypes();
-
     Structure templateUnion;
     templateUnion.SetName("GameObjectTemplateData");
 
@@ -157,7 +183,7 @@ int main(int argc, char* argv[])
     {
         Structure typeStructure;
         typeStructure.SetComment(std::to_string(i) + " " + TCEnumName[i]);
-        typeStructure.SetValueCommentPadding(40);
+        typeStructure.SetValueCommentPadding(56);
 
         std::uint32_t propCount = std::min<std::uint32_t>(MAX_GAMEOBJECT_DATA, typeData[i].Count);
         std::vector<std::uint32_t> propIndexes = wow->ReadArray<std::uint32_t>(typeData[i].List, propCount);
@@ -165,9 +191,11 @@ int main(int argc, char* argv[])
         {
             std::string name = propertyNames[propIndexes[j]];
             GameObjectPropertyTypeInfo* type = wow->Read<GameObjectPropertyTypeInfo*>(typeData[i].TypeInfo + j);
-            typeStructure.AddMember(Structure::Member(j, "uint32", FixName(name),
+            GameObjectPropertyTypeInfo typeValue = wow->Read<GameObjectPropertyTypeInfo>(type);
+            TypeType typeType = GuessType(wow, typeValue);
+            typeStructure.AddMember(Structure::Member(j, GetIntType(typeType, typeValue), FixName(name),
                 static_cast<std::ostringstream&>(std::ostringstream() << j << " " << name << ", "
-                    << FormatType(wow, props[propIndexes[j]].TypeIndex, wow->Read<GameObjectPropertyTypeInfo>(type))).str()));
+                    << FormatType(wow, props[propIndexes[j]].TypeIndex, typeValue)).str()));
         }
 
         templateUnion.AddMember(Structure::Member(i,
@@ -185,69 +213,10 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void InitTypes()
-{
-    PropTypes[4] = INTEGER;
-    PropTypes[6] = ENUM;
-    PropTypes[7] = ENUM;
-    PropTypes[8] = ENUM;
-    PropTypes[9] = ENUM;
-    PropTypes[10] = ENUM;
-    PropTypes[12] = INTEGER;
-    PropTypes[13] = INTEGER;
-    PropTypes[14] = INTEGER;
-    PropTypes[15] = DB_REF;
-    PropTypes[16] = DB_REF;
-    PropTypes[17] = DB_REF;
-    PropTypes[18] = DB_REF;
-    PropTypes[19] = DB_REF;
-    PropTypes[20] = DB_REF;
-    PropTypes[21] = DB_REF;
-    PropTypes[22] = DB_REF;
-    PropTypes[23] = DB_REF;
-    PropTypes[24] = DB_REF;
-    PropTypes[25] = DB_REF;
-    PropTypes[26] = DB_REF;
-    PropTypes[27] = DB_REF;
-    PropTypes[28] = DB_REF;
-    PropTypes[29] = DB_REF;
-    PropTypes[30] = DB_REF;
-    PropTypes[31] = DB_REF;
-    PropTypes[32] = DB_REF;
-    PropTypes[33] = DB_REF;
-    PropTypes[34] = DB_REF;
-    PropTypes[35] = DB_REF;
-    PropTypes[36] = DB_REF;
-    PropTypes[37] = DB_REF;
-    PropTypes[38] = DB_REF;
-    PropTypes[39] = DB_REF;
-    PropTypes[40] = DB_REF;
-    PropTypes[41] = DB_REF;
-    PropTypes[42] = DB_REF;
-    PropTypes[43] = DB_REF;
-    PropTypes[44] = DB_REF;
-    PropTypes[45] = DB_REF;
-    PropTypes[46] = DB_REF;
-    PropTypes[47] = DB_REF;
-    PropTypes[48] = DB_REF;
-    PropTypes[49] = DB_REF;
-    PropTypes[50] = DB_REF;
-    PropTypes[51] = DB_REF;
-    PropTypes[52] = DB_REF;
-    PropTypes[53] = DB_REF;
-    PropTypes[54] = DB_REF;
-    PropTypes[55] = DB_REF;
-    PropTypes[56] = DB_REF;
-    PropTypes[57] = DB_REF;
-}
-
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type)
 {
-    if (typeIndex >= std::extent<decltype(PropTypes)>::value)
-        return "ERROR TOO LARGE TYPEINDEX " + std::to_string(typeIndex);
-
     std::ostringstream stream;
-    switch (PropTypes[typeIndex])
+    switch (GuessType(wow, type))
     {
         case DB_REF:
             stream << "References: " << wow->Read<std::string>(type.DbRef.Name) << ", NoValue = " << type.DbRef.InvalidRefValue;
