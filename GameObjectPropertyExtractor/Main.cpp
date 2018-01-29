@@ -93,8 +93,8 @@ struct GameObjectPropertyInfo
 #define MAX_GAMEOBJECT_TYPE 52
 #define MAX_PROPERTY_INDEX 217
 
-#define GO_TYPE_DATA 0x141ED38
-#define PROPERTY_DATA 0x11D82C0
+#define GO_TYPE_DATA 0x1337E08
+#define PROPERTY_DATA 0x10DCEA0
 #define MAX_GAMEOBJECT_DATA 33
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
@@ -165,7 +165,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT.exe"), 25383, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 25928, true);
     if (!wow)
         return 1;
 
