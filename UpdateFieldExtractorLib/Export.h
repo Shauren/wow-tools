@@ -21,6 +21,16 @@ struct UpdateFieldOffsets
     std::uint32_t ContainerCount;
     std::uint32_t ContainerDynamicCount;
 
+    std::uintptr_t AzeriteEmpoweredItemFields;
+    std::uintptr_t AzeriteEmpoweredItemDynamicFields;
+    std::uint32_t AzeriteEmpoweredItemCount;
+    std::uint32_t AzeriteEmpoweredItemDynamicCount;
+
+    std::uintptr_t AzeriteItemFields;
+    std::uintptr_t AzeriteItemDynamicFields;
+    std::uint32_t AzeriteItemCount;
+    std::uint32_t AzeriteItemDynamicCount;
+
     std::uintptr_t UnitFields;
     std::uintptr_t UnitDynamicFields;
     std::uint32_t UnitCount;
@@ -30,6 +40,11 @@ struct UpdateFieldOffsets
     std::uintptr_t PlayerDynamicFields;
     std::uint32_t PlayerCount;
     std::uint32_t PlayerDynamicCount;
+
+    std::uintptr_t ActivePlayerFields;
+    std::uintptr_t ActivePlayerDynamicFields;
+    std::uint32_t ActivePlayerCount;
+    std::uint32_t ActivePlayerDynamicCount;
 
     std::uintptr_t GameObjectFields;
     std::uintptr_t GameObjectDynamicFields;

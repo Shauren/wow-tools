@@ -35,11 +35,20 @@ void StructureUpdateFieldDumper::Dump()
     BuildUpdateFields(ContainerFields, "CGContainerData", GetInputData()->ContainerFields, "", "");
     BuildDynamicUpdateFields(ContainerDynamicFields, "CGContainerDynamicData", std::vector<DynamicUpdateField>(), "", "");
 
+    BuildUpdateFields(AzeriteEmpoweredItemFields, "CGAzeriteEmpoweredItemData", GetInputData()->AzeriteEmpoweredItemFields, "", "");
+    BuildDynamicUpdateFields(AzeriteEmpoweredItemDynamicFields, "CGAzeriteEmpoweredItemDynamicData", std::vector<DynamicUpdateField>(), "", "");
+
+    BuildUpdateFields(AzeriteItemFields, "CGAzeriteItemData", GetInputData()->AzeriteItemFields, "", "");
+    BuildDynamicUpdateFields(AzeriteItemDynamicFields, "CGAzeriteItemDynamicData", std::vector<DynamicUpdateField>(), "", "");
+
     BuildUpdateFields(UnitFields, "CGUnitData", GetInputData()->UnitFields, "", "");
     BuildDynamicUpdateFields(UnitDynamicFields, "CGUnitDynamicData", GetInputData()->UnitDynamicFields, "", "");
 
     BuildUpdateFields(PlayerFields, "CGPlayerData", GetInputData()->PlayerFields, "", "");
     BuildDynamicUpdateFields(PlayerDynamicFields, "CGPlayerDynamicData", GetInputData()->PlayerDynamicFields, "", "");
+
+    BuildUpdateFields(ActivePlayerFields, "GActivePlayerData", GetInputData()->ActivePlayerFields, "", "");
+    BuildDynamicUpdateFields(ActivePlayerDynamicFields, "CGActivePlayerDynamicData", GetInputData()->ActivePlayerDynamicFields, "", "");
 
     BuildUpdateFields(GameObjectFields, "CGGameObjectData", GetInputData()->GameObjectFields, "", "");
     BuildDynamicUpdateFields(GameObjectDynamicFields, "CGGameObjectDynamicData", GetInputData()->GameObjectDynamicFields, "", "");

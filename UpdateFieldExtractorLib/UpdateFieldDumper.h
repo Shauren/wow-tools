@@ -13,22 +13,24 @@
 #include "Enum.h"
 #include "Structure.h"
 
-#pragma pack(push,4)
+#pragma pack(push,8)
 
 struct UpdateField
 {
-    std::uint32_t NameAddress;
-    std::uint32_t Size;
+    std::uintptr_t NameAddress;
+    std::uintptr_t Size;
     std::uint16_t Flags;
-    std::uint16_t __PADDING__;
+    std::uint16_t __PADDING__[3];
 };
 
 struct DynamicUpdateField
 {
-    std::uint32_t NameAddress;
+    std::uintptr_t NameAddress;
     std::uint16_t Flags;
-    std::uint16_t __PADDING__;
+    std::uint16_t __PADDING__[3];
 };
+
+#pragma pack(pop)
 
 struct UpdateFieldOffsets;
 
@@ -42,10 +44,14 @@ public:
     std::vector<UpdateField> ItemFields;
     std::vector<DynamicUpdateField> ItemDynamicFields;
     std::vector<UpdateField> ContainerFields;
+    std::vector<UpdateField> AzeriteEmpoweredItemFields;
+    std::vector<UpdateField> AzeriteItemFields;
     std::vector<UpdateField> UnitFields;
     std::vector<DynamicUpdateField> UnitDynamicFields;
     std::vector<UpdateField> PlayerFields;
     std::vector<DynamicUpdateField> PlayerDynamicFields;
+    std::vector<UpdateField> ActivePlayerFields;
+    std::vector<DynamicUpdateField> ActivePlayerDynamicFields;
     std::vector<UpdateField> GameObjectFields;
     std::vector<DynamicUpdateField> GameObjectDynamicFields;
     std::vector<UpdateField> DynamicObjectFields;
@@ -65,8 +71,6 @@ namespace Offsets
 {
     extern DWORD_PTR BaseAddress;
 }
-
-#pragma pack(pop)
 
 class UpdateFieldDumper
 {
@@ -105,10 +109,16 @@ protected:
     Outputs ItemDynamicFields;
     Outputs ContainerFields;
     Outputs ContainerDynamicFields;
+    Outputs AzeriteEmpoweredItemFields;
+    Outputs AzeriteEmpoweredItemDynamicFields;
+    Outputs AzeriteItemFields;
+    Outputs AzeriteItemDynamicFields;
     Outputs UnitFields;
     Outputs UnitDynamicFields;
     Outputs PlayerFields;
     Outputs PlayerDynamicFields;
+    Outputs ActivePlayerFields;
+    Outputs ActivePlayerDynamicFields;
     Outputs GameObjectFields;
     Outputs GameObjectDynamicFields;
     Outputs DynamicObjectFields;

@@ -13,15 +13,20 @@ void CppUpdateFieldDumper::Dump()
     BuildUpdateFields(ContainerFields, "ContainerFields", GetInputData()->ContainerFields, "CONTAINER_END", "ITEM_END");
     BuildDynamicUpdateFields(ContainerDynamicFields, "ContainerDynamicFields", std::vector<DynamicUpdateField>(), "CONTAINER_DYNAMIC_END", "ITEM_DYNAMIC_END");
 
+    BuildUpdateFields(AzeriteEmpoweredItemFields, "AzeriteEmpoweredItemField", GetInputData()->AzeriteEmpoweredItemFields, "AZERITE_EMPOWERED_ITEM_END", "ITEM_END");
+    BuildDynamicUpdateFields(AzeriteEmpoweredItemDynamicFields, "AzeriteEmpoweredItemDynamicField", std::vector<DynamicUpdateField>(), "AZERITE_EMPOWERED_ITEM_DYNAMIC_END", "ITEM_DYNAMIC_END");
+
+    BuildUpdateFields(AzeriteItemFields, "AzeriteItemField", GetInputData()->AzeriteItemFields, "AZERITE_ITEM_END", "ITEM_END");
+    BuildDynamicUpdateFields(AzeriteItemDynamicFields, "AzeriteItemDynamicField", std::vector<DynamicUpdateField>(), "AZERITE_ITEM_DYNAMIC_END", "ITEM_DYNAMIC_END");
+
     BuildUpdateFields(UnitFields, "UnitFields", GetInputData()->UnitFields, "UNIT_END", "OBJECT_END");
     BuildDynamicUpdateFields(UnitDynamicFields, "UnitDynamicFields", GetInputData()->UnitDynamicFields, "UNIT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
 
     BuildUpdateFields(PlayerFields, "PlayerFields", GetInputData()->PlayerFields, "PLAYER_END", "UNIT_END");
-    Enum::Member head = *(PlayerFields.E.GetMember("PLAYER_FIELD_INV_SLOT_HEAD"));
-    head.ValueName = "PLAYER_FIELD_END_NOT_SELF";
-    head.Comment = "";
-    PlayerFields.E.AddMemberSorted(std::move(head));
     BuildDynamicUpdateFields(PlayerDynamicFields, "PlayerDynamicFields", GetInputData()->PlayerDynamicFields, "PLAYER_DYNAMIC_END", "UNIT_DYNAMIC_END");
+
+    BuildUpdateFields(ActivePlayerFields, "ActivePlayerField", GetInputData()->ActivePlayerFields, "ACTIVE_PLAYER_END", "PLAYER_END");
+    BuildDynamicUpdateFields(ActivePlayerDynamicFields, "ActivePlayerDynamicField", GetInputData()->ActivePlayerDynamicFields, "ACTIVE_PLAYER_DYNAMIC_END", "PLAYER_DYNAMIC_END");
 
     BuildUpdateFields(GameObjectFields, "GameObjectFields", GetInputData()->GameObjectFields, "GAMEOBJECT_END", "OBJECT_END");
     BuildDynamicUpdateFields(GameObjectDynamicFields, "GameObjectDynamicFields", GetInputData()->GameObjectDynamicFields, "GAMEOBJECT_DYNAMIC_END", "OBJECT_DYNAMIC_END");
@@ -99,17 +104,23 @@ void CppUpdateFieldDumper::Dump()
     updateFieldFlags << "#include \"UpdateFieldFlags.h\"" << std::endl;
     updateFieldFlags << std::endl;
 
-    DumpFlags(updateFieldFlags, "ItemUpdateFieldFlags[CONTAINER_END]",
+    DumpFlags(updateFieldFlags, "ContainerUpdateFieldFlags[CONTAINER_END]",
         { &GetInputData()->ObjectFields, &GetInputData()->ItemFields, &GetInputData()->ContainerFields });
 
-    DumpDynamicFlags(updateFieldFlags, "ItemDynamicUpdateFieldFlags[CONTAINER_DYNAMIC_END]",
+    DumpFlags(updateFieldFlags, "AzeriteEmpoweredItemUpdateFieldFlags[AZERITE_EMPOWERED_ITEM_END]",
+        { &GetInputData()->ObjectFields, &GetInputData()->ItemFields, &GetInputData()->AzeriteEmpoweredItemFields });
+
+    DumpFlags(updateFieldFlags, "AzeriteItemUpdateFieldFlags[AZERITE_ITEM_END]",
+        { &GetInputData()->ObjectFields, &GetInputData()->ItemFields, &GetInputData()->AzeriteItemFields });
+
+    DumpDynamicFlags(updateFieldFlags, "ItemDynamicUpdateFieldFlags[ITEM_DYNAMIC_END]",
         { &GetInputData()->ItemDynamicFields });
 
-    DumpFlags(updateFieldFlags, "UnitUpdateFieldFlags[PLAYER_END]",
-        { &GetInputData()->ObjectFields, &GetInputData()->UnitFields, &GetInputData()->PlayerFields });
+    DumpFlags(updateFieldFlags, "UnitUpdateFieldFlags[ACTIVE_PLAYER_END]",
+        { &GetInputData()->ObjectFields, &GetInputData()->UnitFields, &GetInputData()->PlayerFields, &GetInputData()->ActivePlayerFields });
 
-    DumpDynamicFlags(updateFieldFlags, "UnitDynamicUpdateFieldFlags[PLAYER_DYNAMIC_END]",
-        { &GetInputData()->UnitDynamicFields, &GetInputData()->PlayerDynamicFields });
+    DumpDynamicFlags(updateFieldFlags, "UnitDynamicUpdateFieldFlags[ACTIVE_PLAYER_DYNAMIC_END]",
+        { &GetInputData()->UnitDynamicFields, &GetInputData()->PlayerDynamicFields, &GetInputData()->ActivePlayerDynamicFields });
 
     DumpFlags(updateFieldFlags, "GameObjectUpdateFieldFlags[GAMEOBJECT_END]",
         { &GetInputData()->ObjectFields, &GetInputData()->GameObjectFields });

@@ -27,10 +27,14 @@ Data::Data(std::shared_ptr<Process> wow, UpdateFieldOffsets const* offsets) : _p
     ItemFields = _process->ReadArray<UpdateField>(offsets->ItemFields, offsets->ItemCount);
     ItemDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->ItemDynamicFields, offsets->ItemDynamicCount);
     ContainerFields = _process->ReadArray<UpdateField>(offsets->ContainerFields, offsets->ContainerCount);
+    AzeriteEmpoweredItemFields = _process->ReadArray<UpdateField>(offsets->AzeriteEmpoweredItemFields, offsets->AzeriteEmpoweredItemCount);
+    AzeriteItemFields = _process->ReadArray<UpdateField>(offsets->AzeriteItemFields, offsets->AzeriteItemCount);
     UnitFields = _process->ReadArray<UpdateField>(offsets->UnitFields, offsets->UnitCount);
     UnitDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->UnitDynamicFields, offsets->UnitDynamicCount);
     PlayerFields = _process->ReadArray<UpdateField>(offsets->PlayerFields, offsets->PlayerCount);
     PlayerDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->PlayerDynamicFields, offsets->PlayerDynamicCount);
+    ActivePlayerFields = _process->ReadArray<UpdateField>(offsets->ActivePlayerFields, offsets->ActivePlayerCount);
+    ActivePlayerDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->ActivePlayerDynamicFields, offsets->ActivePlayerDynamicCount);
     GameObjectFields = _process->ReadArray<UpdateField>(offsets->GameObjectFields, offsets->GameObjectCount);
     GameObjectDynamicFields = _process->ReadArray<DynamicUpdateField>(offsets->GameObjectDynamicFields, offsets->GameObjectDynamicCount);
     DynamicObjectFields = _process->ReadArray<UpdateField>(offsets->DynamicObjectFields, offsets->DynamicObjectCount);
@@ -61,7 +65,7 @@ void UpdateFieldDumper::BuildUpdateFields(Outputs& outputs, std::string const& o
             name = oldName;
 
         outputs.E.AddMember(Enum::Member(i, FormatValue(i, fieldBase), name,
-            static_cast<std::ostringstream&>(std::ostringstream() << "Size: " << field->Size << ", Flags: " << GetUpdateFieldFlagName(field->Flags)).str()));
+            (std::ostringstream() << "Size: " << field->Size << ", Flags: " << GetUpdateFieldFlagName(field->Flags)).str()));
 
         if (field->Size > 1)
             name += "[" + std::to_string(field->Size) + "]";
@@ -88,7 +92,7 @@ void UpdateFieldDumper::BuildDynamicUpdateFields(Outputs& outputs, std::string c
             name = oldName;
 
         outputs.E.AddMember(Enum::Member(i, FormatValue(i, fieldBase), name,
-            static_cast<std::ostringstream&>(std::ostringstream() << "Flags: " << GetUpdateFieldFlagName(field->Flags)).str()));
+            (std::ostringstream() << "Flags: " << GetUpdateFieldFlagName(field->Flags)).str()));
         outputs.S.AddMember(Structure::Member(i, "TSDynamicMirrorDataArray", name, ""));
 
         ++i;
@@ -127,10 +131,16 @@ void UpdateFieldDumper::DumpEnums(std::ofstream& updateFieldsDump)
     DumpEnum(updateFieldsDump, ItemDynamicFields);
     DumpEnum(updateFieldsDump, ContainerFields);
     DumpEnum(updateFieldsDump, ContainerDynamicFields);
+    DumpEnum(updateFieldsDump, AzeriteEmpoweredItemFields);
+    DumpEnum(updateFieldsDump, AzeriteEmpoweredItemDynamicFields);
+    DumpEnum(updateFieldsDump, AzeriteItemFields);
+    DumpEnum(updateFieldsDump, AzeriteItemDynamicFields);
     DumpEnum(updateFieldsDump, UnitFields);
     DumpEnum(updateFieldsDump, UnitDynamicFields);
     DumpEnum(updateFieldsDump, PlayerFields);
     DumpEnum(updateFieldsDump, PlayerDynamicFields);
+    DumpEnum(updateFieldsDump, ActivePlayerFields);
+    DumpEnum(updateFieldsDump, ActivePlayerDynamicFields);
     DumpEnum(updateFieldsDump, GameObjectFields);
     DumpEnum(updateFieldsDump, GameObjectDynamicFields);
     DumpEnum(updateFieldsDump, DynamicObjectFields);
@@ -205,10 +215,16 @@ UpdateFieldDumper::UpdateFieldDumper(std::shared_ptr<Data> input, std::uint32_t 
     ItemDynamicFields.E.SetPaddingAfterValueName(enumPadding);
     ContainerFields.E.SetPaddingAfterValueName(enumPadding);
     ContainerDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    AzeriteEmpoweredItemFields.E.SetPaddingAfterValueName(enumPadding);
+    AzeriteEmpoweredItemDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    AzeriteItemFields.E.SetPaddingAfterValueName(enumPadding);
+    AzeriteItemDynamicFields.E.SetPaddingAfterValueName(enumPadding);
     UnitFields.E.SetPaddingAfterValueName(enumPadding);
     UnitDynamicFields.E.SetPaddingAfterValueName(enumPadding);
     PlayerFields.E.SetPaddingAfterValueName(enumPadding);
     PlayerDynamicFields.E.SetPaddingAfterValueName(enumPadding);
+    ActivePlayerFields.E.SetPaddingAfterValueName(enumPadding);
+    ActivePlayerDynamicFields.E.SetPaddingAfterValueName(enumPadding);
     GameObjectFields.E.SetPaddingAfterValueName(enumPadding);
     GameObjectDynamicFields.E.SetPaddingAfterValueName(enumPadding);
     DynamicObjectFields.E.SetPaddingAfterValueName(enumPadding);

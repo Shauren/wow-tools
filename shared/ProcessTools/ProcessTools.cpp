@@ -64,7 +64,7 @@ HANDLE ProcessTools::GetHandleByName(TCHAR* name, DWORD_PTR* baseAddress, DWORD 
                     if (Module32First(moduleSnapshot, &module))
                     {
                         if (baseAddress)
-                            *baseAddress = (DWORD)module.modBaseAddr;
+                            *baseAddress = (DWORD_PTR)module.modBaseAddr;
 
                         if (build)
                         {

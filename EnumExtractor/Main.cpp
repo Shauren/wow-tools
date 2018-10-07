@@ -3,7 +3,7 @@
 #include "Enum.h"
 #include <fstream>
 
-enum UIErrorOutput
+enum UIErrorOutput : std::uint32_t
 {
     UI_ERROR_CHAT = 0,
     UI_ERROR_INFO_MESSAGE = 1,
@@ -15,7 +15,7 @@ struct UIErrorInfo
 {
     char const* ErrorName;
     UIErrorOutput OutputTarget;
-    char const* Sound;
+    std::uint32_t Sound;
     std::uint32_t VocalErrorSoundId;
     std::uint32_t ChatMsgType;
 };
@@ -32,8 +32,8 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 
 void DumpUIErrors(std::shared_ptr<Process> wow)
 {
-    static std::uintptr_t const UIErrorsOffset = 0xF3C240;
-    static std::size_t const UIErrorsSize = 988;
+    static std::uintptr_t const UIErrorsOffset = 0x233AA40;
+    static std::size_t const UIErrorsSize = 1010;
 
     Enum uiErrors;
     uiErrors.SetName("GAME_ERROR_TYPE");
@@ -49,30 +49,11 @@ void DumpUIErrors(std::shared_ptr<Process> wow)
     DumpEnum(uiErrors, "UIErrors");
 }
 
-void DumpFrameXML_Events(std::shared_ptr<Process> wow)
-{
-    static std::uintptr_t const FrameXML_EventsOffset = 0x1142248;
-    std::size_t const FrameXML_EventsSize = 1172;
-
-    Enum frameXML;
-    frameXML.SetName("FrameXML_Events");
-    std::vector<char const*> events = wow->ReadArray<char const*>(FrameXML_EventsOffset, FrameXML_EventsSize);
-    for (std::size_t i = 0; i < events.size(); ++i)
-    {
-        std::string evt = wow->Read<std::string>(events[i]);
-        if (!evt.empty())
-            frameXML.AddMember(Enum::Member(i, evt, ""));
-    }
-
-    DumpEnum(frameXML, "FrameXML_Events");
-}
-
 int main()
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 25928, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 27980, true);
     if (!wow)
         return 1;
 
     DumpUIErrors(wow);
-    DumpFrameXML_Events(wow);
 }

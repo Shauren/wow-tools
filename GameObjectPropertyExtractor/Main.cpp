@@ -21,7 +21,7 @@ union GameObjectPropertyTypeInfo
 {
     struct
     {
-        std::int32_t Data[3];
+        std::uintptr_t Data[3];
     } Raw;
     struct
     {
@@ -45,11 +45,11 @@ union GameObjectPropertyTypeInfo
 
 TypeType GuessType(std::shared_ptr<Process> wow, GameObjectPropertyTypeInfo const& type)
 {
+    if (wow->IsValidAddress(type.Enum.Values) && type.Enum.DefaultValue < type.Enum.ValuesCount && type.Enum.ValuesCount > 0)
+        return ENUM;
+
     if (wow->IsValidAddress(type.DbRef.Name))
         return DB_REF;
-
-    if (wow->IsValidAddress(type.Enum.Values) && type.Enum.DefaultValue < type.Enum.ValuesCount)
-        return ENUM;
 
     return INTEGER;
 }
@@ -74,6 +74,8 @@ char const* GetIntType(TypeType typeType, GameObjectPropertyTypeInfo const& type
     return "uint32";
 }
 
+#pragma pack(push, 8)
+
 struct GameObjectProperty
 {
     std::uint32_t Index;
@@ -90,12 +92,14 @@ struct GameObjectPropertyInfo
     GameObjectPropertyTypeInfo** TypeInfo;
 };
 
-#define MAX_GAMEOBJECT_TYPE 52
-#define MAX_PROPERTY_INDEX 217
+#pragma pack(pop)
 
-#define GO_TYPE_DATA 0x1337E08
-#define PROPERTY_DATA 0x10DCEA0
-#define MAX_GAMEOBJECT_DATA 33
+#define MAX_GAMEOBJECT_TYPE 56
+#define MAX_PROPERTY_INDEX 225
+
+#define GO_TYPE_DATA 0x2333560
+#define PROPERTY_DATA 0x1DBD8B0
+#define MAX_GAMEOBJECT_DATA 34
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
 {
@@ -150,7 +154,11 @@ char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
     "GAMEOBJECT_TYPE_UI_LINK",
     "GAMEOBJECT_TYPE_KEYSTONE_RECEPTACLE",
     "GAMEOBJECT_TYPE_GATHERING_NODE",
-    "GAMEOBJECT_TYPE_CHALLENGE_MODE_REWARD"
+    "GAMEOBJECT_TYPE_CHALLENGE_MODE_REWARD",
+    "GAMEOBJECT_TYPE_MULTI",
+    "GAMEOBJECT_TYPE_SIEGEABLE_MULTI",
+    "GAMEOBJECT_TYPE_SIEGEABLE_MO",
+    "GAMEOBJECT_TYPE_PVP_REWARD"
 };
 
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type);
@@ -165,16 +173,16 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 25928, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 27980, true);
     if (!wow)
         return 1;
 
-    std::vector<GameObjectProperty> props = wow->ReadArray<GameObjectProperty>(PROPERTY_DATA - 0x400000, MAX_PROPERTY_INDEX);
+    std::vector<GameObjectProperty> props = wow->ReadArray<GameObjectProperty>(PROPERTY_DATA, MAX_PROPERTY_INDEX);
     std::string propertyNames[MAX_PROPERTY_INDEX];
     for (std::uint32_t i = 0; i < props.size(); ++i)
         propertyNames[i] = wow->Read<std::string>(props[i].Name);
 
-    std::vector<GameObjectPropertyInfo> typeData = wow->ReadArray<GameObjectPropertyInfo>(GO_TYPE_DATA - 0x400000, MAX_GAMEOBJECT_TYPE);
+    std::vector<GameObjectPropertyInfo> typeData = wow->ReadArray<GameObjectPropertyInfo>(GO_TYPE_DATA, MAX_GAMEOBJECT_TYPE);
 
     Structure templateUnion;
     templateUnion.SetName("GameObjectTemplateData");
@@ -194,19 +202,19 @@ int main(int argc, char* argv[])
             GameObjectPropertyTypeInfo typeValue = wow->Read<GameObjectPropertyTypeInfo>(type);
             TypeType typeType = GuessType(wow, typeValue);
             typeStructure.AddMember(Structure::Member(j, GetIntType(typeType, typeValue), FixName(name),
-                static_cast<std::ostringstream&>(std::ostringstream() << j << " " << name << ", "
+                (std::ostringstream() << j << " " << name << ", "
                     << FormatType(wow, props[propIndexes[j]].TypeIndex, typeValue)).str()));
         }
 
         templateUnion.AddMember(Structure::Member(i,
-            static_cast<std::ostringstream&>(std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), typeStructure, 4)).str(), FixName(wow->Read<std::string>(typeData[i].TypeName)), ""));
+            (std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), typeStructure, 4)).str(), FixName(wow->Read<std::string>(typeData[i].TypeName)), ""));
     }
 
     Structure raw;
     raw.AddMember(Structure::Member(0, "uint32", "data[MAX_GAMEOBJECT_DATA]", ""));
 
     templateUnion.AddMember(Structure::Member(MAX_GAMEOBJECT_TYPE,
-        static_cast<std::ostringstream&>(std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), raw, 4)).str(), "raw", ""));
+        (std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), raw, 4)).str(), "raw", ""));
 
     std::ofstream structure("GameObjectTemplate.h");
     structure << SourceOutput<Structure>(std::make_unique<CppUnion>(false), templateUnion, 0);
