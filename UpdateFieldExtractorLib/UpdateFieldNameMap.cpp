@@ -202,6 +202,8 @@ NameMapping NameMap[] =
     { "CGPlayerData::prestige", "PLAYER_FIELD_PRESTIGE" },
     { "CGPlayerData::honorLevel", "PLAYER_FIELD_HONOR_LEVEL" },
 
+    { "CGPlayerDynamicData::arenaCooldowns", "PLAYER_DYNAMIC_FIELD_ARENA_COOLDOWNS" },
+
     { "CGActivePlayerData::invSlots", "ACTIVE_PLAYER_FIELD_INV_SLOT_HEAD" },
     { "CGActivePlayerData::farsightObject", "ACTIVE_PLAYER_FIELD_FARSIGHT" },
     { "CGActivePlayerData::knownTitles", "ACTIVE_PLAYER_FIELD_KNOWN_TITLES" },
@@ -303,8 +305,6 @@ NameMapping NameMap[] =
     { "CGActivePlayerData::honorNextLevel", "ACTIVE_PLAYER_FIELD_HONOR_NEXT_LEVEL" },
     { "CGActivePlayerData::pvpTierMaxFromWins", "ACTIVE_PLAYER_FIELD_PVP_TIER_MAX_FROM_WINS" },
     { "CGActivePlayerData::pvpLastWeeksTierMaxFromWins", "ACTIVE_PLAYER_FIELD_PVP_LAST_WEEKS_TIER_MAX_FROM_WINS" },
-
-    { "CGPlayerDynamicData::arenaCooldowns", "PLAYER_DYNAMIC_FIELD_ARENA_COOLDOWNS" },
 
     { "CGActivePlayerDynamicData::researchSites", "ACTIVE_PLAYER_DYNAMIC_FIELD_RESERACH_SITE" },
     { "CGActivePlayerDynamicData::researchSiteProgress", "ACTIVE_PLAYER_DYNAMIC_FIELD_RESEARCH_SITE_PROGRESS" },
