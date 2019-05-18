@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace UpdateFieldCodeGenerator.Formats
 {
-    public class UpdateFieldHandlers
+    public class UpdateFieldHandlers : IDisposable
     {
         private readonly ICollection<IUpdateFieldHandler> _handlers;
         private readonly Dictionary<IUpdateFieldHandler, IReadOnlyList<FlowControlBlock>> _previousControlFlowDict;
@@ -18,6 +18,18 @@ namespace UpdateFieldCodeGenerator.Formats
             _previousControlFlowDict = new Dictionary<IUpdateFieldHandler, IReadOnlyList<FlowControlBlock>>();
             foreach (var handler in _handlers)
                 _previousControlFlowDict[handler] = null;
+        }
+
+        public void BeforeStructures()
+        {
+            foreach (var handler in _handlers)
+                handler.BeforeStructures();
+        }
+
+        public void AfterStructures()
+        {
+            foreach (var handler in _handlers)
+                handler.AfterStructures();
         }
 
         public void OnStructureBegin(Type structureType, bool create, bool writeUpdateMasks)
@@ -58,6 +70,14 @@ namespace UpdateFieldCodeGenerator.Formats
                 handler.FinishControlBlocks(_previousControlFlowDict[handler]);
                 _previousControlFlowDict[handler] = null;
             }
+        }
+
+        public void Dispose()
+        {
+            foreach (var handler in _handlers)
+                handler.Dispose();
+
+            _handlers.Clear();
         }
     }
 }

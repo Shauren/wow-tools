@@ -10,7 +10,7 @@ namespace UpdateFieldCodeGenerator.Formats
     public abstract class UpdateFieldHandlerBase : IUpdateFieldHandler
     {
         protected TextWriter _header;
-        protected readonly TextWriter _source;
+        protected TextWriter _source;
         protected Type _structureType;
         protected bool _create;
         protected bool _writeUpdateMasks;
@@ -48,13 +48,13 @@ namespace UpdateFieldCodeGenerator.Formats
                         // write closing brackets
                         if (previousFieldBlock != null)
                             for (var j = previousControlFlow.Count; j > i; --j)
-                                output.WriteLine($"{"".PadLeft((j) * 4)}}}");
+                                output.WriteLine($"{"".PadLeft((j + _indent - 1) * 4)}}}");
                     }
                 }
 
                 if (!blocksMatching)
                 {
-                    var pad = "".PadLeft((i + 1) * 4);
+                    var pad = "".PadLeft((i + _indent) * 4);
                     output.WriteLine($"{pad}{currentBlock.Statement}");
                     output.WriteLine($"{pad}{{");
                 }
@@ -62,16 +62,24 @@ namespace UpdateFieldCodeGenerator.Formats
 
             if (blocksMatching && previousControlFlow != null && previousControlFlow.Count > flowControlBlocks.Count)
                 for (var i = previousControlFlow.Count; i > flowControlBlocks.Count; --i)
-                    output.WriteLine($"{"".PadLeft(i * 4)}}}");
+                    output.WriteLine($"{"".PadLeft((i + _indent - 1) * 4)}}}");
 
             _indent += flowControlBlocks.Count;
         }
 
-        public static void FinishControlBlocks(TextWriter output, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public void FinishControlBlocks(TextWriter output, IReadOnlyList<FlowControlBlock> previousControlFlow)
         {
             if (previousControlFlow != null)
                 for (var i = previousControlFlow.Count; i > 0; --i)
-                    output.WriteLine($"{"".PadLeft(i * 4)}}}");
+                    output.WriteLine($"{"".PadLeft((i + _indent - 1) * 4)}}}");
+        }
+
+        public virtual void BeforeStructures()
+        {
+        }
+
+        public virtual void AfterStructures()
+        {
         }
 
         public virtual void OnStructureBegin(Type structureType, bool create, bool writeUpdateMasks)
@@ -144,6 +152,20 @@ namespace UpdateFieldCodeGenerator.Formats
                     _fieldWrites.RemoveAt(extraScaleCurveIndex);
                     _fieldWrites.Insert(_fieldWrites.Count - 1, extraScaleCurve);
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_source != null)
+            {
+                _source.Dispose();
+                _source = null;
+            }
+            if (_header != null)
+            {
+                _header.Dispose();
+                _header = null;
             }
         }
     }

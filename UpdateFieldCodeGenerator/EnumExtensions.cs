@@ -12,7 +12,7 @@ namespace UpdateFieldCodeGenerator
             if (flagParts.Length > 1)
                 return $"{expressionPrefix}{string.Join(" | ", flagParts.Select(flag => flagPrefix + flag.Trim()))}{expressionSuffix}";
 
-            return flagsStr;
+            return flagPrefix + flagsStr;
         }
     }
 }

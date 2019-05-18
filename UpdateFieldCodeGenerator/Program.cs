@@ -44,11 +44,16 @@ namespace UpdateFieldCodeGenerator
                 .SelectMany(type => (referencesDict.ContainsKey(type) ? referencesDict[type] : Enumerable.Empty<Type>()).Concat(Enumerable.Repeat(type, 1)))
                 .Distinct();
 
-            var handlers = new UpdateFieldHandlers();
-            foreach (var dataType in typeList)
+            using (var handlers = new UpdateFieldHandlers())
             {
-                WriteCreate(dataType, handlers);
-                WriteUpdate(dataType, structureRefTypes[dataType], handlers);
+                handlers.BeforeStructures();
+                foreach (var dataType in typeList)
+                {
+                    WriteCreate(dataType, handlers);
+                    WriteUpdate(dataType, structureRefTypes[dataType], handlers);
+                }
+
+                handlers.AfterStructures();
             }
         }
 

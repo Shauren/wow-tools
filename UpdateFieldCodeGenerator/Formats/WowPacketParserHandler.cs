@@ -7,8 +7,31 @@ namespace UpdateFieldCodeGenerator.Formats
 {
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
+        private static readonly string ModuleName = "V8_0_1_27101";
+        private static readonly string Version = "V8_1_5_29495";
+
         public WowPacketParserHandler() : base(new StreamWriter("UpdateFieldsHandler.cs"), null)
         {
+        }
+
+        public override void BeforeStructures()
+        {
+            _source.WriteLine("using System.Collections;");
+            _source.WriteLine("using System.Linq;");
+            _source.WriteLine("using WowPacketParser.Enums;");
+            _source.WriteLine("using WowPacketParser.Misc;");
+            _source.WriteLine("using WowPacketParser.Store.Objects.UpdateFields;");
+            _source.WriteLine();
+            _source.WriteLine($"namespace WowPacketParserModule.{ModuleName}.UpdateFields.{Version}");
+            _source.WriteLine("{");
+            _source.WriteLine("    public static class UpdateFieldHandler");
+            _source.WriteLine("    {");
+        }
+
+        public override void AfterStructures()
+        {
+            _source.WriteLine("    }");
+            _source.WriteLine("}");
         }
 
         public override void OnStructureBegin(Type structureType, bool create, bool writeUpdateMasks)
@@ -20,21 +43,29 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 _header = new StreamWriter($"{structureName}.cs");
                 _header.WriteLine("using WowPacketParser.Misc;");
+                _header.WriteLine("using WowPacketParser.Store.Objects.UpdateFields;");
                 _header.WriteLine();
-                _header.WriteLine($"namespace WowPacketParserModule.V8_0_1_27101.UpdateFields.V8_1_5_29495");
+                _header.WriteLine($"namespace WowPacketParserModule.{ModuleName}.UpdateFields.{Version}");
                 _header.WriteLine("{");
                 _header.WriteLine($"    public class {structureName} : I{structureName}");
                 _header.WriteLine("    {");
             }
 
+            _indent = 2;
             if (_create)
-                _source.WriteLine($"public static {structureName} ReadCreate{structureName}(Packet packet, UpdateFieldFlag flags, params object[] indexes)");
+                _source.WriteLine($"{GetIndent()}public static {structureName} ReadCreate{structureName}(Packet packet, UpdateFieldFlag flags, params object[] indexes)");
             else
-                _source.WriteLine($"public static void ReadUpdate{structureName}(Packet packet, {structureName} data, params object[] indexes)");
+                _source.WriteLine($"{GetIndent()}public static {structureName} ReadUpdate{structureName}(Packet packet, {structureName} data, params object[] indexes)");
 
-            _source.WriteLine("{");
+            _source.WriteLine($"{GetIndent()}{{");
+            _indent = 3;
             if (_create)
-                _source.WriteLine($"    var data = new {structureName}();");
+                _source.WriteLine($"{GetIndent()}var data = new {structureName}();");
+            else
+            {
+                _source.WriteLine($"{GetIndent()}if (data == null)");
+                _source.WriteLine($"{GetIndent()}    data = new {structureName}();");
+            }
         }
 
         public override void OnStructureEnd(bool needsFlush, bool hadArrayFields)
@@ -52,37 +83,37 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 ++_bitCounter;
                 var maskBlocks = (_bitCounter + 31) / 32;
-                _source.WriteLine($"    var rawChangesMask = new int[{maskBlocks}];");
+                _source.WriteLine($"{GetIndent()}var rawChangesMask = new int[{maskBlocks}];");
                 if (maskBlocks > 1 || hadArrayFields)
                 {
-                    _source.WriteLine($"    var rawMaskMask = new int[{(maskBlocks + 31) / 32}]");
+                    _source.WriteLine($"{GetIndent()}var rawMaskMask = new int[{(maskBlocks + 31) / 32}];");
                     if (maskBlocks >= 32)
                     {
-                        _source.WriteLine($"    for (var i = 0; i < {maskBlocks / 32}; ++i)");
-                        _source.WriteLine($"        rawMaskMask[i] = packet.ReadInt32();");
+                        _source.WriteLine($"{GetIndent()}for (var i = 0; i < {maskBlocks / 32}; ++i)");
+                        _source.WriteLine($"{GetIndent()}    rawMaskMask[i] = packet.ReadInt32();");
                         if ((maskBlocks % 32) != 0)
-                            _source.WriteLine($"    rawMaskMask[{maskBlocks / 32}] = (int)packet.ReadBits({maskBlocks % 32});");
+                            _source.WriteLine($"{GetIndent()}rawMaskMask[{maskBlocks / 32}] = (int)packet.ReadBits({maskBlocks % 32});");
                     }
                     else
-                        _source.WriteLine($"    rawMaskMask[0] = (int)packet.ReadBits({maskBlocks});");
+                        _source.WriteLine($"{GetIndent()}rawMaskMask[0] = (int)packet.ReadBits({maskBlocks});");
 
-                    _source.WriteLine("    var maskMask = new BitArray(rawMaskMask);");
+                    _source.WriteLine($"{GetIndent()}var maskMask = new BitArray(rawMaskMask);");
                     if (maskBlocks > 1)
                     {
-                        _source.WriteLine($"    for (var i = 0; i < {maskBlocks}; ++i)");
-                        _source.WriteLine("        if (maskMask[i])");
-                        _source.WriteLine("            rawChangesMask[i] = (int)packet.ReadBits(32);");
+                        _source.WriteLine($"{GetIndent()}for (var i = 0; i < {maskBlocks}; ++i)");
+                        _source.WriteLine($"{GetIndent()}    if (maskMask[i])");
+                        _source.WriteLine($"{GetIndent()}        rawChangesMask[i] = (int)packet.ReadBits(32);");
                     }
                     else
                     {
-                        _source.WriteLine("    if (maskMask[0])");
-                        _source.WriteLine("        rawChangesMask[0] = (int)packet.ReadBits(32);");
+                        _source.WriteLine($"{GetIndent()}if (maskMask[0])");
+                        _source.WriteLine($"{GetIndent()}    rawChangesMask[0] = (int)packet.ReadBits(32);");
                     }
                 }
                 else
-                    _source.WriteLine($"    rawChangesMask[0] = (int)packet.ReadBits({_bitCounter});");
+                    _source.WriteLine($"{GetIndent()}rawChangesMask[0] = (int)packet.ReadBits({_bitCounter});");
 
-                _source.WriteLine("    var changesMask = new BitArray(rawChangesMask);");
+                _source.WriteLine($"{GetIndent()}var changesMask = new BitArray(rawChangesMask);");
                 _source.WriteLine();
             }
 
@@ -92,12 +123,12 @@ namespace UpdateFieldCodeGenerator.Formats
                 Write();
 
             if (needsFlush)
-                _source.WriteLine("    packet.ResetBitReader();");
+                _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
 
-            if (_create)
-                _source.WriteLine("    return data;");
+            _source.WriteLine($"{GetIndent()}return data;");
 
-            _source.WriteLine("}");
+            _indent = 2;
+            _source.WriteLine($"{GetIndent()}}}");
             _source.WriteLine();
             _source.Flush();
         }
@@ -131,7 +162,7 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"for (var {indexLetter} = 0; {indexLetter} < data.{outputFieldName}.Count; ++{indexLetter})" });
                 if (!_create)
-                    flowControl.Add(new FlowControlBlock { Statement = $"if (data.{name}.UpdateMask[{indexLetter}])" });
+                    flowControl.Add(new FlowControlBlock { Statement = $"if (data.{outputFieldName}.UpdateMask[{indexLetter}])" });
 
                 outputFieldName += $"[{indexLetter}]";
                 type = type.GenericTypeArguments[0];
@@ -141,7 +172,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             if (typeof(BlzVectorField).IsAssignableFrom(type))
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (var {indexLetter} = 0; {indexLetter} < data.{outputFieldName}.Count; ++{indexLetter})" });
+                flowControl.Add(new FlowControlBlock { Statement = $"for (var {indexLetter} = 0; {indexLetter} < data.{outputFieldName}.Length; ++{indexLetter})" });
                 outputFieldName += $"[{indexLetter}]";
                 type = type.GenericTypeArguments[0];
                 nextIndex += ", " + indexLetter;
@@ -217,7 +248,7 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 WriteControlBlocks(_source, flowControl, previousControlFlow);
                 WriteField(name, outputFieldName, type, updateField.BitSize, nextIndex, interfaceType);
-                _indent = 1;
+                _indent = 3;
             }));
 
             if (_create && updateField.SizeForField == null)
@@ -242,7 +273,7 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 WriteControlBlocks(_source, flowControl, previousControlFlow);
                 _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.Resize(packet.ReadUInt32());");
-                _indent = 1;
+                _indent = 3;
             }));
             return flowControl;
         }
@@ -308,8 +339,8 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((name, true, () =>
             {
                 WriteControlBlocks(_source, flowControl, previousControlFlow);
-                _source.WriteLine($"{GetIndent()}data.{name}.ReadUpdateMask(packet);");
-                _indent = 1;
+                _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.ReadUpdateMask(packet);");
+                _indent = 3;
             }));
             return flowControl;
         }
@@ -320,12 +351,11 @@ namespace UpdateFieldCodeGenerator.Formats
             if (name.EndsWith(".size()"))
             {
                 outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 7);
-                var sizeRead = _create ? "packet.ReadUInt32()" : "packet.ReadBits(32)";
                 var interfaceName = RenameType(TypeHandler.GetFriendlyName(interfaceType));
                 if (_create)
-                    _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[{sizeRead}];");
+                    _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[packet.ReadUInt32()];");
                 else
-                    _source.WriteLine($"data.{outputFieldName} = Enumerable.Range(0, {sizeRead}).Select(x => new {RenameType(TypeHandler.GetFriendlyName(type))}()).Cast<{interfaceName}>().ToArray();");
+                    _source.WriteLine($"data.{outputFieldName} = Enumerable.Range(0, (int)packet.ReadBits(32)).Select(x => new {RenameType(TypeHandler.GetFriendlyName(type))}()).Cast<{interfaceName}>().ToArray();");
                 return;
             }
 
@@ -335,7 +365,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     if (type == typeof(WowGuid))
                         _source.WriteLine($"data.{outputFieldName} = packet.ReadPackedGuid128(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(Bits))
-                        _source.WriteLine($"data.{outputFieldName} = packet.ReadBits(\"{name}\", {bitSize});");
+                        _source.WriteLine($"data.{outputFieldName} = packet.ReadBits(\"{name}\", {bitSize}, indexes{nextIndex});");
                     else if (type == typeof(Vector2))
                         _source.WriteLine($"data.{outputFieldName} = packet.ReadVector2(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(Quaternion))
@@ -343,7 +373,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     else if (_create)
                         _source.WriteLine($"data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, flags, indexes, \"{name}\"{nextIndex});");
                     else
-                        _source.WriteLine($"ReadUpdate{RenameType(type)}(packet, data.{outputFieldName}, indexes, \"{name}\"{nextIndex});");
+                        _source.WriteLine($"data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, data.{outputFieldName} as {RenameType(type)}, indexes, \"{name}\"{nextIndex});");
                     break;
                 case TypeCode.Boolean:
                     _source.WriteLine($"data.{outputFieldName} = packet.ReadBit(\"{name}\", indexes{nextIndex});");
