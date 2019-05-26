@@ -72,6 +72,12 @@ namespace UpdateFieldCodeGenerator.Formats
             }
         }
 
+        public void FinishBitPack()
+        {
+            foreach (var handler in _handlers)
+                handler.FinishBitPack();
+        }
+
         public void Dispose()
         {
             foreach (var handler in _handlers)

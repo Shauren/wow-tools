@@ -451,5 +451,13 @@ namespace UpdateFieldCodeGenerator.Formats
                 FinishControlBlocks(_source, previousControlFlow);
             }));
         }
+
+        public override void FinishBitPack()
+        {
+            _fieldWrites.Add((string.Empty, false, () =>
+            {
+                _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
+            }));
+        }
     }
 }

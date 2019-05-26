@@ -16,5 +16,7 @@ namespace UpdateFieldCodeGenerator.Formats
         IReadOnlyList<FlowControlBlock> OnDynamicFieldSizeUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
 
         void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow);
+
+        void FinishBitPack();
     }
 }

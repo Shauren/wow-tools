@@ -180,8 +180,13 @@ namespace UpdateFieldCodeGenerator
                     fieldHandler.OnField(Name, Field);
 
             if (allFields.TryGetValue(UpdateTypeOrder.BlzVector, out fieldGroup))
+            {
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
+
+                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishBitPack();
+            }
 
             var dynamicFields = Enumerable.Empty<(UpdateField Field, string Name)>();
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicField, out fieldGroup))

@@ -102,6 +102,8 @@ namespace UpdateFieldCodeGenerator.Formats
 
         public abstract void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow);
 
+        public abstract void FinishBitPack();
+
         protected static bool HasNonArrayFields(Type type)
         {
             return type.GetFields(BindingFlags.Static | BindingFlags.Public)
