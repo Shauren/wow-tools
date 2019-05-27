@@ -15,4 +15,11 @@ namespace UpdateFieldCodeGenerator
         Unk7 = 0x40,
         Unk8 = 0x80,
     }
+
+    [Flags]
+    public enum CustomUpdateFieldFlag
+    {
+        None = 0,
+        ViewerDependent = 0x1,
+    }
 }

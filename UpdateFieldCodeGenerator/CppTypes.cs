@@ -8,7 +8,7 @@ namespace UpdateFieldCodeGenerator
 {
     public static class CppTypes
     {
-        private static readonly ModuleBuilder _moduleBuilder = AppDomain.CurrentDomain
+        private static readonly ModuleBuilder _moduleBuilder = AssemblyBuilder
             .DefineDynamicAssembly(new AssemblyName("CppTypes"), AssemblyBuilderAccess.ReflectionOnly)
             .DefineDynamicModule("CppTypes.dll");
 

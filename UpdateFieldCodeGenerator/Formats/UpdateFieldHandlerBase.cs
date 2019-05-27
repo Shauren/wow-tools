@@ -82,7 +82,7 @@ namespace UpdateFieldCodeGenerator.Formats
         {
         }
 
-        public virtual void OnStructureBegin(Type structureType, bool create, bool writeUpdateMasks)
+        public virtual void OnStructureBegin(Type structureType, ObjectType objectType, bool create, bool writeUpdateMasks)
         {
             _structureType = structureType;
             _create = create;

@@ -38,6 +38,9 @@ namespace UpdateFieldCodeGenerator
                 }
             }
 
+            foreach (var referencedBy in referencedByDict)
+                referencedBy.Value.Sort((a, b) => GetObjectType(a).CompareTo(GetObjectType(b)));
+
             var typeList = structureRefTypes.Where(kvp => kvp.Value == StructureReferenceType.Root)
                 .Select(kvp => kvp.Key)
                 .OrderBy(type => GetObjectType(type))
@@ -49,8 +52,10 @@ namespace UpdateFieldCodeGenerator
                 handlers.BeforeStructures();
                 foreach (var dataType in typeList)
                 {
-                    WriteCreate(dataType, handlers);
-                    WriteUpdate(dataType, structureRefTypes[dataType], handlers);
+                    var objectType = GetObjectType(referencedByDict.ContainsKey(dataType) ? referencedByDict[dataType].First() : dataType);
+
+                    WriteCreate(dataType, objectType, handlers);
+                    WriteUpdate(dataType, objectType, structureRefTypes[dataType], handlers);
                 }
 
                 handlers.AfterStructures();
@@ -77,7 +82,7 @@ namespace UpdateFieldCodeGenerator
             return (type, structureReferenceType);
         }
 
-        private static void WriteCreate(Type dataType, UpdateFieldHandlers fieldHandler)
+        private static void WriteCreate(Type dataType, ObjectType objectType, UpdateFieldHandlers fieldHandler)
         {
             // Create
             // * In declaration order
@@ -93,7 +98,7 @@ namespace UpdateFieldCodeGenerator
                 .Select(group => (group.Key, group.OrderBy(field => field.Field.Order)))
                 .ToDictionary(thing => thing.Key, thing => thing.Item2);
 
-            fieldHandler.OnStructureBegin(dataType, true, false);
+            fieldHandler.OnStructureBegin(dataType, objectType, true, false);
 
             IOrderedEnumerable<(UpdateField Field, string Name)> fieldGroup;
             var firstBunchOfFields = Enumerable.Empty<(UpdateField Field, string Name)>();
@@ -137,7 +142,7 @@ namespace UpdateFieldCodeGenerator
             fieldHandler.OnStructureEnd(StructureHasBitFields(dataType), false);
         }
 
-        private static void WriteUpdate(Type dataType, StructureReferenceType structureReferenceType, UpdateFieldHandlers fieldHandler)
+        private static void WriteUpdate(Type dataType, ObjectType objectType, StructureReferenceType structureReferenceType, UpdateFieldHandlers fieldHandler)
         {
             // Update - if the value is a complex structure, it gets its own bits for each field
             // -- dynamic only if sizeof(struct) > 32
@@ -171,7 +176,7 @@ namespace UpdateFieldCodeGenerator
             var writeUpdateMasks = structureReferenceType == StructureReferenceType.Root
                 || structureReferenceType == StructureReferenceType.Array
                 || GetFieldCount(dataType) > 5;
-            fieldHandler.OnStructureBegin(dataType, false, writeUpdateMasks);
+            fieldHandler.OnStructureBegin(dataType, objectType, false, writeUpdateMasks);
 
             IOrderedEnumerable<(UpdateField Field, string Name)> fieldGroup;
 
@@ -240,7 +245,7 @@ namespace UpdateFieldCodeGenerator
             if (field.SizeForField == null)
                 return (field, fieldInfo.Name);
 
-            return (new UpdateField(typeof(uint), field.Flag, field.SizeForField, order: field.Order), field.SizeForField.Name + ".size()");
+            return (new UpdateField(typeof(uint), field.Flag, field.SizeForField, order: field.Order), field.SizeForField.Name + "->size()");
         }
 
         private static CreateTypeOrder GetCreateTypeOrder(UpdateField fieldType)

@@ -32,10 +32,10 @@ namespace UpdateFieldCodeGenerator.Formats
                 handler.AfterStructures();
         }
 
-        public void OnStructureBegin(Type structureType, bool create, bool writeUpdateMasks)
+        public void OnStructureBegin(Type structureType, ObjectType objectType, bool create, bool writeUpdateMasks)
         {
             foreach (var handler in _handlers)
-                handler.OnStructureBegin(structureType, create, writeUpdateMasks);
+                handler.OnStructureBegin(structureType, objectType, create, writeUpdateMasks);
         }
 
         public void OnStructureEnd(bool needsFlush, bool hadArrayFields)

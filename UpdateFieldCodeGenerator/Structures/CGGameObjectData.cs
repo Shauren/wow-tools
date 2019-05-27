@@ -16,11 +16,11 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_stateWorldEffectIDs = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.None);
         public static readonly UpdateField m_createdBy = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_guildGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
-        public static readonly UpdateField m_flags = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField m_flags = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField m_parentRotation = new UpdateField(typeof(Quaternion), UpdateFieldFlag.None);
         public static readonly UpdateField m_factionTemplate = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_level = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_state = new UpdateField(typeof(sbyte), UpdateFieldFlag.None);
+        public static readonly UpdateField m_level = new UpdateField(typeof(int), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField m_state = new UpdateField(typeof(sbyte), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField m_typeID = new UpdateField(typeof(sbyte), UpdateFieldFlag.None);
         public static readonly UpdateField m_artKit = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField m_percentHealth = new UpdateField(typeof(byte), UpdateFieldFlag.None);

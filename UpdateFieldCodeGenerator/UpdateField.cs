@@ -11,9 +11,10 @@ namespace UpdateFieldCodeGenerator
         public int Size { get; }
         public int BitSize { get; }
         public int Order { get; }
+        public CustomUpdateFieldFlag CustomFlag { get; }
         public FieldInfo SizeForField { get; }
 
-        public UpdateField(Type type, UpdateFieldFlag flag, int size = 0, int bitSize = 0, [CallerLineNumber] int order = 0)
+        public UpdateField(Type type, UpdateFieldFlag flag, int size = 0, int bitSize = 0, CustomUpdateFieldFlag customFlag = CustomUpdateFieldFlag.None, [CallerLineNumber] int order = 0)
         {
             if (size == 0 && type.IsArray)
                 throw new ArgumentException($"Given type is an array with 0 length ({type.Name})", nameof(type));
@@ -23,11 +24,11 @@ namespace UpdateFieldCodeGenerator
             if (type == typeof(Bits) && (bitSize == 0 || bitSize > 32))
                 throw new ArgumentOutOfRangeException(nameof(bitSize), bitSize, "must be in range 1-32");
 
-            (Type, Flag, Size, BitSize, Order) = (type, flag, size, bitSize, order);
+            (Type, Flag, Size, BitSize, CustomFlag, Order) = (type, flag, size, bitSize, customFlag, order);
         }
 
-        public UpdateField(Type type, UpdateFieldFlag flag, FieldInfo sizeForField, int size = 0, int bitSize = 0, [CallerLineNumber] int order = 0)
-            : this(type, flag, size, bitSize, order)
+        public UpdateField(Type type, UpdateFieldFlag flag, FieldInfo sizeForField, int size = 0, int bitSize = 0, CustomUpdateFieldFlag customFlag = CustomUpdateFieldFlag.None, [CallerLineNumber] int order = 0)
+            : this(type, flag, size, bitSize, customFlag, order)
         {
             SizeForField = sizeForField ?? throw new ArgumentNullException(nameof(sizeForField));
         }

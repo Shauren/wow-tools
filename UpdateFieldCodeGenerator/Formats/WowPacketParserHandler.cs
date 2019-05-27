@@ -34,9 +34,9 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.WriteLine("}");
         }
 
-        public override void OnStructureBegin(Type structureType, bool create, bool writeUpdateMasks)
+        public override void OnStructureBegin(Type structureType, ObjectType objectType, bool create, bool writeUpdateMasks)
         {
-            base.OnStructureBegin(structureType, create, writeUpdateMasks);
+            base.OnStructureBegin(structureType, objectType, create, writeUpdateMasks);
             var structureName = RenameType(structureType);
 
             if (_create)
@@ -139,7 +139,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
             var flowControl = new List<FlowControlBlock>();
             if (_create && updateField.Flag != UpdateFieldFlag.None)
-                flowControl.Add(new FlowControlBlock { Statement = $"if ((flags & {updateField.Flag.ToFlagsExpression("UpdateFieldFlag.", "(", ")")}) != UpdateFieldFlag.None)" });
+                flowControl.Add(new FlowControlBlock { Statement = $"if ((flags & {updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag.", "", "(", ")")}) != UpdateFieldFlag.None)" });
 
             var type = updateField.Type;
             var outputFieldName = name;
@@ -348,9 +348,9 @@ namespace UpdateFieldCodeGenerator.Formats
         private void WriteField(string name, string outputFieldName, Type type, int bitSize, string nextIndex, Type interfaceType)
         {
             _source.Write(GetIndent());
-            if (name.EndsWith(".size()"))
+            if (name.EndsWith("size()"))
             {
-                outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 7);
+                outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 8);
                 var interfaceName = RenameType(TypeHandler.GetFriendlyName(interfaceType));
                 if (_create)
                     _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[packet.ReadUInt32()];");
