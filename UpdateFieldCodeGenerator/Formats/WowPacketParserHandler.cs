@@ -79,6 +79,9 @@ namespace UpdateFieldCodeGenerator.Formats
                 _header = null;
             }
 
+            if (needsFlush)
+                _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
+
             if (!_create && _writeUpdateMasks)
             {
                 ++_bitCounter;
@@ -121,9 +124,6 @@ namespace UpdateFieldCodeGenerator.Formats
 
             foreach (var (_, _, Write) in _fieldWrites)
                 Write();
-
-            if (needsFlush)
-                _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
 
             _source.WriteLine($"{GetIndent()}return data;");
 

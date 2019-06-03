@@ -215,6 +215,8 @@ namespace UpdateFieldCodeGenerator
                 fieldHandler.FinishControlBlocks();
             }
 
+            fieldHandler.FinishBitPack();
+
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicFieldArray, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
@@ -235,7 +237,7 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
-            fieldHandler.OnStructureEnd(StructureHasBitFields(dataType) || writeUpdateMasks,
+            fieldHandler.OnStructureEnd(StructureHasBitFields(dataType),
                 allFields.ContainsKey(UpdateTypeOrder.Array) || allFields.ContainsKey(UpdateTypeOrder.JamDynamicFieldArray));
         }
 
