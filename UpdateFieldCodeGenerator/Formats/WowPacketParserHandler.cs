@@ -55,7 +55,7 @@ namespace UpdateFieldCodeGenerator.Formats
             if (_create)
                 _source.WriteLine($"{GetIndent()}public static {structureName} ReadCreate{structureName}(Packet packet, UpdateFieldFlag flags, params object[] indexes)");
             else
-                _source.WriteLine($"{GetIndent()}public static {structureName} ReadUpdate{structureName}(Packet packet, {structureName} data, params object[] indexes)");
+                _source.WriteLine($"{GetIndent()}public static {structureName} ReadUpdate{structureName}(Packet packet, I{structureName} existingData, params object[] indexes)");
 
             _source.WriteLine($"{GetIndent()}{{");
             _indent = 3;
@@ -63,6 +63,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 _source.WriteLine($"{GetIndent()}var data = new {structureName}();");
             else
             {
+                _source.WriteLine($"{GetIndent()}var data = existingData as {structureName};");
                 _source.WriteLine($"{GetIndent()}if (data == null)");
                 _source.WriteLine($"{GetIndent()}    data = new {structureName}();");
             }
