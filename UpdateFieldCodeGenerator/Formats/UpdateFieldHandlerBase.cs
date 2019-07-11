@@ -127,17 +127,20 @@ namespace UpdateFieldCodeGenerator.Formats
         {
             if (_structureType == typeof(CGActivePlayerData))
             {
-                var name = RenameField("pvpInfo");
-                var pvpInfoIndex = _fieldWrites.FindIndex(fieldWrite =>
+                if (!_create)
                 {
-                    return fieldWrite.Name == name;
-                });
-                if (pvpInfoIndex != -1)
-                {
-                    // move to just-before-end (end is a write for closing all brackets)
-                    var pvpInfo = _fieldWrites[pvpInfoIndex];
-                    _fieldWrites.RemoveAt(pvpInfoIndex);
-                    _fieldWrites.Insert(_fieldWrites.Count - 1, pvpInfo);
+                    var name = RenameField("pvpInfo");
+                    var pvpInfoIndex = _fieldWrites.FindIndex(fieldWrite =>
+                    {
+                        return fieldWrite.Name == name;
+                    });
+                    if (pvpInfoIndex != -1)
+                    {
+                        // move to just-before-end (end is a write for closing all brackets)
+                        var pvpInfo = _fieldWrites[pvpInfoIndex];
+                        _fieldWrites.RemoveAt(pvpInfoIndex);
+                        _fieldWrites.Insert(_fieldWrites.Count - 1, pvpInfo);
+                    }
                 }
             }
             else if (_structureType == typeof(CGAreaTriggerData))

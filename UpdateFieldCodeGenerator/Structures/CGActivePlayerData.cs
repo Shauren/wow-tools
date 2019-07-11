@@ -40,7 +40,7 @@
         public static readonly UpdateField versatilityBonus = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField pvpPowerDamage = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField pvpPowerHealing = new UpdateField(typeof(float), UpdateFieldFlag.None);
-        public static readonly UpdateField exploredZones = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 160);
+        public static readonly UpdateField exploredZones = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 192);
         public static readonly UpdateField restInfo = new UpdateField(typeof(JamMirrorRestInfo_C[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField modDamageDonePos = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);
         public static readonly UpdateField modDamageDoneNeg = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);

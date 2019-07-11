@@ -11,7 +11,7 @@ namespace UpdateFieldCodeGenerator
         UnitAll = 0x04,
         Empath = 0x08,
         Unk5 = 0x10,
-        Unk6 = 0x20,
+        SkipChangeHandlers = 0x20,
         Unk7 = 0x40,
         Unk8 = 0x80,
     }

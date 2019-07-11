@@ -86,10 +86,12 @@
     <Compile Include="Structures\JamMirrorResearch_C.cs" />
     <Compile Include="Structures\JamMirrorRestInfo_C.cs" />
     <Compile Include="Structures\JamMirrorScaleCurve_C.cs" />
+    <Compile Include="Structures\JamMirrorSelectedAzeriteEssences_C.cs" />
     <Compile Include="Structures\JamMirrorSkillInfo_C.cs" />
     <Compile Include="Structures\JamMirrorSpellFlatModByLabel_C.cs" />
     <Compile Include="Structures\JamMirrorSpellPctModByLabel_C.cs" />
     <Compile Include="Structures\JamMirrorUnitChannel_C.cs" />
+    <Compile Include="Structures\JamMirrorUnlockedAzeriteEssence_C.cs" />
     <Compile Include="Structures\JamMirrorVisibleItem_C.cs" />
     <Compile Include="TypeHandler.cs" />
     <Compile Include="Vector2.cs" />
