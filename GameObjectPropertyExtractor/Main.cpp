@@ -95,10 +95,10 @@ struct GameObjectPropertyInfo
 #pragma pack(pop)
 
 #define MAX_GAMEOBJECT_TYPE 56
-#define MAX_PROPERTY_INDEX 225
+#define MAX_PROPERTY_INDEX 232
 
-#define GO_TYPE_DATA 0x2333560
-#define PROPERTY_DATA 0x1DBD8B0
+#define GO_TYPE_DATA 0x24D55A0
+#define PROPERTY_DATA 0x1F52600
 #define MAX_GAMEOBJECT_DATA 34
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
@@ -150,7 +150,7 @@ char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
     "GAMEOBJECT_TYPE_GARRISON_MONUMENT",
     "GAMEOBJECT_TYPE_GARRISON_SHIPMENT",
     "GAMEOBJECT_TYPE_GARRISON_MONUMENT_PLAQUE",
-    "GAMEOBJECT_TYPE_ARTIFACT_FORGE",
+    "GAMEOBJECT_TYPE_ITEM_FORGE",
     "GAMEOBJECT_TYPE_UI_LINK",
     "GAMEOBJECT_TYPE_KEYSTONE_RECEPTACLE",
     "GAMEOBJECT_TYPE_GATHERING_NODE",
@@ -173,7 +173,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 27980, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 30993, true);
     if (!wow)
         return 1;
 

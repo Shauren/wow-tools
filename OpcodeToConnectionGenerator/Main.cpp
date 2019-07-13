@@ -28,7 +28,7 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 void DumpSpellFailures()
 {
     typedef char*(__cdecl* pGetErrorString)(int);
-    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0x818400);
+    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0x9E3680);
 
     Enum spellFailures;
     spellFailures.SetName("SPELL_FAILED_REASON");
@@ -60,10 +60,10 @@ void DumpInventoryErrors()
         std::uint32_t ChatMsgType;
     };
 
-    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0x233AA40);
+    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0x24DDC80);
 
     typedef int(__cdecl* GetGameErrorFn)(int);
-    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0xB6C220);
+    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0xD22000);
 
     Enum spellFailures;
     spellFailures.SetName("InventoryResult");
@@ -74,7 +74,7 @@ void DumpInventoryErrors()
     while (err <= 104)
     {
         std::string err_name = std::string("EQUIP_");
-        if (error < 1010)
+        if (error < 1031)
             err_name += uis[error].ErrorName;
         else
             err_name += "NONE";
