@@ -386,6 +386,8 @@ namespace UpdateFieldCodeGenerator.Formats
             name = RenameField(name);
 
             var flowControl = new List<FlowControlBlock>();
+            if (_create && updateField.Flag != UpdateFieldFlag.None)
+                flowControl.Add(new FlowControlBlock { Statement = $"if ({updateField.Flag.ToFlagsExpression(" || ", "fieldVisibilityFlags.HasFlag(UpdateFieldFlag::", ")")})" });
 
             var nameUsedToWrite = name;
             if (updateField.Type.IsArray)
@@ -408,6 +410,8 @@ namespace UpdateFieldCodeGenerator.Formats
             name = RenameField(name);
 
             var flowControl = new List<FlowControlBlock>();
+            if (_create && updateField.Flag != UpdateFieldFlag.None)
+                flowControl.Add(new FlowControlBlock { Statement = $"if ({updateField.Flag.ToFlagsExpression(" || ", "fieldVisibilityFlags.HasFlag(UpdateFieldFlag::", ")")})" });
 
             var nameUsedToWrite = name;
             if (updateField.Type.IsArray)
