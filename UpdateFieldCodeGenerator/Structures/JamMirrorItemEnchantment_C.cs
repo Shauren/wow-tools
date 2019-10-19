@@ -1,5 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
+    [HasChangesMask]
     public class JamMirrorItemEnchantment_C
     {
         public static readonly UpdateField m_ID = new UpdateField(typeof(int), UpdateFieldFlag.None);

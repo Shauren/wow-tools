@@ -2,6 +2,7 @@
 
 namespace UpdateFieldCodeGenerator.Structures
 {
+    [HasChangesMask]
     public class CGConversationData
     {
         public static readonly ObjectType ObjectType = ObjectType.Conversation;

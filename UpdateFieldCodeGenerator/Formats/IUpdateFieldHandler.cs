@@ -9,7 +9,7 @@ namespace UpdateFieldCodeGenerator.Formats
         void AfterStructures();
 
         void OnStructureBegin(Type structureType, ObjectType objectType, bool create, bool writeUpdateMasks);
-        void OnStructureEnd(bool needsFlush, bool hadArrayFields);
+        void OnStructureEnd(bool needsFlush, bool forceMaskMask);
 
         IReadOnlyList<FlowControlBlock> OnField(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
         IReadOnlyList<FlowControlBlock> OnDynamicFieldSizeCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);

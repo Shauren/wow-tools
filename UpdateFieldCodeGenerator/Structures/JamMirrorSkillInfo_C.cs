@@ -1,5 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
+    [HasChangesMask]
     public class JamMirrorSkillInfo_C
     {
         public static readonly UpdateField m_skillLineID = new UpdateField(typeof(ushort[]), UpdateFieldFlag.None, 256);

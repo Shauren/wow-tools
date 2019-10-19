@@ -164,19 +164,8 @@ namespace UpdateFieldCodeGenerator
                 .Select(group => (group.Key, group.OrderBy(field => field.Field.Order)))
                 .ToDictionary(thing => thing.Key, thing => thing.Item2);
 
-            //          NAME                   | FIELDS | SIZE | HAS ARRAY | HAS BITS | HAS MASK
-            //        JamMirrorArtifactPower_C |      3 |    4 |        NO |       NO |       NO
-            //          JamMirrorSocketedGem_C |     18 |   40 |       YES |       NO |      YES <-
-            //  JamMirrorPassiveSpellHistory_C |      2 |    8 |        NO |       NO |       NO
-            //        JamMirrorArenaCooldown_C |      7 |   28 |        NO |       NO |      YES <-
-            // JamMirrorCharacterRestriction_C |      4 |   16 |        NO |      YES |       NO
-            //   JamMirrorSpellPctModByLabel_C |      4 |   12 |        NO |       NO |       NO
-            //  JamMirrorSpellFlatModByLabel_C |      4 |   12 |        NO |       NO |       NO
-            //    JamMirrorConversationActor_C |      5 |   32 |        NO |       NO |       NO
-            var writeUpdateMasks = structureReferenceType == StructureReferenceType.Root
-                || structureReferenceType == StructureReferenceType.Array
-                || GetFieldCount(dataType) > 5;
-            fieldHandler.OnStructureBegin(dataType, objectType, false, writeUpdateMasks);
+            var hasChangesMask = dataType.GetCustomAttribute<HasChangesMaskAttribute>();
+            fieldHandler.OnStructureBegin(dataType, objectType, false, hasChangesMask != null);
 
             IOrderedEnumerable<(UpdateField Field, string Name)> fieldGroup;
 
@@ -193,15 +182,9 @@ namespace UpdateFieldCodeGenerator
                 fieldHandler.FinishBitPack();
             }
 
-            var dynamicFields = Enumerable.Empty<(UpdateField Field, string Name)>();
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicField, out fieldGroup))
-                dynamicFields = dynamicFields.Concat(fieldGroup);
-            if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicFieldWithBits, out fieldGroup))
-                dynamicFields = dynamicFields.Concat(fieldGroup);
-
-            if (allFields.ContainsKey(UpdateTypeOrder.JamDynamicField) || allFields.ContainsKey(UpdateTypeOrder.JamDynamicFieldWithBits))
             {
-                foreach (var (Field, Name) in dynamicFields)
+                foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnDynamicFieldSizeUpdate(Name, Field);
 
                 fieldHandler.FinishControlBlocks();
@@ -215,19 +198,25 @@ namespace UpdateFieldCodeGenerator
                 fieldHandler.FinishControlBlocks();
             }
 
-            fieldHandler.FinishBitPack();
+            if (hasChangesMask != null || allFields.ContainsKey(UpdateTypeOrder.Bits) ||
+                allFields.ContainsKey(UpdateTypeOrder.JamDynamicField) || allFields.ContainsKey(UpdateTypeOrder.JamDynamicFieldArray))
+            {
+                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishBitPack();
+            }
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicFieldArray, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicField, out fieldGroup))
-                foreach (var (Field, Name) in fieldGroup)
+            {
+                foreach (var (Field, Name) in fieldGroup.Where(field => !StructureHasBitFields(field.Field.Type.GenericTypeArguments[0])))
                     fieldHandler.OnField(Name, Field);
 
-            if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicFieldWithBits, out fieldGroup))
-                foreach (var (Field, Name) in fieldGroup)
+                foreach (var (Field, Name) in fieldGroup.Where(field => StructureHasBitFields(field.Field.Type.GenericTypeArguments[0])))
                     fieldHandler.OnField(Name, Field);
+            }
 
             if (allFields.TryGetValue(UpdateTypeOrder.Default, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
@@ -238,7 +227,7 @@ namespace UpdateFieldCodeGenerator
                     fieldHandler.OnField(Name, Field);
 
             fieldHandler.OnStructureEnd(StructureHasBitFields(dataType),
-                allFields.ContainsKey(UpdateTypeOrder.Array) || allFields.ContainsKey(UpdateTypeOrder.JamDynamicFieldArray));
+                hasChangesMask != null && hasChangesMask.ForceMaskMask);
         }
 
         private static (UpdateField Field, string Name) ResolveField(FieldInfo fieldInfo)
@@ -276,7 +265,7 @@ namespace UpdateFieldCodeGenerator
                 return GetUpdateTypeOrder(fieldType.SizeForField.GetValue(null) as UpdateField);
 
             if (typeof(DynamicUpdateField).IsAssignableFrom(fieldType.Type))
-                return StructureHasBitFields(fieldType.Type.GenericTypeArguments[0]) ? UpdateTypeOrder.JamDynamicFieldWithBits : UpdateTypeOrder.JamDynamicField;
+                return UpdateTypeOrder.JamDynamicField;
 
             if (typeof(BlzVectorField).IsAssignableFrom(fieldType.Type))
                 return UpdateTypeOrder.BlzVector;
@@ -288,15 +277,6 @@ namespace UpdateFieldCodeGenerator
                 return UpdateTypeOrder.Bits;
 
             return UpdateTypeOrder.Default;
-        }
-
-        private static int GetFieldCount(Type type)
-        {
-            return type.GetFields(BindingFlags.Static | BindingFlags.Public)
-                .Where(field => typeof(UpdateField).IsAssignableFrom(field.FieldType))
-                .Select(field => field.GetValue(null) as UpdateField)
-                .Where(field => field.SizeForField == null)
-                .Sum(field => Math.Max(field.Size, 1));
         }
 
         private static int GetStructureSize(Type type)

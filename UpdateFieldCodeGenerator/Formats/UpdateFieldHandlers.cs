@@ -38,11 +38,11 @@ namespace UpdateFieldCodeGenerator.Formats
                 handler.OnStructureBegin(structureType, objectType, create, writeUpdateMasks);
         }
 
-        public void OnStructureEnd(bool needsFlush, bool hadArrayFields)
+        public void OnStructureEnd(bool needsFlush, bool forceMaskMask)
         {
             FinishControlBlocks();
             foreach (var handler in _handlers)
-                handler.OnStructureEnd(needsFlush, hadArrayFields);
+                handler.OnStructureEnd(needsFlush, forceMaskMask);
         }
 
         public void OnField(string name, UpdateField updateField)

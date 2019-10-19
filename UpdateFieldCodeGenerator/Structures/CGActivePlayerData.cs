@@ -1,5 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
+    [HasChangesMask]
     public class CGActivePlayerData
     {
         public static readonly ObjectType ObjectType = ObjectType.ActivePlayer;

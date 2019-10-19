@@ -94,7 +94,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites = new List<(string Name, bool IsSize, Action Write)>();
         }
 
-        public abstract void OnStructureEnd(bool needsFlush, bool hadArrayFields);
+        public abstract void OnStructureEnd(bool needsFlush, bool forceMaskMask);
 
         public abstract IReadOnlyList<FlowControlBlock> OnField(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousBlock);
         public abstract IReadOnlyList<FlowControlBlock> OnDynamicFieldSizeCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);

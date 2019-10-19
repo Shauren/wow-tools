@@ -104,7 +104,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.WriteLine("{");
         }
 
-        public override void OnStructureEnd(bool needsFlush, bool hadArrayFields)
+        public override void OnStructureEnd(bool needsFlush, bool forceMaskMask)
         {
             ++_bitCounter;
             if (!_create)
@@ -193,7 +193,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
 
                 var maskBlocks = (_bitCounter + 31) / 32;
-                if (maskBlocks > 1 || hadArrayFields)
+                if (maskBlocks > 1 || forceMaskMask)
                 {
                     if (maskBlocks >= 32)
                     {

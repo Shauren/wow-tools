@@ -1,5 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
+    [HasChangesMask]
     public class JamMirrorPVPInfo_C
     {
         public static readonly UpdateField field_0 = new UpdateField(typeof(uint), UpdateFieldFlag.None);

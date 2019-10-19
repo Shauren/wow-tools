@@ -1,5 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
+    [HasChangesMask(forceMaskMask: true)]
     public class JamMirrorQuestLog_C
     {
         public static readonly UpdateField m_questID = new UpdateField(typeof(int), UpdateFieldFlag.None);

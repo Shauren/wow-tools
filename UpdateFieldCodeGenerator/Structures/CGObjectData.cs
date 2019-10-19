@@ -1,5 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
+    [HasChangesMask]
     public class CGObjectData
     {
         public static readonly ObjectType ObjectType = ObjectType.Object;

@@ -69,7 +69,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
         }
 
-        public override void OnStructureEnd(bool needsFlush, bool hadArrayFields)
+        public override void OnStructureEnd(bool needsFlush, bool forceMaskMask)
         {
             if (_create)
             {
@@ -88,7 +88,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 ++_bitCounter;
                 var maskBlocks = (_bitCounter + 31) / 32;
                 _source.WriteLine($"{GetIndent()}var rawChangesMask = new int[{maskBlocks}];");
-                if (maskBlocks > 1 || hadArrayFields)
+                if (maskBlocks > 1 || forceMaskMask)
                 {
                     _source.WriteLine($"{GetIndent()}var rawMaskMask = new int[{(maskBlocks + 31) / 32}];");
                     if (maskBlocks >= 32)

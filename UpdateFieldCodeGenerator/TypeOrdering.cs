@@ -17,7 +17,6 @@
         BlzVector,
         JamDynamicField,
         JamDynamicFieldArray,
-        Array,
-        JamDynamicFieldWithBits
+        Array
     }
 }

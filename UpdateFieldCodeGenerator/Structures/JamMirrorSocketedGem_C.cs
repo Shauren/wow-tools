@@ -1,5 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
+    [HasChangesMask(forceMaskMask: true)]
     public class JamMirrorSocketedGem_C
     {
         public static readonly UpdateField m_itemID = new UpdateField(typeof(int), UpdateFieldFlag.None);

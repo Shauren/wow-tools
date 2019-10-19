@@ -2,6 +2,7 @@
 
 namespace UpdateFieldCodeGenerator.Structures
 {
+    [HasChangesMask]
     class CGUnitData
     {
         public static readonly ObjectType ObjectType = ObjectType.Unit;
