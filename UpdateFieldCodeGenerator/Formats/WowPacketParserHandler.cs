@@ -123,6 +123,15 @@ namespace UpdateFieldCodeGenerator.Formats
 
             PostProcessFieldWrites();
 
+            if (!_create)
+            {
+                foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
+                {
+                    var typeName = RenameType(dynamicChangesMaskType);
+                    _source.WriteLine($"{GetIndent()}var has{typeName}DynamicChangesMask = packet.ReadBit();");
+                }
+            }
+
             foreach (var (_, _, Write) in _fieldWrites)
                 Write();
 
@@ -244,6 +253,8 @@ namespace UpdateFieldCodeGenerator.Formats
                 type = type.GenericTypeArguments[0];
                 interfaceType = TypeHandler.ConvertToInterfaces(type, rawName => RenameType(rawName));
             }
+
+            RegisterDynamicChangesMaskFieldType(type);
 
             _fieldWrites.Add((name, false, () =>
             {
@@ -378,7 +389,18 @@ namespace UpdateFieldCodeGenerator.Formats
                     else if (_create)
                         _source.WriteLine($"data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, flags, indexes, \"{name}\"{nextIndex});");
                     else
-                        _source.WriteLine($"data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, data.{outputFieldName} as {RenameType(type)}, indexes, \"{name}\"{nextIndex});");
+                    {
+                        if (_dynamicChangesMaskTypes.Contains(type.Name))
+                        {
+                            _source.WriteLine($"if (has{RenameType(type.Name)}DynamicChangesMask)");
+                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, data.{outputFieldName} as {RenameType(type)}, indexes, \"{name}\"{nextIndex});");
+                            _source.WriteLine($"{GetIndent()}else");
+                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, flags, indexes, \"{name}\"{nextIndex});");
+
+                        }
+                        else
+                            _source.WriteLine($"data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, data.{outputFieldName} as {RenameType(type)}, indexes, \"{name}\"{nextIndex});");
+                    }
                     break;
                 case TypeCode.Boolean:
                     _source.WriteLine($"data.{outputFieldName} = packet.ReadBit(\"{name}\", indexes{nextIndex});");

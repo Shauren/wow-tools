@@ -21,6 +21,7 @@ namespace UpdateFieldCodeGenerator.Formats
         protected int _blockGroupBit;
         protected int _nonArrayBitCounter;
         protected List<(string Name, bool IsSize, Action Write)> _fieldWrites;
+        protected List<string> _dynamicChangesMaskTypes;
 
         protected UpdateFieldHandlerBase(TextWriter source, TextWriter header)
         {
@@ -92,6 +93,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _blockGroupBit = 0;
             _nonArrayBitCounter = 0;
             _fieldWrites = new List<(string Name, bool IsSize, Action Write)>();
+            _dynamicChangesMaskTypes = new List<string>();
         }
 
         public abstract void OnStructureEnd(bool needsFlush, bool forceMaskMask);
@@ -158,6 +160,17 @@ namespace UpdateFieldCodeGenerator.Formats
                     _fieldWrites.Insert(_fieldWrites.Count - 1, extraScaleCurve);
                 }
             }
+        }
+
+        protected void RegisterDynamicChangesMaskFieldType(Type fieldType)
+        {
+            if (fieldType.GetCustomAttribute<HasDynamicChangesMaskAttribute>() == null)
+                return;
+
+            if (_dynamicChangesMaskTypes.Contains(fieldType.Name))
+                return;
+
+            _dynamicChangesMaskTypes.Add(fieldType.Name);
         }
 
         public void Dispose()

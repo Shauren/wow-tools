@@ -130,6 +130,9 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                     _header.WriteLine("    void ClearChangesMask();");
                 }
+                foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
+                    _header.WriteLine($"    bool Is{RenameType(dynamicChangesMaskType)}DynamicChangesMask() const {{ return false; }} // bandwidth savings aren't worth the cpu time");
+
                 _header.WriteLine("};");
                 _header.WriteLine();
                 _header.Flush();
@@ -224,6 +227,15 @@ namespace UpdateFieldCodeGenerator.Formats
             }
 
             PostProcessFieldWrites();
+
+            if (!_create)
+            {
+                foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
+                {
+                    var typeName = RenameType(dynamicChangesMaskType);
+                    _source.WriteLine($"    bool has{typeName}DynamicChangesMask = data.WriteBit(Is{typeName}DynamicChangesMask());");
+                }
+            }
 
             foreach (var (_, _, Write) in _fieldWrites)
                 Write();
@@ -359,6 +371,8 @@ namespace UpdateFieldCodeGenerator.Formats
 
                 _previousFieldCounters = bitIndex;
             }
+
+            RegisterDynamicChangesMaskFieldType(type);
 
             _fieldWrites.Add((name, false, () =>
             {
@@ -509,7 +523,18 @@ namespace UpdateFieldCodeGenerator.Formats
                     else if (_create)
                         _source.WriteLine($"{name}{access}WriteCreate(data, fieldVisibilityFlags, owner, receiver);");
                     else
-                        _source.WriteLine($"{name}{access}WriteUpdate(data, fieldVisibilityFlags, owner, receiver);");
+                    {
+                        if (_dynamicChangesMaskTypes.Contains(type.Name))
+                        {
+                            _source.WriteLine($"if (has{RenameType(type.Name)}DynamicChangesMask)");
+                            _source.WriteLine($"{GetIndent()}    {name}{access}WriteUpdate(data, fieldVisibilityFlags, owner, receiver);");
+                            _source.WriteLine($"{GetIndent()}else");
+                            _source.WriteLine($"{GetIndent()}    {name}{access}WriteCreate(data, fieldVisibilityFlags, owner, receiver);");
+
+                        }
+                        else
+                            _source.WriteLine($"{name}{access}WriteUpdate(data, fieldVisibilityFlags, owner, receiver);");
+                    }
                     break;
                 case TypeCode.Boolean:
                     _source.WriteLine($"data.WriteBit({name});");

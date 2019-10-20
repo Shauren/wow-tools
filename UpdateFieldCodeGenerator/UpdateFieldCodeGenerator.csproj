@@ -69,6 +69,7 @@
     <Compile Include="BlzVectorField.cs" />
     <Compile Include="DynamicUpdateField.cs" />
     <Compile Include="HasChangesMaskAttribute.cs" />
+    <Compile Include="HasDynamicChangesMaskAttribute.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="StructureReferenceType.cs" />
     <Compile Include="Structures\CGActivePlayerData.cs" />
