@@ -55,7 +55,7 @@ namespace UpdateFieldCodeGenerator
                     var objectType = GetObjectType(referencedByDict.ContainsKey(dataType) ? referencedByDict[dataType].First() : dataType);
 
                     WriteCreate(dataType, objectType, handlers);
-                    WriteUpdate(dataType, objectType, structureRefTypes[dataType], handlers);
+                    WriteUpdate(dataType, objectType, handlers);
                 }
 
                 handlers.AfterStructures();
@@ -74,10 +74,10 @@ namespace UpdateFieldCodeGenerator
         private static (Type, StructureReferenceType) GetFieldElementType(Type type, StructureReferenceType structureReferenceType)
         {
             if (type.IsArray)
-                return GetFieldElementType(type.GetElementType(), StructureReferenceType.Array);
+                return GetFieldElementType(type.GetElementType(), StructureReferenceType.Embedded);
 
             if (typeof(DynamicUpdateField).IsAssignableFrom(type) || typeof(BlzVectorField).IsAssignableFrom(type))
-                return GetFieldElementType(type.GenericTypeArguments[0], StructureReferenceType.DynamicField);
+                return GetFieldElementType(type.GenericTypeArguments[0], StructureReferenceType.Embedded);
 
             return (type, structureReferenceType);
         }
@@ -142,7 +142,7 @@ namespace UpdateFieldCodeGenerator
             fieldHandler.OnStructureEnd(StructureHasBitFields(dataType), false);
         }
 
-        private static void WriteUpdate(Type dataType, ObjectType objectType, StructureReferenceType structureReferenceType, UpdateFieldHandlers fieldHandler)
+        private static void WriteUpdate(Type dataType, ObjectType objectType, UpdateFieldHandlers fieldHandler)
         {
             // Update - if the value is a complex structure, it gets its own bits for each field
             // -- dynamic only if sizeof(struct) > 32

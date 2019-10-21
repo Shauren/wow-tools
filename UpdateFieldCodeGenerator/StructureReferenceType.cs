@@ -3,8 +3,6 @@
     public enum StructureReferenceType
     {
         Root,
-        Embedded,
-        Array,
-        DynamicField
+        Embedded
     }
 }
