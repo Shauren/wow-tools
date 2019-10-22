@@ -198,16 +198,16 @@ namespace UpdateFieldCodeGenerator
                 fieldHandler.FinishControlBlocks();
             }
 
+            if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicFieldArray, out fieldGroup))
+                foreach (var (Field, Name) in fieldGroup)
+                    fieldHandler.OnField(Name, Field);
+
             if (hasChangesMask != null || allFields.ContainsKey(UpdateTypeOrder.Bits) ||
                 allFields.ContainsKey(UpdateTypeOrder.JamDynamicField) || allFields.ContainsKey(UpdateTypeOrder.JamDynamicFieldArray))
             {
                 fieldHandler.FinishControlBlocks();
                 fieldHandler.FinishBitPack();
             }
-
-            if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicFieldArray, out fieldGroup))
-                foreach (var (Field, Name) in fieldGroup)
-                    fieldHandler.OnField(Name, Field);
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicField, out fieldGroup))
             {

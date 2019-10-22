@@ -132,8 +132,9 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
             }
 
+            List<FlowControlBlock> previousFlowControl = null;
             foreach (var (_, _, Write) in _fieldWrites)
-                Write();
+                previousFlowControl = Write(previousFlowControl);
 
             _source.WriteLine($"{GetIndent()}return data;");
 
@@ -195,56 +196,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
 
             if (!_create && _writeUpdateMasks)
-            {
-                var newField = false;
-                var nameForIndex = updateField.SizeForField != null ? RenameField(updateField.SizeForField.Name) : name;
-                if (!_fieldBitIndex.TryGetValue(nameForIndex, out var bitIndex))
-                {
-                    bitIndex = new List<int>();
-                    if (flowControl.Count == 0 || !FlowControlBlock.AreChainsAlmostEqual(previousControlFlow, flowControl))
-                    {
-                        if (!updateField.Type.IsArray)
-                        {
-                            ++_nonArrayBitCounter;
-                            if (_nonArrayBitCounter == 32)
-                            {
-                                _blockGroupBit = ++_bitCounter;
-                                _nonArrayBitCounter = 1;
-                            }
-                        }
-
-                        bitIndex.Add(++_bitCounter);
-                    }
-                    else
-                    {
-                        if (_previousFieldCounters == null || _previousFieldCounters.Count == 1)
-                            throw new Exception("Expected previous field to have been an array");
-
-                        bitIndex.Add(_previousFieldCounters[0]);
-                    }
-
-                    _fieldBitIndex[nameForIndex] = bitIndex;
-                    newField = true;
-                }
-
-                if (updateField.Type.IsArray)
-                {
-                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
-                    if (newField)
-                    {
-                        bitIndex.AddRange(Enumerable.Range(_bitCounter + 1, updateField.Size));
-                        _bitCounter += updateField.Size;
-                    }
-                    flowControl.Insert(arrayLoopBlockIndex + 1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]} + i])" });
-                }
-                else
-                {
-                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{_blockGroupBit}])" });
-                    flowControl.Insert(1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
-                }
-
-                _previousFieldCounters = bitIndex;
-            }
+                GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
 
             Type interfaceType = null;
             if (updateField.SizeForField != null)
@@ -256,12 +208,14 @@ namespace UpdateFieldCodeGenerator.Formats
 
             RegisterDynamicChangesMaskFieldType(type);
 
-            _fieldWrites.Add((name, false, () =>
+            _fieldWrites.Add((name, false, (pcf) =>
             {
-                WriteControlBlocks(_source, flowControl, previousControlFlow);
+                WriteControlBlocks(_source, flowControl, pcf);
                 WriteField(name, outputFieldName, type, updateField.BitSize, nextIndex, interfaceType);
                 _indent = 3;
-            }));
+                return flowControl;
+            }
+            ));
 
             if (_create && updateField.SizeForField == null)
                 WriteFieldDeclaration(name, updateField, declarationType, declarationSettable);
@@ -283,12 +237,14 @@ namespace UpdateFieldCodeGenerator.Formats
                 nameUsedToWrite += "[i]";
             }
 
-            _fieldWrites.Add((name, true, () =>
+            _fieldWrites.Add((name, true, (pcf) =>
             {
-                WriteControlBlocks(_source, flowControl, previousControlFlow);
+                WriteControlBlocks(_source, flowControl, pcf);
                 _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.Resize(packet.ReadUInt32());");
                 _indent = 3;
-            }));
+                return flowControl;
+            }
+            ));
             return flowControl;
         }
 
@@ -300,65 +256,81 @@ namespace UpdateFieldCodeGenerator.Formats
                 flowControl.Add(new FlowControlBlock { Statement = $"if ((flags & {updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag.", "", "(", ")")}) != UpdateFieldFlag.None)" });
 
             var nameUsedToWrite = name;
+            var arrayLoopBlockIndex = -1;
             if (updateField.Type.IsArray)
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"for (var i = 0; i < {updateField.Size}; ++i)" });
                 nameUsedToWrite += "[i]";
+                arrayLoopBlockIndex = flowControl.Count;
             }
 
             if (_writeUpdateMasks)
+                GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
+
+            _fieldWrites.Add((name, true, (pcf) =>
             {
-                if (!_fieldBitIndex.TryGetValue(name, out var bitIndex))
+                WriteControlBlocks(_source, flowControl, pcf);
+                _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.ReadUpdateMask(packet);");
+                _indent = 3;
+                return flowControl;
+            }
+            ));
+            return flowControl;
+        }
+
+        private void GenerateBitIndexConditions(UpdateField updateField, string name, List<FlowControlBlock> flowControl, IReadOnlyList<FlowControlBlock> previousControlFlow, int arrayLoopBlockIndex)
+        {
+            var newField = false;
+            var nameForIndex = updateField.SizeForField != null ? RenameField(updateField.SizeForField.Name) : name;
+            if (!_fieldBitIndex.TryGetValue(nameForIndex, out var bitIndex))
+            {
+                bitIndex = new List<int>();
+                if (flowControl.Count == 0 || !FlowControlBlock.AreChainsAlmostEqual(previousControlFlow, flowControl))
                 {
-                    bitIndex = new List<int>();
-                    if (flowControl.Count == 0 || !FlowControlBlock.AreChainsAlmostEqual(previousControlFlow, flowControl))
+                    if (!updateField.Type.IsArray)
                     {
-                        if (!updateField.Type.IsArray)
+                        ++_nonArrayBitCounter;
+                        if (_nonArrayBitCounter == 32)
                         {
-                            ++_nonArrayBitCounter;
-                            if (_nonArrayBitCounter == 32)
-                            {
-                                _blockGroupBit = ++_bitCounter;
-                                _nonArrayBitCounter = 1;
-                            }
+                            _blockGroupBit = ++_bitCounter;
+                            _nonArrayBitCounter = 1;
                         }
-
-                        bitIndex.Add(++_bitCounter);
-                    }
-                    else
-                    {
-                        if (_previousFieldCounters == null || _previousFieldCounters.Count == 1)
-                            throw new Exception("Expected previous field to have been an array");
-
-                        bitIndex.Add(_previousFieldCounters[0]);
                     }
 
-                    _fieldBitIndex[name] = bitIndex;
-                }
+                    bitIndex.Add(++_bitCounter);
 
-                if (updateField.Type.IsArray)
-                {
-                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
-                    bitIndex.AddRange(Enumerable.Range(_bitCounter + 1, updateField.Size));
-                    flowControl.Add(new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]} + i])" });
-                    _bitCounter += updateField.Size;
+                    if (!updateField.Type.IsArray)
+                        bitIndex.Add(_blockGroupBit);
                 }
                 else
                 {
-                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{_blockGroupBit}])" });
-                    flowControl.Insert(1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
+                    if (_previousFieldCounters == null || _previousFieldCounters.Count == 1)
+                        throw new Exception("Expected previous field to have been an array");
+
+                    bitIndex.Add(_previousFieldCounters[0]);
                 }
 
-                _previousFieldCounters = bitIndex;
+                _fieldBitIndex[nameForIndex] = bitIndex;
+                newField = true;
             }
 
-            _fieldWrites.Add((name, true, () =>
+            if (updateField.Type.IsArray)
             {
-                WriteControlBlocks(_source, flowControl, previousControlFlow);
-                _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.ReadUpdateMask(packet);");
-                _indent = 3;
-            }));
-            return flowControl;
+                flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
+                if (newField)
+                {
+                    bitIndex.AddRange(Enumerable.Range(_bitCounter + 1, updateField.Size));
+                    _bitCounter += updateField.Size;
+                }
+                flowControl.Insert(arrayLoopBlockIndex + 1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]} + i])" });
+            }
+            else
+            {
+                flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{_blockGroupBit}])" });
+                flowControl.Insert(1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
+            }
+
+            _previousFieldCounters = bitIndex;
         }
 
         private void WriteField(string name, string outputFieldName, Type type, int bitSize, string nextIndex, Type interfaceType)
@@ -473,18 +445,21 @@ namespace UpdateFieldCodeGenerator.Formats
 
         public override void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow)
         {
-            _fieldWrites.Add((string.Empty, false, () =>
+            _fieldWrites.Add((string.Empty, false, (pcf) =>
             {
-                FinishControlBlocks(_source, previousControlFlow);
+                FinishControlBlocks(_source, pcf);
+                return new List<FlowControlBlock>();
             }));
         }
 
         public override void FinishBitPack()
         {
-            _fieldWrites.Add((string.Empty, false, () =>
+            _fieldWrites.Add((string.Empty, false, (pcf) =>
             {
                 _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
-            }));
+                return new List<FlowControlBlock>();
+            }
+            ));
         }
     }
 }

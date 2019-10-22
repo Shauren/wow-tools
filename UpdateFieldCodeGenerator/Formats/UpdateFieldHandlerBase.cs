@@ -20,7 +20,7 @@ namespace UpdateFieldCodeGenerator.Formats
         protected int _bitCounter;
         protected int _blockGroupBit;
         protected int _nonArrayBitCounter;
-        protected List<(string Name, bool IsSize, Action Write)> _fieldWrites;
+        protected List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)> _fieldWrites;
         protected List<string> _dynamicChangesMaskTypes;
 
         protected UpdateFieldHandlerBase(TextWriter source, TextWriter header)
@@ -92,7 +92,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _bitCounter = HasNonArrayFields(structureType) ? 0 : -1;
             _blockGroupBit = 0;
             _nonArrayBitCounter = 0;
-            _fieldWrites = new List<(string Name, bool IsSize, Action Write)>();
+            _fieldWrites = new List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)>();
             _dynamicChangesMaskTypes = new List<string>();
         }
 
