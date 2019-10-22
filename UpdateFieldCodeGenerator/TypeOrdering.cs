@@ -7,7 +7,8 @@
         JamDynamicFieldArray,
         ArrayWithBits,
         Bits,
-        JamDynamicFieldWithBits
+        JamDynamicFieldWithBits,
+        Optional
     }
 
     public enum UpdateTypeOrder
@@ -17,6 +18,7 @@
         BlzVector,
         JamDynamicField,
         JamDynamicFieldArray,
-        Array
+        Array,
+        Optional
     }
 }

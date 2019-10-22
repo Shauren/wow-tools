@@ -57,6 +57,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlzOptionalField.cs" />
     <Compile Include="CppTypes.cs" />
     <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="EnumExtensions.cs" />

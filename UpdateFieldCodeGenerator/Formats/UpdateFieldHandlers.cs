@@ -63,6 +63,18 @@ namespace UpdateFieldCodeGenerator.Formats
                 _previousControlFlowDict[handler] = handler.OnDynamicFieldSizeUpdate(name, updateField, _previousControlFlowDict[handler]);
         }
 
+        public void OnOptionalFieldInitCreate(string name, UpdateField updateField)
+        {
+            foreach (var handler in _handlers)
+                _previousControlFlowDict[handler] = handler.OnOptionalFieldInitCreate(name, updateField, _previousControlFlowDict[handler]);
+        }
+
+        public void OnOptionalFieldInitUpdate(string name, UpdateField updateField)
+        {
+            foreach (var handler in _handlers)
+                _previousControlFlowDict[handler] = handler.OnOptionalFieldInitUpdate(name, updateField, _previousControlFlowDict[handler]);
+        }
+
         public void FinishControlBlocks()
         {
             foreach (var handler in _handlers)

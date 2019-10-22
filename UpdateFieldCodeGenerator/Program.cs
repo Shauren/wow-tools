@@ -76,7 +76,9 @@ namespace UpdateFieldCodeGenerator
             if (type.IsArray)
                 return GetFieldElementType(type.GetElementType(), StructureReferenceType.Embedded);
 
-            if (typeof(DynamicUpdateField).IsAssignableFrom(type) || typeof(BlzVectorField).IsAssignableFrom(type))
+            if (typeof(DynamicUpdateField).IsAssignableFrom(type)
+                || typeof(BlzVectorField).IsAssignableFrom(type)
+                || typeof(BlzOptionalField).IsAssignableFrom(type))
                 return GetFieldElementType(type.GenericTypeArguments[0], StructureReferenceType.Embedded);
 
             return (type, structureReferenceType);
@@ -135,7 +137,15 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
+            if (allFields.TryGetValue(CreateTypeOrder.Optional, out fieldGroup))
+                foreach (var (Field, Name) in fieldGroup)
+                    fieldHandler.OnOptionalFieldInitCreate(Name, Field);
+
             if (allFields.TryGetValue(CreateTypeOrder.JamDynamicFieldWithBits, out fieldGroup))
+                foreach (var (Field, Name) in fieldGroup)
+                    fieldHandler.OnField(Name, Field);
+
+            if (allFields.TryGetValue(CreateTypeOrder.Optional, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
@@ -222,6 +232,19 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
+            if (allFields.TryGetValue(UpdateTypeOrder.Optional, out fieldGroup))
+            {
+                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishBitPack();
+
+                foreach (var (Field, Name) in fieldGroup)
+                    fieldHandler.OnOptionalFieldInitUpdate(Name, Field);
+            }
+
+            if (allFields.TryGetValue(UpdateTypeOrder.Optional, out fieldGroup))
+                foreach (var (Field, Name) in fieldGroup)
+                    fieldHandler.OnField(Name, Field);
+
             if (allFields.TryGetValue(UpdateTypeOrder.Array, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
@@ -247,6 +270,9 @@ namespace UpdateFieldCodeGenerator
             if (typeof(bool).IsAssignableFrom(fieldType.Type))
                 return CreateTypeOrder.Bits;
 
+            if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
+                return CreateTypeOrder.Optional;
+
             if (fieldType.Type.IsArray)
             {
                 if (typeof(DynamicUpdateField).IsAssignableFrom(fieldType.Type.GetElementType()))
@@ -266,6 +292,9 @@ namespace UpdateFieldCodeGenerator
 
             if (typeof(DynamicUpdateField).IsAssignableFrom(fieldType.Type))
                 return UpdateTypeOrder.JamDynamicField;
+
+            if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
+                return UpdateTypeOrder.Optional;
 
             if (typeof(BlzVectorField).IsAssignableFrom(fieldType.Type))
                 return UpdateTypeOrder.BlzVector;

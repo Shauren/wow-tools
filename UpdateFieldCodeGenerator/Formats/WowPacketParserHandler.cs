@@ -190,6 +190,12 @@ namespace UpdateFieldCodeGenerator.Formats
                 declarationType = type.MakeArrayType();
                 ++indexLetter;
             }
+            if (typeof(BlzOptionalField).IsAssignableFrom(type))
+            {
+                flowControl.Add(new FlowControlBlock { Statement = $"if (has{name})" });
+                type = type.GenericTypeArguments[0];
+                declarationType = type;
+            }
             if (typeof(Bits).IsAssignableFrom(type))
             {
                 declarationType = typeof(uint);
@@ -271,6 +277,64 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 WriteControlBlocks(_source, flowControl, pcf);
                 _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.ReadUpdateMask(packet);");
+                _indent = 3;
+                return flowControl;
+            }
+            ));
+            return flowControl;
+        }
+
+        public override IReadOnlyList<FlowControlBlock> OnOptionalFieldInitCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        {
+            name = RenameField(name);
+            var flowControl = new List<FlowControlBlock>();
+            if (_create && updateField.Flag != UpdateFieldFlag.None)
+                flowControl.Add(new FlowControlBlock { Statement = $"if ((flags & {updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag.", "", "(", ")")}) != UpdateFieldFlag.None)" });
+
+            var nameUsedToWrite = name;
+            if (updateField.Type.IsArray)
+            {
+                flowControl.Add(new FlowControlBlock { Statement = $"for (var i = 0; i < {updateField.Size}; ++i)" });
+                nameUsedToWrite += "[i]";
+            }
+
+            _fieldWrites.Add((name, true, (pcf) =>
+            {
+                WriteControlBlocks(_source, flowControl, pcf);
+                _source.WriteLine($"{GetIndent()}var has{name} = packet.ReadBit(\"Has{name}\");");
+                _indent = 3;
+                return flowControl;
+            }
+            ));
+            return flowControl;
+        }
+
+        public override IReadOnlyList<FlowControlBlock> OnOptionalFieldInitUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        {
+            name = RenameField(name);
+            var flowControl = new List<FlowControlBlock>();
+            if (_create && updateField.Flag != UpdateFieldFlag.None)
+                flowControl.Add(new FlowControlBlock { Statement = $"if ((flags & {updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag.", "", "(", ")")}) != UpdateFieldFlag.None)" });
+
+            var nameUsedToWrite = name;
+            var arrayLoopBlockIndex = -1;
+            if (updateField.Type.IsArray)
+            {
+                flowControl.Add(new FlowControlBlock { Statement = $"for (var i = 0; i < {updateField.Size}; ++i)" });
+                nameUsedToWrite += "[i]";
+                arrayLoopBlockIndex = flowControl.Count;
+            }
+
+            if (_writeUpdateMasks)
+            {
+                GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
+                flowControl.RemoveAt(1); // bit generated but not checked for is_initialized
+            }
+
+            _fieldWrites.Add((name, true, (pcf) =>
+            {
+                WriteControlBlocks(_source, flowControl, pcf);
+                _source.WriteLine($"{GetIndent()}var has{name} = data.ReadBit(\"Has{name}\");");
                 _indent = 3;
                 return flowControl;
             }

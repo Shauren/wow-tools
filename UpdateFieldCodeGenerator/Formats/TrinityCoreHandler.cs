@@ -12,6 +12,7 @@ namespace UpdateFieldCodeGenerator.Formats
         private readonly Type _updateFieldType = CppTypes.CreateType("UpdateField", "T", "BlockBit", "Bit");
         private readonly Type _arrayUpdateFieldType = CppTypes.CreateType("UpdateFieldArray", "T", "Size", "PrimaryBit", "FirstElementBit");
         private readonly Type _dynamicUpdateFieldType = CppTypes.CreateType("DynamicUpdateField", "T", "BlockBit", "Bit");
+        private readonly Type _optionalUpdateFieldType = CppTypes.CreateType("OptionalUpdateField", "T", "BlockBit", "Bit");
 
         private UpdateFieldFlag _allUsedFlags;
         private readonly IDictionary<int, UpdateFieldFlag> _flagByUpdateBit = new Dictionary<int, UpdateFieldFlag>();
@@ -308,6 +309,12 @@ namespace UpdateFieldCodeGenerator.Formats
                 allIndexes += ", " + indexLetter;
                 ++indexLetter;
             }
+            if (typeof(BlzOptionalField).IsAssignableFrom(type))
+            {
+                flowControl.Add(new FlowControlBlock { Statement = $"if ({name}.is_initialized())" });
+                type = type.GenericTypeArguments[0];
+            }
+
             if ((updateField.CustomFlag & CustomUpdateFieldFlag.ViewerDependent) != CustomUpdateFieldFlag.None)
                 nameUsedToWrite = $"ViewerDependentValue<{name}Tag>::GetValue({nameUsedToWrite}{allIndexes}, owner, receiver)";
 
@@ -390,6 +397,66 @@ namespace UpdateFieldCodeGenerator.Formats
                 _indent = 1;
                 return flowControl;
             }));
+            return flowControl;
+        }
+
+        public override IReadOnlyList<FlowControlBlock> OnOptionalFieldInitCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        {
+            name = RenameField(name);
+
+            var flowControl = new List<FlowControlBlock>();
+            if (_create && updateField.Flag != UpdateFieldFlag.None)
+                flowControl.Add(new FlowControlBlock { Statement = $"if ({updateField.Flag.ToFlagsExpression(" || ", "fieldVisibilityFlags.HasFlag(UpdateFieldFlag::", ")")})" });
+
+            var nameUsedToWrite = name;
+            if (updateField.Type.IsArray)
+            {
+                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t i = 0; i < {updateField.Size}; ++i)" });
+                nameUsedToWrite += "[i]";
+            }
+
+            _fieldWrites.Add((name, true, (pcf) =>
+            {
+                WriteControlBlocks(_source, flowControl, pcf);
+                _source.WriteLine($"{GetIndent()}data.WriteBit({nameUsedToWrite}.is_initialized());");
+                _indent = 1;
+                return flowControl;
+            }
+            ));
+            return flowControl;
+        }
+
+        public override IReadOnlyList<FlowControlBlock> OnOptionalFieldInitUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        {
+            name = RenameField(name);
+
+            var flowControl = new List<FlowControlBlock>();
+            if (_create && updateField.Flag != UpdateFieldFlag.None)
+                flowControl.Add(new FlowControlBlock { Statement = $"if ({updateField.Flag.ToFlagsExpression(" || ", "fieldVisibilityFlags.HasFlag(UpdateFieldFlag::", ")")})" });
+
+            var nameUsedToWrite = name;
+            var arrayLoopBlockIndex = -1;
+            if (updateField.Type.IsArray)
+            {
+                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t i = 0; i < {updateField.Size}; ++i)" });
+                nameUsedToWrite += "[i]";
+                arrayLoopBlockIndex = flowControl.Count;
+            }
+
+            if (_writeUpdateMasks)
+            {
+                GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
+                flowControl.RemoveAt(1); // bit generated but not checked for is_initialized
+            }
+
+            _fieldWrites.Add((name, true, (pcf) =>
+            {
+                WriteControlBlocks(_source, flowControl, pcf);
+                _source.WriteLine($"{GetIndent()}data.WriteBit({nameUsedToWrite}.is_initialized());");
+                _indent = 1;
+                return flowControl;
+            }
+            ));
             return flowControl;
         }
 
@@ -580,6 +647,14 @@ namespace UpdateFieldCodeGenerator.Formats
                     var elementType = PrepareFieldType(fieldGeneratedType.GenericTypeArguments[0]);
                     typeName = TypeHandler.GetFriendlyName(elementType);
                     fieldGeneratedType = _dynamicUpdateFieldType.MakeGenericType(PrepareFieldType(fieldGeneratedType.GenericTypeArguments[0]),
+                        CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][1]),
+                        bit);
+                }
+                else if (typeof(BlzOptionalField).IsAssignableFrom(declarationType.Type))
+                {
+                    var elementType = PrepareFieldType(fieldGeneratedType.GenericTypeArguments[0]);
+                    typeName = TypeHandler.GetFriendlyName(elementType);
+                    fieldGeneratedType = _optionalUpdateFieldType.MakeGenericType(elementType,
                         CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][1]),
                         bit);
                 }
