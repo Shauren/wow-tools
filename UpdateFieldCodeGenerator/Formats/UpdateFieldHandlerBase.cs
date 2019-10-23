@@ -14,6 +14,7 @@ namespace UpdateFieldCodeGenerator.Formats
         protected Type _structureType;
         protected bool _create;
         protected bool _writeUpdateMasks;
+        protected bool _isRoot;
         protected int _indent = 1;
         protected readonly IDictionary<string, List<int>> _fieldBitIndex = new Dictionary<string, List<int>>();
         protected List<int> _previousFieldCounters;
@@ -88,6 +89,15 @@ namespace UpdateFieldCodeGenerator.Formats
             _structureType = structureType;
             _create = create;
             _writeUpdateMasks = writeUpdateMasks;
+            _isRoot = false;
+            try
+            {
+                Program.GetObjectType(structureType);
+                _isRoot = true;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+            }
             _fieldBitIndex.Clear();
             _bitCounter = HasNonArrayFields(structureType) ? 0 : -1;
             _blockGroupBit = 0;

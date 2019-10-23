@@ -53,7 +53,12 @@ namespace UpdateFieldCodeGenerator.Formats
 
             _indent = 2;
             if (_create)
-                _source.WriteLine($"{GetIndent()}public static {structureName} ReadCreate{structureName}(Packet packet, UpdateFieldFlag flags, params object[] indexes)");
+            {
+                if (_isRoot)
+                    _source.WriteLine($"{GetIndent()}public static I{structureName} ReadCreate{structureName}(Packet packet, UpdateFieldFlag flags, params object[] indexes)");
+                else
+                    _source.WriteLine($"{GetIndent()}public static I{structureName} ReadCreate{structureName}(Packet packet, params object[] indexes)");
+            }
             else
                 _source.WriteLine($"{GetIndent()}public static {structureName} ReadUpdate{structureName}(Packet packet, I{structureName} existingData, params object[] indexes)");
 
@@ -423,7 +428,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     else if (type == typeof(Quaternion))
                         _source.WriteLine($"data.{outputFieldName} = packet.ReadQuaternion(\"{name}\", indexes{nextIndex});");
                     else if (_create)
-                        _source.WriteLine($"data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, flags, indexes, \"{name}\"{nextIndex});");
+                        _source.WriteLine($"data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     else
                     {
                         if (_dynamicChangesMaskTypes.Contains(type.Name))
@@ -431,7 +436,7 @@ namespace UpdateFieldCodeGenerator.Formats
                             _source.WriteLine($"if (has{RenameType(type.Name)}DynamicChangesMask)");
                             _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, data.{outputFieldName} as {RenameType(type)}, indexes, \"{name}\"{nextIndex});");
                             _source.WriteLine($"{GetIndent()}else");
-                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, flags, indexes, \"{name}\"{nextIndex});");
+                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
 
                         }
                         else

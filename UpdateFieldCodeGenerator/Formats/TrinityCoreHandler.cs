@@ -98,9 +98,19 @@ namespace UpdateFieldCodeGenerator.Formats
             var structureName = RenameType(structureType);
 
             if (_create)
-                _source.WriteLine($"void {structureName}::WriteCreate(ByteBuffer& data, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const");
+            {
+                if (_isRoot)
+                    _source.WriteLine($"void {structureName}::WriteCreate(ByteBuffer& data, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const");
+                else
+                    _source.WriteLine($"void {structureName}::WriteCreate(ByteBuffer& data, {_owningObjectType} const* owner, Player const* receiver) const");
+            }
             else
-                _source.WriteLine($"void {structureName}::WriteUpdate(ByteBuffer& data, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const");
+            {
+                if (_isRoot)
+                    _source.WriteLine($"void {structureName}::WriteUpdate(ByteBuffer& data, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const");
+                else
+                    _source.WriteLine($"void {structureName}::WriteUpdate(ByteBuffer& data, {_owningObjectType} const* owner, Player const* receiver) const");
+            }
 
             _source.WriteLine("{");
         }
@@ -120,14 +130,25 @@ namespace UpdateFieldCodeGenerator.Formats
                     headerWrite();
 
                 _header.WriteLine();
-                _header.WriteLine($"    void WriteCreate(ByteBuffer& data, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const;");
-                _header.WriteLine($"    void WriteUpdate(ByteBuffer& data, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const;");
+                if (_isRoot)
+                    _header.WriteLine($"    void WriteCreate(ByteBuffer& data, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const;");
+                else
+                    _header.WriteLine($"    void WriteCreate(ByteBuffer& data, {_owningObjectType} const* owner, Player const* receiver) const;");
+
+                if (_isRoot)
+                    _header.WriteLine($"    void WriteUpdate(ByteBuffer& data, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const;");
+                else
+                    _header.WriteLine($"    void WriteUpdate(ByteBuffer& data, {_owningObjectType} const* owner, Player const* receiver) const;");
+
                 if (_writeUpdateMasks)
                 {
                     if (_allUsedFlags != UpdateFieldFlag.None)
                     {
                         _header.WriteLine($"    void AppendAllowedFieldsMaskForFlag(UpdateMask<{_bitCounter}>& allowedMaskForTarget, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags) const;");
-                        _header.WriteLine($"    void WriteUpdate(ByteBuffer& data, UpdateMask<{_bitCounter}> const& changesMask, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const;");
+                        if (_isRoot)
+                            _header.WriteLine($"    void WriteUpdate(ByteBuffer& data, UpdateMask<{_bitCounter}> const& changesMask, EnumClassFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const;");
+                        else
+                            _header.WriteLine($"    void WriteUpdate(ByteBuffer& data, UpdateMask<{_bitCounter}> const& changesMask, {_owningObjectType} const* owner, Player const* receiver) const;");
                     }
                     _header.WriteLine("    void ClearChangesMask();");
                 }
@@ -551,19 +572,19 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"{GetIndent()}data << float({name}{access}w);");
                     }
                     else if (_create)
-                        _source.WriteLine($"{name}{access}WriteCreate(data, fieldVisibilityFlags, owner, receiver);");
+                        _source.WriteLine($"{name}{access}WriteCreate(data, owner, receiver);");
                     else
                     {
                         if (_dynamicChangesMaskTypes.Contains(type.Name))
                         {
                             _source.WriteLine($"if (has{RenameType(type.Name)}DynamicChangesMask)");
-                            _source.WriteLine($"{GetIndent()}    {name}{access}WriteUpdate(data, fieldVisibilityFlags, owner, receiver);");
+                            _source.WriteLine($"{GetIndent()}    {name}{access}WriteUpdate(data, owner, receiver);");
                             _source.WriteLine($"{GetIndent()}else");
-                            _source.WriteLine($"{GetIndent()}    {name}{access}WriteCreate(data, fieldVisibilityFlags, owner, receiver);");
+                            _source.WriteLine($"{GetIndent()}    {name}{access}WriteCreate(data, owner, receiver);");
 
                         }
                         else
-                            _source.WriteLine($"{name}{access}WriteUpdate(data, fieldVisibilityFlags, owner, receiver);");
+                            _source.WriteLine($"{name}{access}WriteUpdate(data, owner, receiver);");
                     }
                     break;
                 case TypeCode.Boolean:

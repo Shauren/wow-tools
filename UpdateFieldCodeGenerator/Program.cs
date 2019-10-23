@@ -62,11 +62,11 @@ namespace UpdateFieldCodeGenerator
             }
         }
 
-        private static ObjectType GetObjectType(Type type)
+        public static ObjectType GetObjectType(Type type)
         {
             var objectTypeField = type.GetField("ObjectType", BindingFlags.Static | BindingFlags.Public);
             if (objectTypeField != null)
-                return ((ObjectType)objectTypeField.GetValue(null));
+                return (ObjectType)objectTypeField.GetValue(null);
 
             throw new ArgumentOutOfRangeException(nameof(type));
         }
