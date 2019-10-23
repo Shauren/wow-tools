@@ -20,11 +20,12 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.WriteLine("using System.Linq;");
             _source.WriteLine("using WowPacketParser.Enums;");
             _source.WriteLine("using WowPacketParser.Misc;");
+            _source.WriteLine("using WowPacketParser.Parsing.Parsers;");
             _source.WriteLine("using WowPacketParser.Store.Objects.UpdateFields;");
             _source.WriteLine();
             _source.WriteLine($"namespace WowPacketParserModule.{ModuleName}.UpdateFields.{Version}");
             _source.WriteLine("{");
-            _source.WriteLine("    public static class UpdateFieldHandler");
+            _source.WriteLine("    public class UpdateFieldHandler : UpdateFieldsHandlerBase");
             _source.WriteLine("    {");
         }
 
@@ -51,16 +52,18 @@ namespace UpdateFieldCodeGenerator.Formats
                 _header.WriteLine("    {");
             }
 
+            var methodType = _isRoot ? "override" : "static";
+
             _indent = 2;
             if (_create)
             {
                 if (_isRoot)
-                    _source.WriteLine($"{GetIndent()}public static I{structureName} ReadCreate{structureName}(Packet packet, UpdateFieldFlag flags, params object[] indexes)");
+                    _source.WriteLine($"{GetIndent()}public {methodType} I{structureName} ReadCreate{structureName}(Packet packet, UpdateFieldFlag flags, params object[] indexes)");
                 else
-                    _source.WriteLine($"{GetIndent()}public static I{structureName} ReadCreate{structureName}(Packet packet, params object[] indexes)");
+                    _source.WriteLine($"{GetIndent()}public {methodType} I{structureName} ReadCreate{structureName}(Packet packet, params object[] indexes)");
             }
             else
-                _source.WriteLine($"{GetIndent()}public static {structureName} ReadUpdate{structureName}(Packet packet, I{structureName} existingData, params object[] indexes)");
+                _source.WriteLine($"{GetIndent()}public {methodType} I{structureName} ReadUpdate{structureName}(Packet packet, I{structureName} existingData, params object[] indexes)");
 
             _source.WriteLine($"{GetIndent()}{{");
             _indent = 3;
@@ -339,7 +342,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}var has{name} = data.ReadBit(\"Has{name}\");");
+                _source.WriteLine($"{GetIndent()}var has{name} = packet.ReadBit(\"Has{name}\");");
                 _indent = 3;
                 return flowControl;
             }
@@ -485,7 +488,23 @@ namespace UpdateFieldCodeGenerator.Formats
             if (typeof(DynamicUpdateField).IsAssignableFrom(updateField.Type))
                 _header.Write($" = new {TypeHandler.GetFriendlyName(declarationType)}();");
             else if (updateField.Type.IsArray)
-                _header.Write($" = new {TypeHandler.GetFriendlyName(declarationType.GetElementType())}[{updateField.Size}];");
+            {
+                var typeFormat = TypeHandler.GetFriendlyName(declarationType.GetElementType());
+                _header.Write($" = new {typeFormat}[{updateField.Size}]");
+                if (typeof(DynamicUpdateField).IsAssignableFrom(updateField.Type.GetElementType()))
+                {
+                    _header.Write($" {{ ");
+                    for (var i = 0; i < updateField.Size; ++i)
+                    {
+                        if (i != 0)
+                            _header.Write(", ");
+
+                        _header.Write($"new {typeFormat}()");
+                    }
+                    _header.Write(" }");
+                }
+                _header.Write(";");
+            }
 
             _header.WriteLine();
         }
