@@ -26,7 +26,8 @@
         public static readonly UpdateField arenaFaction = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField duelTeam = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField guildTimeStamp = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField questLog = new UpdateField(typeof(JamMirrorQuestLog_C[]), UpdateFieldFlag.PartyMember, 100);
+        public static readonly UpdateField questLog = new UpdateField(typeof(JamMirrorQuestLog_C[]), UpdateFieldFlag.PartyMember, 125);
+        public static readonly UpdateField questSessionQuestLog = new UpdateField(typeof(DynamicUpdateField<JamMirrorQuestLog_C>), UpdateFieldFlag.PartyMember);
         public static readonly UpdateField visibleItems = new UpdateField(typeof(JamMirrorVisibleItem_C[]), UpdateFieldFlag.None, 19);
         public static readonly UpdateField playerTitle = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField fakeInebriation = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -39,5 +40,9 @@
         public static readonly UpdateField arenaCooldowns = new UpdateField(typeof(DynamicUpdateField<JamMirrorArenaCooldown_C>), UpdateFieldFlag.None);
         public static readonly UpdateField field_B0 = new UpdateField(typeof(int), UpdateFieldFlag.None); // these 2 are both quest ids and are used in condition to trigger PlayerCliQuestGiverAcceptQuest
         public static readonly UpdateField field_B4 = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField hasQuestSession = new UpdateField(typeof(bool), UpdateFieldFlag.PartyMember);
+        public static readonly UpdateField field_F8 = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
+        public static readonly UpdateField field_108 = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField hasLevelLink = new UpdateField(typeof(bool), UpdateFieldFlag.None);
     }
 }

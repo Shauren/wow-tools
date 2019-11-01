@@ -115,9 +115,12 @@
         public static readonly UpdateField spellPctModByLabel = new UpdateField(typeof(DynamicUpdateField<JamMirrorSpellPctModByLabel_C>), UpdateFieldFlag.None);
         public static readonly UpdateField spellFlatModByLabel = new UpdateField(typeof(DynamicUpdateField<JamMirrorSpellFlatModByLabel_C>), UpdateFieldFlag.None);
         public static readonly UpdateField research = new UpdateField(typeof(DynamicUpdateField<JamMirrorResearch_C>[]), UpdateFieldFlag.None, 1);
+        public static readonly UpdateField replayedQuests = new UpdateField(typeof(DynamicUpdateField<JamMirrorReplayedQuest_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField disabledSpells = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField backpackAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField bankAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField sortBagsRightToLeft = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField insertItemsLeftToRight = new UpdateField(typeof(bool), UpdateFieldFlag.None);
+        public static readonly UpdateField questSession = new UpdateField(typeof(BlzOptionalField<JamMirrorQuestSession_C>), UpdateFieldFlag.None);
     }
 }

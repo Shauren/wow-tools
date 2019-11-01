@@ -155,6 +155,57 @@ namespace UpdateFieldCodeGenerator.Formats
                         _fieldWrites.RemoveAt(pvpInfoIndex);
                         _fieldWrites.Insert(_fieldWrites.Count - 1, pvpInfo);
                     }
+
+                    var replayedQuestsSizeIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("replayedQuests") && fieldWrite.IsSize);
+                    if (replayedQuestsSizeIndex != -1)
+                    {
+                        // move after research
+                        var researchIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("research") && !fw.IsSize);
+                        if (researchIndex != -1)
+                        {
+                            var replayedQuestsSize = _fieldWrites[replayedQuestsSizeIndex];
+                            _fieldWrites.RemoveAt(replayedQuestsSizeIndex);
+                            _fieldWrites.Insert(researchIndex + 2, replayedQuestsSize);
+                        }
+                    }
+
+                    var disabledSpellsSizeIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("disabledSpells") && fieldWrite.IsSize);
+                    if (disabledSpellsSizeIndex != -1)
+                    {
+                        // move after replayedQuests
+                        replayedQuestsSizeIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("replayedQuests") && fw.IsSize);
+                        if (replayedQuestsSizeIndex != -1)
+                        {
+                            var replayedQuestsSize = _fieldWrites[disabledSpellsSizeIndex];
+                            _fieldWrites.RemoveAt(disabledSpellsSizeIndex);
+
+                            FinishBitPack();
+                            var finish = _fieldWrites.Last();
+                            _fieldWrites.RemoveAt(_fieldWrites.Count - 1);
+                            _fieldWrites.Insert(replayedQuestsSizeIndex, finish);
+
+                            FinishControlBlocks(null);
+                            finish = _fieldWrites.Last();
+                            _fieldWrites.RemoveAt(_fieldWrites.Count - 1);
+                            _fieldWrites.Insert(replayedQuestsSizeIndex, finish);
+
+                            _fieldWrites.Insert(replayedQuestsSizeIndex, replayedQuestsSize);
+                        }
+                    }
+                }
+                else
+                {
+                    var researchDataIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && !fieldWrite.IsSize);
+                    if (researchDataIndex != -1)
+                    {
+                        var researchSizeIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && fieldWrite.IsSize);
+                        if (researchSizeIndex != -1)
+                        {
+                            var researchData = _fieldWrites[researchDataIndex];
+                            _fieldWrites.RemoveAt(researchDataIndex);
+                            _fieldWrites.Insert(researchSizeIndex + 1, researchData);
+                        }
+                    }
                 }
             }
             else if (_structureType == typeof(CGAreaTriggerData))

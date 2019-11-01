@@ -8,7 +8,7 @@ namespace UpdateFieldCodeGenerator.Formats
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private static readonly string ModuleName = "V8_0_1_27101";
-        private static readonly string Version = "V8_2_0_30898";
+        private static readonly string Version = "V8_2_5_31921";
 
         public WowPacketParserHandler() : base(new StreamWriter("UpdateFieldsHandler.cs"), null)
         {
@@ -136,7 +136,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
                 {
                     var typeName = RenameType(dynamicChangesMaskType);
-                    _source.WriteLine($"{GetIndent()}var has{typeName}DynamicChangesMask = packet.ReadBit();");
+                    _source.WriteLine($"{GetIndent()}var no{typeName}ChangesMask = packet.ReadBit();");
                 }
             }
 
@@ -309,7 +309,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}var has{name} = packet.ReadBit(\"Has{name}\");");
+                _source.WriteLine($"{GetIndent()}var has{name} = packet.ReadBit(\"Has{name}\", indexes);");
                 _indent = 3;
                 return flowControl;
             }
@@ -342,7 +342,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}var has{name} = packet.ReadBit(\"Has{name}\");");
+                _source.WriteLine($"{GetIndent()}var has{name} = packet.ReadBit(\"Has{name}\", indexes);");
                 _indent = 3;
                 return flowControl;
             }
@@ -436,10 +436,10 @@ namespace UpdateFieldCodeGenerator.Formats
                     {
                         if (_dynamicChangesMaskTypes.Contains(type.Name))
                         {
-                            _source.WriteLine($"if (has{RenameType(type.Name)}DynamicChangesMask)");
-                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, data.{outputFieldName} as {RenameType(type)}, indexes, \"{name}\"{nextIndex});");
-                            _source.WriteLine($"{GetIndent()}else");
+                            _source.WriteLine($"if (no{RenameType(type.Name)}ChangesMask)");
                             _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
+                            _source.WriteLine($"{GetIndent()}else");
+                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, data.{outputFieldName} as {RenameType(type)}, indexes, \"{name}\"{nextIndex});");
 
                         }
                         else

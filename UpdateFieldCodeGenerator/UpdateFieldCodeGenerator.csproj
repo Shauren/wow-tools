@@ -96,6 +96,8 @@
     <Compile Include="Structures\JamMirrorUnitChannel_C.cs" />
     <Compile Include="Structures\JamMirrorUnlockedAzeriteEssence_C.cs" />
     <Compile Include="Structures\JamMirrorVisibleItem_C.cs" />
+    <Compile Include="Structures\JamMirrorQuestSession_C.cs" />
+    <Compile Include="Structures\JamMirrorReplayedQuest_C.cs" />
     <Compile Include="TypeHandler.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="WowGuid.cs" />

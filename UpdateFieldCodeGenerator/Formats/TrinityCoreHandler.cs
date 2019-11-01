@@ -255,7 +255,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
                 {
                     var typeName = RenameType(dynamicChangesMaskType);
-                    _source.WriteLine($"    bool has{typeName}DynamicChangesMask = data.WriteBit(Is{typeName}DynamicChangesMask());");
+                    _source.WriteLine($"    bool no{typeName}ChangesMask = data.WriteBit(Is{typeName}ChangesMaskSkipped());");
                 }
             }
 
@@ -577,10 +577,10 @@ namespace UpdateFieldCodeGenerator.Formats
                     {
                         if (_dynamicChangesMaskTypes.Contains(type.Name))
                         {
-                            _source.WriteLine($"if (has{RenameType(type.Name)}DynamicChangesMask)");
-                            _source.WriteLine($"{GetIndent()}    {name}{access}WriteUpdate(data, owner, receiver);");
-                            _source.WriteLine($"{GetIndent()}else");
+                            _source.WriteLine($"if (no{RenameType(type.Name)}ChangesMask)");
                             _source.WriteLine($"{GetIndent()}    {name}{access}WriteCreate(data, owner, receiver);");
+                            _source.WriteLine($"{GetIndent()}else");
+                            _source.WriteLine($"{GetIndent()}    {name}{access}WriteUpdate(data, owner, receiver);");
 
                         }
                         else
@@ -629,7 +629,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 return cppType.GetGenericTypeDefinition().MakeGenericType(cppType.GenericTypeArguments.Select(gp => PrepareFieldType(gp)).ToArray());
 
             if (cppType.Assembly == Assembly.GetExecutingAssembly() && !cppType.Assembly.IsDynamic)
-                return CppTypes.CreateType(RenameType(cppType));
+                return CppTypes.CreateType("UF::" + RenameType(cppType));
 
             return cppType;
         }
