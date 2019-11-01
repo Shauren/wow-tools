@@ -9,7 +9,7 @@
 #include <sstream>
 #include <regex>
 
-enum TypeType
+enum class TypeType
 {
     UNKNOWN,
     DB_REF,
@@ -46,25 +46,25 @@ union GameObjectPropertyTypeInfo
 TypeType GuessType(std::shared_ptr<Process> wow, GameObjectPropertyTypeInfo const& type)
 {
     if (wow->IsValidAddress(type.Enum.Values) && type.Enum.DefaultValue < type.Enum.ValuesCount && type.Enum.ValuesCount > 0)
-        return ENUM;
+        return TypeType::ENUM;
 
     if (wow->IsValidAddress(type.DbRef.Name))
-        return DB_REF;
+        return TypeType::DB_REF;
 
-    return INTEGER;
+    return TypeType::INTEGER;
 }
 
 char const* GetIntType(TypeType typeType, GameObjectPropertyTypeInfo const& type)
 {
     switch (typeType)
     {
-        case DB_REF:
+        case TypeType::DB_REF:
             if (type.DbRef.InvalidRefValue < 0)
                 return "int32";
             return "uint32";
-        case ENUM:
+        case TypeType::ENUM:
             return "uint32";
-        case INTEGER:
+        case TypeType::INTEGER:
             if (std::uint32_t(type.Int.MinValue) > std::uint32_t(type.Int.MaxValue))
                 return "int32";
             return "uint32";
@@ -94,11 +94,11 @@ struct GameObjectPropertyInfo
 
 #pragma pack(pop)
 
-#define MAX_GAMEOBJECT_TYPE 56
-#define MAX_PROPERTY_INDEX 232
+#define MAX_GAMEOBJECT_TYPE 58
+#define MAX_PROPERTY_INDEX 236
 
-#define GO_TYPE_DATA 0x24D55A0
-#define PROPERTY_DATA 0x1F52600
+#define GO_TYPE_DATA 0x2683680
+#define PROPERTY_DATA 0x20E3440
 #define MAX_GAMEOBJECT_DATA 34
 
 char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
@@ -158,7 +158,9 @@ char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
     "GAMEOBJECT_TYPE_MULTI",
     "GAMEOBJECT_TYPE_SIEGEABLE_MULTI",
     "GAMEOBJECT_TYPE_SIEGEABLE_MO",
-    "GAMEOBJECT_TYPE_PVP_REWARD"
+    "GAMEOBJECT_TYPE_PVP_REWARD",
+    "GAMEOBJECT_TYPE_FUTURE_PATCH_1",
+    "GAMEOBJECT_TYPE_FUTURE_PATCH_2"
 };
 
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type);
@@ -173,7 +175,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 30993, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 32305, true);
     if (!wow)
         return 1;
 
@@ -226,10 +228,10 @@ std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, Ga
     std::ostringstream stream;
     switch (GuessType(wow, type))
     {
-        case DB_REF:
+        case TypeType::DB_REF:
             stream << "References: " << wow->Read<std::string>(type.DbRef.Name) << ", NoValue = " << type.DbRef.InvalidRefValue;
             break;
-        case ENUM:
+        case TypeType::ENUM:
         {
             void const* values;
             stream << "enum {";
@@ -246,7 +248,7 @@ std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, Ga
             }
             break;
         }
-        case INTEGER:
+        case TypeType::INTEGER:
             stream << "int, Min value: " << type.Int.MinValue << ", Max value: " << type.Int.MaxValue << ", Default value: " << type.Int.DefaultValue;
             break;
         default:
