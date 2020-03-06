@@ -5,14 +5,6 @@
 #include <fstream>
 #include <map>
 
-typedef bool(__cdecl *JamCheckFn)(WORD);
-
-struct JamGroup
-{
-    JamCheckFn BelongsToGroup;
-    JamCheckFn RequiresInstanceConnection;
-};
-
 void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 {
     std::ofstream dump(fileNameBase + ".h");
@@ -27,7 +19,7 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 void DumpSpellFailures()
 {
     typedef char*(__cdecl* pGetErrorString)(int);
-    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0xB0DBD0);
+    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0xB7D1F0);
 
     Enum spellFailures;
     spellFailures.SetName("SpellCastResult");
@@ -59,10 +51,10 @@ void DumpInventoryErrors()
         std::uint32_t ChatMsgType;
     };
 
-    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0x268ABA0);
+    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0x27B1EE0);
 
     typedef int(__cdecl* GetGameErrorFn)(int);
-    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0xE7B870);
+    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0xED8440);
 
     Enum spellFailures;
     spellFailures.SetName("InventoryResult");
@@ -72,8 +64,8 @@ void DumpInventoryErrors()
     std::multimap<std::string, int> duplicates;
     while (err <= 105)
     {
-        std::string err_name = std::string("EQUIP_");
-        if (error < 1042)
+        std::string err_name = "EQUIP_";
+        if (error < 1048)
             err_name += uis[error].ErrorName;
         else
             err_name += "NONE";

@@ -153,7 +153,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     _header.WriteLine("    void ClearChangesMask();");
                 }
                 foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
-                    _header.WriteLine($"    bool Is{RenameType(dynamicChangesMaskType)}DynamicChangesMask() const {{ return false; }} // bandwidth savings aren't worth the cpu time");
+                    _header.WriteLine($"    bool Is{RenameType(dynamicChangesMaskType)}ChangesMaskSkipped() const {{ return false; }} // bandwidth savings aren't worth the cpu time");
 
                 _header.WriteLine("};");
                 _header.WriteLine();
@@ -749,7 +749,7 @@ namespace UpdateFieldCodeGenerator.Formats
         private static void WriteLicense(TextWriter writer)
         {
             writer.WriteLine("/*");
-            writer.WriteLine($" * Copyright (C) 2008-{DateTime.UtcNow.Year} TrinityCore <https://www.trinitycore.org/>");
+            writer.WriteLine(" * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information");
             writer.WriteLine(" *");
             writer.WriteLine(" * This program is free software; you can redistribute it and/or modify it");
             writer.WriteLine(" * under the terms of the GNU General Public License as published by the");
@@ -778,9 +778,9 @@ namespace UpdateFieldCodeGenerator.Formats
                 case ObjectType.Container:
                     return "Bag";
                 case ObjectType.AzeriteEmpoweredItem:
-                    return "Item";
+                    return "AzeriteEmpoweredItem";
                 case ObjectType.AzeriteItem:
-                    return "Item";
+                    return "AzeriteItem";
                 case ObjectType.Unit:
                     return "Unit";
                 case ObjectType.Player:
