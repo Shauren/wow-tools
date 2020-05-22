@@ -55,7 +55,7 @@ namespace UpdateFieldCodeGenerator
             return type.CreateType();
         }
 
-        public static Type CreateConstantForTemplateParameter(int value)
+        public static Type CreateConstantForTemplateParameter<T>(T value)
         {
             var name = "" + value;
             var existingType = _moduleBuilder.GetType(name);

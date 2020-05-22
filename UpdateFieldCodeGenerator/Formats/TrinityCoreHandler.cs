@@ -671,7 +671,7 @@ namespace UpdateFieldCodeGenerator.Formats
                         var elementType = PrepareFieldType(fieldGeneratedType.GetElementType().GenericTypeArguments[0]);
                         typeName = TypeHandler.GetFriendlyName(elementType);
                         fieldGeneratedType = _arrayUpdateFieldType.MakeGenericType(
-                            _dynamicUpdateFieldType.MakeGenericType(elementType, CppTypes.CreateConstantForTemplateParameter(-1), CppTypes.CreateConstantForTemplateParameter(-1)),
+                            _dynamicUpdateFieldType.MakeGenericType(elementType, CppTypes.CreateConstantForTemplateParameter(uint.MaxValue), CppTypes.CreateConstantForTemplateParameter(uint.MaxValue)),
                             CppTypes.CreateConstantForTemplateParameter(declarationType.Size),
                             bit,
                             CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][1]));
