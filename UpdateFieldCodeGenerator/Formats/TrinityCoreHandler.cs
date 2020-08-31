@@ -9,9 +9,13 @@ namespace UpdateFieldCodeGenerator.Formats
 {
     public class TrinityCoreHandler : UpdateFieldHandlerBase
     {
+        private readonly Type _updateFieldBaseType = CppTypes.CreateType("UpdateFieldBase", "T");
         private readonly Type _updateFieldType = CppTypes.CreateType("UpdateField", "T", "BlockBit", "Bit");
+        private readonly Type _arrayUpdateFieldBaseType = CppTypes.CreateType("UpdateFieldArrayBase", "T", "Size");
         private readonly Type _arrayUpdateFieldType = CppTypes.CreateType("UpdateFieldArray", "T", "Size", "PrimaryBit", "FirstElementBit");
+        private readonly Type _dynamicUpdateFieldBaseType = CppTypes.CreateType("DynamicUpdateFieldBase", "T");
         private readonly Type _dynamicUpdateFieldType = CppTypes.CreateType("DynamicUpdateField", "T", "BlockBit", "Bit");
+        private readonly Type _optionalUpdateFieldBaseType = CppTypes.CreateType("OptionalUpdateFieldBase", "T");
         private readonly Type _optionalUpdateFieldType = CppTypes.CreateType("OptionalUpdateField", "T", "BlockBit", "Bit");
 
         private UpdateFieldFlag _allUsedFlags;
@@ -671,7 +675,7 @@ namespace UpdateFieldCodeGenerator.Formats
                         var elementType = PrepareFieldType(fieldGeneratedType.GetElementType().GenericTypeArguments[0]);
                         typeName = TypeHandler.GetFriendlyName(elementType);
                         fieldGeneratedType = _arrayUpdateFieldType.MakeGenericType(
-                            _dynamicUpdateFieldType.MakeGenericType(elementType, CppTypes.CreateConstantForTemplateParameter(uint.MaxValue), CppTypes.CreateConstantForTemplateParameter(uint.MaxValue)),
+                            _dynamicUpdateFieldBaseType.MakeGenericType(elementType),
                             CppTypes.CreateConstantForTemplateParameter(declarationType.Size),
                             bit,
                             CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][1]));
