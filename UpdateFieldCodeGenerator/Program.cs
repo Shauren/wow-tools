@@ -8,13 +8,32 @@ namespace UpdateFieldCodeGenerator
 {
     public static class Program
     {
+        private static readonly Dictionary<ObjectType, ObjectType> _objectTypeInheritance = new Dictionary<ObjectType, ObjectType>
+        {
+            {ObjectType.Object, ObjectType.Object},
+            {ObjectType.Item, ObjectType.Object},
+            {ObjectType.Container, ObjectType.Item},
+            {ObjectType.AzeriteEmpoweredItem, ObjectType.Item},
+            {ObjectType.AzeriteItem, ObjectType.Item},
+            {ObjectType.Unit, ObjectType.Object},
+            {ObjectType.Player, ObjectType.Unit},
+            {ObjectType.ActivePlayer, ObjectType.Player},
+            {ObjectType.GameObject, ObjectType.Object},
+            {ObjectType.DynamicObject, ObjectType.Object},
+            {ObjectType.Corpse, ObjectType.Object},
+            {ObjectType.AreaTrigger, ObjectType.Object},
+            {ObjectType.SceneObject, ObjectType.Object},
+            {ObjectType.Conversation, ObjectType.Object}
+        };
+
         public static void Main()
         {
             var referencedByDict = new Dictionary<Type, List<Type>>();
             var referencesDict = new Dictionary<Type, List<Type>>();
             var structureRefTypes = new Dictionary<Type, StructureReferenceType>();
             var unsortedTypes = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(type => type.Namespace == "UpdateFieldCodeGenerator.Structures");
+                .Where(type => type.Namespace == "UpdateFieldCodeGenerator.Structures")
+                .ToList();
 
             foreach (var type in unsortedTypes)
                 structureRefTypes[type] = StructureReferenceType.Root;
@@ -38,21 +57,49 @@ namespace UpdateFieldCodeGenerator
                 }
             }
 
-            foreach (var referencedBy in referencedByDict)
-                referencedBy.Value.Sort((a, b) => GetObjectType(a).CompareTo(GetObjectType(b)));
-
             var typeList = structureRefTypes.Where(kvp => kvp.Value == StructureReferenceType.Root)
                 .Select(kvp => kvp.Key)
                 .OrderBy(type => GetObjectType(type))
-                .SelectMany(type => (referencesDict.ContainsKey(type) ? referencesDict[type] : Enumerable.Empty<Type>()).Concat(Enumerable.Repeat(type, 1)))
-                .Distinct();
+                .ToList();
+
+            foreach (var type in typeList)
+                unsortedTypes.Remove(type);
+
+            // add all missed types
+            while (unsortedTypes.Count > 0)
+            {
+                for (var i = 0; i < typeList.Count; ++i)
+                {
+                    if (referencesDict.TryGetValue(typeList[i], out var referencedTypes))
+                    {
+                        var insertIndex = i;
+                        foreach (var referencedType in referencedTypes)
+                        {
+                            var unsortedTypeIndex = unsortedTypes.IndexOf(referencedType);
+                            if (unsortedTypeIndex == -1)
+                                continue;
+
+                            typeList.Insert(insertIndex, referencedType);
+                            unsortedTypes.RemoveAt(unsortedTypeIndex);
+                            i = 0;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (unsortedTypes.Count > 0)
+                typeList.AddRange(unsortedTypes);
 
             using (var handlers = new UpdateFieldHandlers())
             {
                 handlers.BeforeStructures();
                 foreach (var dataType in typeList)
                 {
-                    var objectType = GetObjectType(referencedByDict.ContainsKey(dataType) ? referencedByDict[dataType].First() : dataType);
+
+                    var objectType = structureRefTypes[dataType] == StructureReferenceType.Root
+                        ? GetObjectType(dataType)
+                        : GetCommonObjectType(GetObjectTypeReferenceRoots(dataType, referencedByDict).Select(t => GetObjectType(t)).ToList());
 
                     WriteCreate(dataType, objectType, handlers);
                     WriteUpdate(dataType, objectType, handlers);
@@ -60,6 +107,53 @@ namespace UpdateFieldCodeGenerator
 
                 handlers.AfterStructures();
             }
+        }
+
+        public static IEnumerable<Type> GetObjectTypeReferenceRoots(Type key, Dictionary<Type, List<Type>> dict)
+        {
+            if (dict.ContainsKey(key))
+                return dict[key].SelectMany(v => GetObjectTypeReferenceRoots(v, dict));
+
+            return Enumerable.Repeat(key, 1);
+        }
+
+        public static ObjectType GetCommonObjectType(List<ObjectType> types)
+        {
+            if (types.Count == 1)
+                return types[0];
+
+            var inheritanceDepths = types.Select(objectType => GetInheritanceDepth(objectType)).ToList();
+            var minDepth = inheritanceDepths.Min();
+
+            // normalize all types to same level
+            var typesAtDepth = new List<ObjectType>();
+            for (var i = 0; i < types.Count; ++i)
+            {
+                while (inheritanceDepths[i] != minDepth)
+                {
+                    types[i] = _objectTypeInheritance[types[i]];
+                    --inheritanceDepths[i];
+                }
+            }
+
+            // now go down one level until all elements are equal
+            while (types.Distinct().Count() > 1 && minDepth > 0)
+            {
+                for (var i = 0; i < types.Count; ++i)
+                    types[i] = _objectTypeInheritance[types[i]];
+
+                --minDepth;
+            }
+
+            return types[0];
+        }
+
+        public static int GetInheritanceDepth(ObjectType objectType)
+        {
+            if (objectType == ObjectType.Object)
+                return 0;
+
+            return 1 + GetInheritanceDepth(_objectTypeInheritance[objectType]);
         }
 
         public static ObjectType GetObjectType(Type type)
