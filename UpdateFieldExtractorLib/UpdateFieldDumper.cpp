@@ -72,7 +72,7 @@ void UpdateFieldDumper::BuildUpdateFields(Outputs& outputs, std::string const& o
 
         outputs.S.AddMember(Structure::Member(i, "_DWORD", name, ""));
 
-        i += field->Size;
+        i += std::uint32_t(field->Size);
     }
 
     outputs.E.AddMember(Enum::Member(i, FormatValue(i, fieldBase), end, ""));

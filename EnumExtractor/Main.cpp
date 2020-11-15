@@ -43,7 +43,7 @@ void DumpUIErrors(std::shared_ptr<Process> wow)
     {
         std::string error = wow->Read<std::string>(errors[i].ErrorName);
         if (!error.empty())
-            uiErrors.AddMember(Enum::Member(i, error, ""));
+            uiErrors.AddMember(Enum::Member(std::uint32_t(i), error, ""));
     }
 
     DumpEnum(uiErrors, "UIErrors");

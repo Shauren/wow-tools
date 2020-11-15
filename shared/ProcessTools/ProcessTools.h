@@ -89,10 +89,10 @@ std::string const& Process::Read<std::string>(std::uintptr_t address, bool relat
 
 namespace ProcessTools
 {
-    std::shared_ptr<Process> Open(TCHAR* name, DWORD build, bool log);
+    std::shared_ptr<Process> Open(TCHAR const* name, DWORD build, bool log);
 
-    HANDLE GetHandleByName(TCHAR* name, DWORD_PTR* baseAddress, DWORD build, bool log, FileVersionInfo* versionInfo);
-    void GetFileVersion(TCHAR* path, FileVersionInfo* info);
+    HANDLE GetHandleByName(TCHAR const* name, DWORD_PTR* baseAddress, DWORD build, bool log, FileVersionInfo* versionInfo);
+    void GetFileVersion(TCHAR const* path, FileVersionInfo* info);
 }
 
 #endif // ProcessTools_h__

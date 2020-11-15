@@ -13,6 +13,8 @@ class Cache
     class MemoryObject
     {
     public:
+        virtual ~MemoryObject() = default;
+
         template<typename T>
         T const* Get() const { return reinterpret_cast<T const*>(This()); }
 

@@ -46,6 +46,7 @@ template<class ConstructType>
 class Formatter
 {
 public:
+    virtual ~Formatter() = default;
     virtual void ProcessDefinition(std::ostream& stream, ConstructType const& structure, std::uint32_t indent) = 0;
     virtual void ProcessMember(std::ostream& stream, ConstructType const& structure, typename ConstructType::Member const& member, std::uint32_t indent) = 0;
     virtual void ProcessEnd(std::ostream& stream, ConstructType const& structure, std::uint32_t indent) = 0;
@@ -61,7 +62,7 @@ public:
     {
         _formatter->ProcessDefinition(stream, _structure, _indent);
 
-        for (ConstructType::Member const& m : _structure.GetMembers())
+        for (typename ConstructType::Member const& m : _structure.GetMembers())
             _formatter->ProcessMember(stream, _structure, m, _indent);
 
         _formatter->ProcessEnd(stream, _structure, _indent);

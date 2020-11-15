@@ -165,7 +165,7 @@ void CppUpdateFieldDumper::DumpFlags(std::ofstream& file, std::string const& var
     for (std::size_t i = 0; i < fields.size(); ++i)
     {
         std::vector<UpdateField> const& fieldDefs = *fields[i];
-        std::uint32_t j = 0;
+        std::uintptr_t j = 0;
         while (j < fieldDefs.size())
         {
             std::string flagName = GetUpdateFieldFlagFullName(fieldDefs[j].Flags);

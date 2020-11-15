@@ -203,13 +203,15 @@ int main(int argc, char* argv[])
             GameObjectPropertyTypeInfo* type = wow->Read<GameObjectPropertyTypeInfo*>(typeData[i].TypeInfo + j);
             GameObjectPropertyTypeInfo typeValue = wow->Read<GameObjectPropertyTypeInfo>(type);
             TypeType typeType = GuessType(wow, typeValue);
-            typeStructure.AddMember(Structure::Member(j, GetIntType(typeType, typeValue), FixName(name),
+            std::string fixedName = FixName(name);
+            typeStructure.AddMember(Structure::Member(std::uint32_t(j), GetIntType(typeType, typeValue), fixedName,
                 (std::ostringstream() << j << " " << name << ", "
                     << FormatType(wow, props[propIndexes[j]].TypeIndex, typeValue)).str()));
         }
 
+        std::string typeName = FixName(wow->Read<std::string>(typeData[i].TypeName));
         templateUnion.AddMember(Structure::Member(i,
-            (std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), typeStructure, 4)).str(), FixName(wow->Read<std::string>(typeData[i].TypeName)), ""));
+            (std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), typeStructure, 4)).str(), typeName, ""));
     }
 
     Structure raw;
