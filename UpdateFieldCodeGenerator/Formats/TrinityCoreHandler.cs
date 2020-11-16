@@ -25,6 +25,7 @@ namespace UpdateFieldCodeGenerator.Formats
         private string _owningObjectType;
         private readonly IList<Action> _delayedHeaderWrites = new List<Action>();
         private readonly IList<string> _changesMaskClears = new List<string>();
+        private readonly IList<string> _equalityComparisonFields = new List<string>();
 
         public TrinityCoreHandler() : base(new StreamWriter("UpdateFields.cpp"), new StreamWriter("UpdateFields.h"))
         {
@@ -98,6 +99,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _owningObjectType = GetClassForObjectType(objectType);
             _delayedHeaderWrites.Clear();
             _changesMaskClears.Clear();
+            _equalityComparisonFields.Clear();
 
             var structureName = RenameType(structureType);
 
@@ -157,6 +159,12 @@ namespace UpdateFieldCodeGenerator.Formats
 
                     _header.WriteLine("    void ClearChangesMask();");
                 }
+                else
+                {
+                    _header.WriteLine($"    bool operator==({RenameType(_structureType)} const& right) const;");
+                    _header.WriteLine($"    bool operator!=({RenameType(_structureType)} const& right) const {{ return !(*this == right); }}");
+                }
+
                 foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
                     _header.WriteLine($"    bool Is{RenameType(dynamicChangesMaskType)}ChangesMaskSkipped() const {{ return false; }} // bandwidth savings aren't worth the cpu time");
 
@@ -295,15 +303,26 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.WriteLine("}");
             _source.WriteLine();
 
-            if (_writeUpdateMasks)
+            if (!_create)
             {
-                _source.WriteLine($"void {RenameType(_structureType)}::ClearChangesMask()");
-                _source.WriteLine("{");
-                foreach (var clear in _changesMaskClears)
-                    _source.WriteLine(clear);
-                _source.WriteLine($"    {_changesMaskName}.ResetAll();");
-                _source.WriteLine("}");
-                _source.WriteLine();
+                if (_writeUpdateMasks)
+                {
+                    _source.WriteLine($"void {RenameType(_structureType)}::ClearChangesMask()");
+                    _source.WriteLine("{");
+                    foreach (var clear in _changesMaskClears)
+                        _source.WriteLine(clear);
+                    _source.WriteLine($"    {_changesMaskName}.ResetAll();");
+                    _source.WriteLine("}");
+                    _source.WriteLine();
+                }
+                else
+                {
+                    _source.WriteLine($"bool {RenameType(_structureType)}::operator==({RenameType(_structureType)} const& right) const");
+                    _source.WriteLine("{");
+                    _source.WriteLine($"    return {string.Join(Environment.NewLine + "        && ", _equalityComparisonFields)};");
+                    _source.WriteLine("}");
+                    _source.WriteLine();
+                }
             }
 
             _source.Flush();
@@ -387,6 +406,8 @@ namespace UpdateFieldCodeGenerator.Formats
                 });
                 if (_writeUpdateMasks)
                     _changesMaskClears.Add($"    Base::ClearChangesMask({name});");
+                else
+                    _equalityComparisonFields.Add($"{name} == {name}");
             }
 
             return flowControl;

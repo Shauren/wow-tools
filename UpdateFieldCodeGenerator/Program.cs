@@ -194,7 +194,7 @@ namespace UpdateFieldCodeGenerator
                 .Select(group => (group.Key, group.OrderBy(field => field.Field.Order)))
                 .ToDictionary(thing => thing.Key, thing => thing.Item2);
 
-            fieldHandler.OnStructureBegin(dataType, objectType, true, false);
+            fieldHandler.OnStructureBegin(dataType, objectType, true, dataType.GetCustomAttribute<HasChangesMaskAttribute>() != null);
 
             IOrderedEnumerable<(UpdateField Field, string Name)> fieldGroup;
             var firstBunchOfFields = Enumerable.Empty<(UpdateField Field, string Name)>();
