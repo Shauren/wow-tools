@@ -407,7 +407,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 if (_writeUpdateMasks)
                     _changesMaskClears.Add($"    Base::ClearChangesMask({name});");
                 else
-                    _equalityComparisonFields.Add($"{name} == {name}");
+                    _equalityComparisonFields.Add($"{name} == right.{name}");
             }
 
             return flowControl;
