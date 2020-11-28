@@ -596,7 +596,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.Write(GetIndent());
             if (name.EndsWith("size()"))
             {
-                if (_create)
+                if (_create || !_isRoot)
                     _source.WriteLine($"data << uint32({name});");
                 else
                     _source.WriteLine($"data.WriteBits({name}, 32);");

@@ -410,7 +410,7 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 8);
                 var interfaceName = RenameType(TypeHandler.GetFriendlyName(interfaceType));
-                if (_create)
+                if (_create || !_isRoot)
                     _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[packet.ReadUInt32()];");
                 else
                     _source.WriteLine($"data.{outputFieldName} = Enumerable.Range(0, (int)packet.ReadBits(32)).Select(x => new {RenameType(TypeHandler.GetFriendlyName(type))}()).Cast<{interfaceName}>().ToArray();");
