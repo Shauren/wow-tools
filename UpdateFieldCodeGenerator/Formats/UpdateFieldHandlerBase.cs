@@ -99,7 +99,7 @@ namespace UpdateFieldCodeGenerator.Formats
             {
             }
             _fieldBitIndex.Clear();
-            _bitCounter = HasNonArrayFields(structureType) ? 0 : -1;
+            _bitCounter = HasNonArrayFields(structureType) && CountFields(structureType, field => true) > 1 ? 0 : -1;
             _blockGroupBit = 0;
             _nonArrayBitCounter = 0;
             _fieldWrites = new List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)>();
@@ -120,11 +120,16 @@ namespace UpdateFieldCodeGenerator.Formats
 
         protected static bool HasNonArrayFields(Type type)
         {
+            return CountFields(type, field => !field.Type.IsArray) > 0;
+        }
+
+        protected static int CountFields(Type type, Func<UpdateField, bool> pred)
+        {
             return type.GetFields(BindingFlags.Static | BindingFlags.Public)
                 .Where(field => typeof(UpdateField).IsAssignableFrom(field.FieldType))
                 .Select(field => field.GetValue(null) as UpdateField)
-                .Where(field => !field.Type.IsArray)
-                .Count() > 0;
+                .Where(pred)
+                .Count();
         }
 
         protected virtual string RenameType(Type type)
