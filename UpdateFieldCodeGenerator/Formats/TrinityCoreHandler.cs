@@ -59,7 +59,10 @@ namespace UpdateFieldCodeGenerator.Formats
 
             WriteLicense(_source);
             _source.WriteLine("#include \"UpdateFields.h\"");
+            _source.WriteLine("#include \"AreaTrigger.h\"");
             _source.WriteLine("#include \"ByteBuffer.h\"");
+            _source.WriteLine("#include \"Corpse.h\"");
+            _source.WriteLine("#include \"DynamicObject.h\"");
             _source.WriteLine("#include \"Player.h\"");
             _source.WriteLine("#include \"ViewerDependentValues.h\"");
             _source.WriteLine();
