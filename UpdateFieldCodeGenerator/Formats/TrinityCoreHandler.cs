@@ -339,8 +339,8 @@ namespace UpdateFieldCodeGenerator.Formats
                 flowControl.Add(new FlowControlBlock { Statement = $"if (fieldVisibilityFlags.HasFlag({updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag::")}))" });
 
             var type = updateField.Type;
-            var nameUsedToWrite = name;
-            var access = "->";
+            var access = _writeUpdateMasks ? "->" : ".";
+            var nameUsedToWrite = updateField.SizeForField != null ? string.Format(name, access) : name;
             var arrayLoopBlockIndex = -1;
             var indexLetter = 'i';
             var allIndexes = "";
@@ -368,8 +368,11 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             if (typeof(BlzVectorField).IsAssignableFrom(type))
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t {indexLetter} = 0; {indexLetter} < {name}->size(); ++{indexLetter})" });
-                nameUsedToWrite = $"(*{nameUsedToWrite})[{indexLetter}]";
+                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t {indexLetter} = 0; {indexLetter} < {name}{access}size(); ++{indexLetter})" });
+                if (_writeUpdateMasks)
+                    nameUsedToWrite = $"(*{nameUsedToWrite})";
+
+                nameUsedToWrite += $"[{indexLetter}]";
                 access = ".";
                 type = type.GenericTypeArguments[0];
                 allIndexes += ", " + indexLetter;

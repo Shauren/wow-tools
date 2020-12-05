@@ -408,7 +408,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.Write(GetIndent());
             if (name.EndsWith("size()"))
             {
-                outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 8);
+                outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 9);
                 var interfaceName = RenameType(TypeHandler.GetFriendlyName(interfaceType));
                 if (_create || !_isRoot)
                     _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[packet.ReadUInt32()];");
