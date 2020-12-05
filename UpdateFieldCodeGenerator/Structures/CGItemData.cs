@@ -21,11 +21,11 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_durability = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_maxDurability = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_createPlayedTime = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField m_modifiersMask = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_context = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField m_createTime = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_artifactXP = new UpdateField(typeof(ulong), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_itemAppearanceModID = new UpdateField(typeof(byte), UpdateFieldFlag.Owner);
-        public static readonly UpdateField m_modifiers = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
+        public static readonly UpdateField m_modifiers = new UpdateField(typeof(JamMirrorItemModList_C), UpdateFieldFlag.None);
         public static readonly UpdateField m_artifactPowers = new UpdateField(typeof(DynamicUpdateField<JamMirrorArtifactPower_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_gems = new UpdateField(typeof(DynamicUpdateField<JamMirrorSocketedGem_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_dynamicFlags2 = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);

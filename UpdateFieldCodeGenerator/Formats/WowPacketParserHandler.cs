@@ -7,8 +7,8 @@ namespace UpdateFieldCodeGenerator.Formats
 {
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
-        private static readonly string ModuleName = "V8_0_1_27101";
-        private static readonly string Version = "V8_3_0_32861";
+        private const string ModuleName = "V9_0_1_36216";
+        private const string Version = "V9_0_2_36639";
 
         public WowPacketParserHandler() : base(new StreamWriter("UpdateFieldsHandler.cs"), null)
         {

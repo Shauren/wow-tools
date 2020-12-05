@@ -14,6 +14,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField stateAnimKitID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField stateWorldEffectIDsSize = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.None, typeof(CGUnitData).GetField("stateWorldEffectIDs", BindingFlags.Static | BindingFlags.Public));
         public static readonly UpdateField stateWorldEffectsQuestObjectiveID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField spellOverrideNameID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField stateWorldEffectIDs = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.None);
         public static readonly UpdateField charm = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField summon = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
@@ -60,6 +61,8 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField boundingRadius = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField combatReach = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField displayScale = new UpdateField(typeof(float), UpdateFieldFlag.None);
+        public static readonly UpdateField creatureFamily = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField creatureType = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField nativeDisplayID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField nativeXDisplayScale = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField mountDisplayID = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -77,6 +80,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField petExperience = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField petNextLevelExperience = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField modCastingSpeed = new UpdateField(typeof(float), UpdateFieldFlag.None);
+        public static readonly UpdateField modCastingSpeedNeg = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField modSpellHaste = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField modHaste = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField modRangedHaste = new UpdateField(typeof(float), UpdateFieldFlag.None);
@@ -90,7 +94,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField resistances = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner | UpdateFieldFlag.Empath, 7);
         public static readonly UpdateField bonusResistanceMods = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 7);
         public static readonly UpdateField powerCostModifier = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 7);
-        public static readonly UpdateField powerCostMultiplier = new UpdateField(typeof(float[]), UpdateFieldFlag.Owner, 7);
         public static readonly UpdateField baseMana = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField baseHealth = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField sheatheState = new UpdateField(typeof(byte), UpdateFieldFlag.None);
@@ -123,7 +126,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField battlePetCompanionNameTimestamp = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField interactSpellID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scaleDuration = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField spellOverrideNameID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField looksLikeMountID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField looksLikeCreatureID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField lookAtControllerID = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -133,5 +135,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField worldEffects = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField channelObjects = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.None);
         public static readonly UpdateField skinningOwnerGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
+        public static readonly UpdateField silencedSchoolMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
     }
 }

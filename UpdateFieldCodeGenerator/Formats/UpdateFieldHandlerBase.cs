@@ -144,7 +144,24 @@ namespace UpdateFieldCodeGenerator.Formats
 
         protected void PostProcessFieldWrites()
         {
-            if (_structureType == typeof(CGActivePlayerData))
+            if (_structureType == typeof(CGItemData))
+            {
+                var modifiersIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("m_modifiers"));
+                if (modifiersIndex != -1)
+                {
+                    if (!_create)
+                    {
+                        var dynamicFlags2Index = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("m_dynamicFlags2"));
+                        if (dynamicFlags2Index != -1)
+                        {
+                            var modifiers = _fieldWrites[modifiersIndex];
+                            _fieldWrites.RemoveAt(modifiersIndex);
+                            _fieldWrites.Insert(dynamicFlags2Index, modifiers);
+                        }
+                    }
+                }
+            }
+            else if (_structureType == typeof(CGActivePlayerData))
             {
                 if (!_create)
                 {
@@ -161,55 +178,62 @@ namespace UpdateFieldCodeGenerator.Formats
                         _fieldWrites.Insert(_fieldWrites.Count - 1, pvpInfo);
                     }
 
-                    var replayedQuestsSizeIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("replayedQuests") && fieldWrite.IsSize);
-                    if (replayedQuestsSizeIndex != -1)
+                    var spellFlatModByLabelIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("spellFlatModByLabel") && fieldWrite.IsSize);
+                    if (spellFlatModByLabelIndex != -1)
                     {
                         // move after research
-                        var researchIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("research") && !fw.IsSize);
-                        if (researchIndex != -1)
+                        var researchSizeIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("research") && fw.IsSize);
+                        if (researchSizeIndex != -1)
                         {
-                            var replayedQuestsSize = _fieldWrites[replayedQuestsSizeIndex];
-                            _fieldWrites.RemoveAt(replayedQuestsSizeIndex);
-                            _fieldWrites.Insert(researchIndex + 2, replayedQuestsSize);
-                        }
-                    }
-
-                    var disabledSpellsSizeIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("disabledSpells") && fieldWrite.IsSize);
-                    if (disabledSpellsSizeIndex != -1)
-                    {
-                        // move after replayedQuests
-                        replayedQuestsSizeIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("replayedQuests") && fw.IsSize);
-                        if (replayedQuestsSizeIndex != -1)
-                        {
-                            var replayedQuestsSize = _fieldWrites[disabledSpellsSizeIndex];
-                            _fieldWrites.RemoveAt(disabledSpellsSizeIndex);
-
-                            FinishBitPack();
-                            var finish = _fieldWrites.Last();
-                            _fieldWrites.RemoveAt(_fieldWrites.Count - 1);
-                            _fieldWrites.Insert(replayedQuestsSizeIndex, finish);
-
-                            FinishControlBlocks(null);
-                            finish = _fieldWrites.Last();
-                            _fieldWrites.RemoveAt(_fieldWrites.Count - 1);
-                            _fieldWrites.Insert(replayedQuestsSizeIndex, finish);
-
-                            _fieldWrites.Insert(replayedQuestsSizeIndex, replayedQuestsSize);
+                            var researchSize = _fieldWrites[researchSizeIndex];
+                            _fieldWrites.RemoveAt(researchSizeIndex);
+                            _fieldWrites.Insert(spellFlatModByLabelIndex + 1, researchSize);
                         }
                     }
                 }
-                else
+
+                var questSessionBitIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession.is_initialized()"));
+                if (questSessionBitIndex != -1)
                 {
-                    var researchDataIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && !fieldWrite.IsSize);
-                    if (researchDataIndex != -1)
+                    var newQuestSessionPos = _fieldWrites.FindIndex(fw => !fw.IsSize && fw.Name == RenameField(_create ? "characterRestrictions" : "invSlots"));
+                    if (newQuestSessionPos != -1)
                     {
-                        var researchSizeIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && fieldWrite.IsSize);
-                        if (researchSizeIndex != -1)
-                        {
-                            var researchData = _fieldWrites[researchDataIndex];
-                            _fieldWrites.RemoveAt(researchDataIndex);
-                            _fieldWrites.Insert(researchSizeIndex + 1, researchData);
-                        }
+                        var movedCount = 3;
+
+                        var movedItems = _fieldWrites.GetRange(questSessionBitIndex, movedCount);
+                        _fieldWrites.RemoveRange(questSessionBitIndex, movedCount);
+
+                        FinishControlBlocks(null);
+
+                        movedItems.Insert(0, _fieldWrites[_fieldWrites.Count - 1]);
+
+                        _fieldWrites.RemoveRange(_fieldWrites.Count - 1, 1);
+
+                        _fieldWrites.InsertRange(newQuestSessionPos - movedCount, movedItems);
+                    }
+                }
+
+                var researchDataIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && !fieldWrite.IsSize);
+                if (researchDataIndex != -1)
+                {
+                    var researchSizeIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && fieldWrite.IsSize);
+                    if (researchSizeIndex != -1)
+                    {
+                        var researchData = _fieldWrites[researchDataIndex];
+                        _fieldWrites.RemoveAt(researchDataIndex);
+                        _fieldWrites.Insert(researchSizeIndex + 1, researchData);
+                    }
+                }
+
+                var field_1410Index = _fieldWrites.FindIndex(fw => fw.Name == RenameField("field_1410"));
+                if (field_1410Index != -1)
+                {
+                    var questSessionBit = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession") && fw.IsSize);
+                    if (questSessionBit != -1)
+                    {
+                        var field_1410 = _fieldWrites[field_1410Index];
+                        _fieldWrites.RemoveAt(field_1410Index);
+                        _fieldWrites.Insert(questSessionBit, field_1410);
                     }
                 }
             }
@@ -226,6 +250,20 @@ namespace UpdateFieldCodeGenerator.Formats
                     var extraScaleCurve = _fieldWrites[extraScaleCurveIndex];
                     _fieldWrites.RemoveAt(extraScaleCurveIndex);
                     _fieldWrites.Insert(_fieldWrites.Count - 1, extraScaleCurve);
+                }
+                if (_create)
+                {
+                    var overrideScaleCurveIndex = _fieldWrites.FindIndex(fieldWrite =>
+                    {
+                        return fieldWrite.Name == RenameField("m_overrideScaleCurve") && !fieldWrite.IsSize;
+                    });
+                    if (overrideScaleCurveIndex != -1)
+                    {
+                        // move to start
+                        var overrideScaleCurve = _fieldWrites[overrideScaleCurveIndex];
+                        _fieldWrites.RemoveAt(overrideScaleCurveIndex);
+                        _fieldWrites.Insert(0, overrideScaleCurve);
+                    }
                 }
             }
         }

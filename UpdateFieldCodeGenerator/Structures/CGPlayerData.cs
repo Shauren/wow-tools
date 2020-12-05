@@ -13,12 +13,7 @@
         public static readonly UpdateField guildRankID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField guildDeleteDate = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField guildLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField skinID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField faceID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField hairStyleID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField hairColorID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField customDisplayOption = new UpdateField(typeof(byte[]), UpdateFieldFlag.None, 3);
-        public static readonly UpdateField facialHairStyleID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField customizations = new UpdateField(typeof(DynamicUpdateField<JamMirrorChrCustomizationChoice_C>), UpdateFieldFlag.None);
         public static readonly UpdateField partyType = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField nativeSex = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField inebriation = new UpdateField(typeof(byte), UpdateFieldFlag.None);
@@ -40,9 +35,10 @@
         public static readonly UpdateField arenaCooldowns = new UpdateField(typeof(DynamicUpdateField<JamMirrorArenaCooldown_C>), UpdateFieldFlag.None);
         public static readonly UpdateField field_B0 = new UpdateField(typeof(int), UpdateFieldFlag.None); // these 2 are both quest ids and are used in condition to trigger PlayerCliQuestGiverAcceptQuest
         public static readonly UpdateField field_B4 = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField ctrOptions = new UpdateField(typeof(JamMirrorCTROptions_C), UpdateFieldFlag.None);
+        public static readonly UpdateField covenantID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField soulbindID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField hasQuestSession = new UpdateField(typeof(bool), UpdateFieldFlag.PartyMember);
-        public static readonly UpdateField field_F8 = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
-        public static readonly UpdateField field_108 = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField hasLevelLink = new UpdateField(typeof(bool), UpdateFieldFlag.None);
     }
 }

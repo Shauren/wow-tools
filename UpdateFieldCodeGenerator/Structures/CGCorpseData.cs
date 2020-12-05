@@ -14,13 +14,9 @@
         public static readonly UpdateField m_unused = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField m_raceID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField m_sex = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField m_skinID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField m_faceID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField m_hairStyleID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField m_hairColorID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField m_facialHairStyleID = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField m_customizations = new UpdateField(typeof(DynamicUpdateField<JamMirrorChrCustomizationChoice_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_flags = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_factionTemplate = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_customDisplayOption = new UpdateField(typeof(byte[]), UpdateFieldFlag.None, 3);
+        public static readonly UpdateField m_stateSpellVisualKitID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
     }
 }
