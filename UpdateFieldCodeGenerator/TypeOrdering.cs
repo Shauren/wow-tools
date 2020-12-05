@@ -3,6 +3,7 @@
     public enum CreateTypeOrder
     {
         Default,
+        DefaultWithBits,
         JamDynamicField,
         JamDynamicFieldArray,
         ArrayWithBits,

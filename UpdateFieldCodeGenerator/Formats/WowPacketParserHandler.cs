@@ -210,7 +210,11 @@ namespace UpdateFieldCodeGenerator.Formats
             }
 
             if (!_create && _writeUpdateMasks)
+            {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
+                if (name.EndsWith("is_initialized()"))
+                    flowControl.RemoveAt(1); // bit generated but not checked for is_initialized
+            }
 
             Type interfaceType = null;
             if (updateField.SizeForField != null)
@@ -418,6 +422,13 @@ namespace UpdateFieldCodeGenerator.Formats
                     _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[packet.ReadUInt32()];");
                 else
                     _source.WriteLine($"data.{outputFieldName} = Enumerable.Range(0, (int)packet.ReadBits(32)).Select(x => new {RenameType(TypeHandler.GetFriendlyName(type))}()).Cast<{interfaceName}>().ToArray();");
+                return;
+            }
+
+            if (name.EndsWith("is_initialized()"))
+            {
+                outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 17);
+                _source.WriteLine($"var has{outputFieldName} = packet.ReadBit(\"Has{outputFieldName}\", indexes);");
                 return;
             }
 

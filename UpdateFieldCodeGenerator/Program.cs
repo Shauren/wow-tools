@@ -223,9 +223,19 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
+            if (allFields.TryGetValue(CreateTypeOrder.DefaultWithBits, out fieldGroup))
+                foreach (var (Field, Name) in fieldGroup)
+                    fieldHandler.OnField(Name, Field);
+
             if (allFields.TryGetValue(CreateTypeOrder.ArrayWithBits, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
+
+            if (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional))
+            {
+                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishBitPack();
+            }
 
             if (allFields.TryGetValue(CreateTypeOrder.Bits, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
@@ -235,11 +245,11 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnOptionalFieldInitCreate(Name, Field);
 
-            if (allFields.TryGetValue(CreateTypeOrder.JamDynamicFieldWithBits, out fieldGroup))
+            if (allFields.TryGetValue(CreateTypeOrder.Optional, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
-            if (allFields.TryGetValue(CreateTypeOrder.Optional, out fieldGroup))
+            if (allFields.TryGetValue(CreateTypeOrder.JamDynamicFieldWithBits, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
@@ -353,7 +363,10 @@ namespace UpdateFieldCodeGenerator
             if (field.SizeForField == null)
                 return (field, fieldInfo.Name);
 
-            return (new UpdateField(typeof(uint), field.Flag, field.SizeForField, order: field.Order), field.SizeForField.Name + "->size()");
+            if (typeof(BlzOptionalField).IsAssignableFrom(field.Type))
+                return (new UpdateField(typeof(Bits), field.Flag, field.SizeForField, bitSize: 1, order: field.Order), field.SizeForField.Name + ".is_initialized()");
+
+            return (new UpdateField(typeof(uint), field.Flag, field.SizeForField, order: field.Order), field.SizeForField.Name + "{0}size()");
         }
 
         private static CreateTypeOrder GetCreateTypeOrder(UpdateField fieldType)
@@ -364,8 +377,8 @@ namespace UpdateFieldCodeGenerator
             if (typeof(bool).IsAssignableFrom(fieldType.Type))
                 return CreateTypeOrder.Bits;
 
-            if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
-                return CreateTypeOrder.Optional;
+            //if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
+            //    return CreateTypeOrder.Optional;
 
             if (fieldType.Type.IsArray)
             {
@@ -375,6 +388,9 @@ namespace UpdateFieldCodeGenerator
                 if (StructureHasBitFields(fieldType.Type.GetElementType()))
                     return CreateTypeOrder.ArrayWithBits;
             }
+
+            if (StructureHasBitFields(fieldType.Type))
+                return CreateTypeOrder.DefaultWithBits;
 
             return CreateTypeOrder.Default;
         }
@@ -387,8 +403,8 @@ namespace UpdateFieldCodeGenerator
             if (typeof(DynamicUpdateField).IsAssignableFrom(fieldType.Type))
                 return UpdateTypeOrder.JamDynamicField;
 
-            if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
-                return UpdateTypeOrder.Optional;
+            //if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
+            //    return UpdateTypeOrder.Optional;
 
             if (typeof(BlzVectorField).IsAssignableFrom(fieldType.Type))
                 return UpdateTypeOrder.BlzVector;

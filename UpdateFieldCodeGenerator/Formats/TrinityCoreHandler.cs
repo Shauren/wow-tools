@@ -391,7 +391,11 @@ namespace UpdateFieldCodeGenerator.Formats
                 nameUsedToWrite = $"ViewerDependentValue<{name}Tag>::GetValue({nameUsedToWrite}{allIndexes}, owner, receiver)";
 
             if (!_create && _writeUpdateMasks)
+            {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
+                if (name.EndsWith("is_initialized()"))
+                    flowControl.RemoveAt(1); // bit generated but not checked for is_initialized
+            }
 
             RegisterDynamicChangesMaskFieldType(type);
 
@@ -755,7 +759,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             else
             {
-                typeName = TypeHandler.GetFriendlyName(fieldGeneratedType);
+                typeName = TypeHandler.GetFriendlyName(PrepareFieldType(fieldGeneratedType));
                 _header.WriteLine($"    {typeName} {name};");
             }
 
