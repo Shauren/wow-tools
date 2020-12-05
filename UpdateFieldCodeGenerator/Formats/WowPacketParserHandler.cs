@@ -254,7 +254,10 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.Resize(packet.ReadUInt32());");
+                if (updateField.BitSize > 0)
+                    _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.Resize(packet.ReadBits({updateField.BitSize}));");
+                else
+                    _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.Resize(packet.ReadUInt32());");
                 _indent = 3;
                 return flowControl;
             }
@@ -284,7 +287,8 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.ReadUpdateMask(packet);");
+                var bitCountArgument = updateField.BitSize > 0 ? ", " + updateField.BitSize : "";
+                _source.WriteLine($"{GetIndent()}data.{nameUsedToWrite}.ReadUpdateMask(packet{bitCountArgument});");
                 _indent = 3;
                 return flowControl;
             }

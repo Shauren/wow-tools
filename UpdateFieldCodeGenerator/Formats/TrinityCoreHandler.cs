@@ -437,7 +437,10 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}data << uint32({nameUsedToWrite}.size());");
+                if (updateField.BitSize > 0)
+                    _source.WriteLine($"{GetIndent()}data.WriteBits({nameUsedToWrite}.size(), {updateField.BitSize});");
+                else
+                    _source.WriteLine($"{GetIndent()}data << uint32({nameUsedToWrite}.size());");
                 _indent = 1;
                 return flowControl;
             }));
@@ -467,10 +470,11 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
+                var bitCountArgument = updateField.BitSize > 0 ? ", " + updateField.BitSize : "";
                 _source.WriteLine($"{GetIndent()}if (!{(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")})");
-                _source.WriteLine($"{GetIndent()}    {nameUsedToWrite}.WriteUpdateMask(data);");
+                _source.WriteLine($"{GetIndent()}    {nameUsedToWrite}.WriteUpdateMask(data{bitCountArgument});");
                 _source.WriteLine($"{GetIndent()}else");
-                _source.WriteLine($"{GetIndent()}    WriteCompleteDynamicFieldUpdateMask({nameUsedToWrite}.size(), data);");
+                _source.WriteLine($"{GetIndent()}    WriteCompleteDynamicFieldUpdateMask({nameUsedToWrite}.size(), data{bitCountArgument});");
                 _indent = 1;
                 return flowControl;
             }));
