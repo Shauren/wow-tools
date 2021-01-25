@@ -8,7 +8,7 @@
         public static readonly UpdateField m_stateFlags = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_endTime = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_acceptTime = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField field_10 = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField m_objectiveFlags = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_objectiveProgress = new UpdateField(typeof(short[]), UpdateFieldFlag.None, 24);
     }
 }
