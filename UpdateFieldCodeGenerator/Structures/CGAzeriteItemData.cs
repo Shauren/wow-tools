@@ -13,6 +13,6 @@
         public static readonly UpdateField m_unlockedEssences = new UpdateField(typeof(DynamicUpdateField<JamMirrorUnlockedAzeriteEssence_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_selectedEssences = new UpdateField(typeof(DynamicUpdateField<JamMirrorSelectedAzeriteEssences_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_unlockedEssenceMilestones = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
-        public static readonly UpdateField m_enabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
+        public static readonly UpdateField m_enabled = new UpdateField(typeof(bool), UpdateFieldFlag.Owner);
     }
 }
