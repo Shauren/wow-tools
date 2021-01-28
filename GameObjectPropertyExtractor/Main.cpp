@@ -78,6 +78,9 @@ char const* GetIntType(TypeType typeType, GameObjectPropertyTypeInfo const& type
 
 struct GameObjectProperty
 {
+    static constexpr std::uintptr_t PROPERTY_DATA = 0x2693BF0;
+    static constexpr std::size_t MAX_PROPERTY_INDEX = 242;
+
     std::uint32_t Index;
     char const* Name;
     std::uint32_t TypeIndex;
@@ -86,6 +89,9 @@ struct GameObjectProperty
 
 struct GameObjectPropertyInfo
 {
+    static constexpr std::uintptr_t GO_TYPE_DATA = 0x2CD1EC0;
+    static constexpr std::size_t MAX_GAMEOBJECT_TYPE = 61;
+
     char const* TypeName;
     std::uint32_t Count;
     std::uint32_t* List;
@@ -94,14 +100,9 @@ struct GameObjectPropertyInfo
 
 #pragma pack(pop)
 
-#define MAX_GAMEOBJECT_TYPE 58
-#define MAX_PROPERTY_INDEX 237
+constexpr std::uint32_t MAX_GAMEOBJECT_DATA = 34;
 
-#define GO_TYPE_DATA 0x27AA860
-#define PROPERTY_DATA 0x21E4260
-#define MAX_GAMEOBJECT_DATA 34
-
-char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
+char const* TCEnumName[GameObjectPropertyInfo::MAX_GAMEOBJECT_TYPE] =
 {
     "GAMEOBJECT_TYPE_DOOR",
     "GAMEOBJECT_TYPE_BUTTON",
@@ -159,15 +160,18 @@ char const* TCEnumName[MAX_GAMEOBJECT_TYPE] =
     "GAMEOBJECT_TYPE_SIEGEABLE_MULTI",
     "GAMEOBJECT_TYPE_SIEGEABLE_MO",
     "GAMEOBJECT_TYPE_PVP_REWARD",
-    "GAMEOBJECT_TYPE_FUTURE_PATCH_1",
-    "GAMEOBJECT_TYPE_FUTURE_PATCH_2"
+    "GAMEOBJECT_TYPE_PLAYER_CHOICE_CHEST",
+    "GAMEOBJECT_TYPE_LEGENDARY_FORGE",
+    "GAMEOBJECT_TYPE_GARR_TALENT_TREE",
+    "GAMEOBJECT_TYPE_WEEKLY_REWARD_CHEST",
+    "GAMEOBJECT_TYPE_CLIENT_MODEL"
 };
 
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type);
 
 std::string FixName(std::string name)
 {
-    static std::regex const commentRemoval("\\s*\\([^\\)]+\\)");
+    static std::regex const commentRemoval(R"(\s*\([^\)]+\))");
     static std::regex const normalizer("[^[:alnum:]]");
     std::string noExtra = std::regex_replace(name, commentRemoval, "");
     return std::regex_replace(noExtra, normalizer, "");
@@ -175,16 +179,16 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 33369, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 36839, true);
     if (!wow)
         return 1;
 
-    std::vector<GameObjectProperty> props = wow->ReadArray<GameObjectProperty>(PROPERTY_DATA, MAX_PROPERTY_INDEX);
-    std::string propertyNames[MAX_PROPERTY_INDEX];
+    std::vector<GameObjectProperty> props = wow->ReadArray<GameObjectProperty>(GameObjectProperty::PROPERTY_DATA, GameObjectProperty::MAX_PROPERTY_INDEX);
+    std::string propertyNames[GameObjectProperty::MAX_PROPERTY_INDEX];
     for (std::uint32_t i = 0; i < props.size(); ++i)
         propertyNames[i] = wow->Read<std::string>(props[i].Name);
 
-    std::vector<GameObjectPropertyInfo> typeData = wow->ReadArray<GameObjectPropertyInfo>(GO_TYPE_DATA, MAX_GAMEOBJECT_TYPE);
+    std::vector<GameObjectPropertyInfo> typeData = wow->ReadArray<GameObjectPropertyInfo>(GameObjectPropertyInfo::GO_TYPE_DATA, GameObjectPropertyInfo::MAX_GAMEOBJECT_TYPE);
 
     Structure templateUnion;
     templateUnion.SetName("GameObjectTemplateData");
@@ -195,7 +199,7 @@ int main(int argc, char* argv[])
         typeStructure.SetComment(std::to_string(i) + " " + TCEnumName[i]);
         typeStructure.SetValueCommentPadding(56);
 
-        std::uint32_t propCount = std::min<std::uint32_t>(MAX_GAMEOBJECT_DATA, typeData[i].Count);
+        std::uint32_t propCount = std::min(MAX_GAMEOBJECT_DATA, typeData[i].Count);
         std::vector<std::uint32_t> propIndexes = wow->ReadArray<std::uint32_t>(typeData[i].List, propCount);
         for (std::size_t j = 0; j < propIndexes.size(); ++j)
         {
@@ -217,7 +221,7 @@ int main(int argc, char* argv[])
     Structure raw;
     raw.AddMember(Structure::Member(0, "uint32", "data[MAX_GAMEOBJECT_DATA]", ""));
 
-    templateUnion.AddMember(Structure::Member(MAX_GAMEOBJECT_TYPE,
+    templateUnion.AddMember(Structure::Member(GameObjectPropertyInfo::MAX_GAMEOBJECT_TYPE,
         (std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), raw, 4)).str(), "raw", ""));
 
     std::ofstream structure("GameObjectTemplate.h");
