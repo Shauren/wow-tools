@@ -93,7 +93,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField statNegBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 4);
         public static readonly UpdateField resistances = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner | UpdateFieldFlag.Empath, 7);
         public static readonly UpdateField bonusResistanceMods = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 7);
-        public static readonly UpdateField powerCostModifier = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 7);
+        public static readonly UpdateField manaCostModifier = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 7);
         public static readonly UpdateField baseMana = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField baseHealth = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField sheatheState = new UpdateField(typeof(byte), UpdateFieldFlag.None);
@@ -115,7 +115,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField lifesteal = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
         public static readonly UpdateField minRangedDamage = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
         public static readonly UpdateField maxRangedDamage = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
-        public static readonly UpdateField manaCostModifierModifier = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
+        public static readonly UpdateField manaCostMultiplier = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
         public static readonly UpdateField maxHealthModifier = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
         public static readonly UpdateField hoverHeight = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField minItemLevelCutoff = new UpdateField(typeof(int), UpdateFieldFlag.None);
