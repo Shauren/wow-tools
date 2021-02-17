@@ -154,12 +154,12 @@ namespace UpdateFieldCodeGenerator.Formats
                 if (_writeUpdateMasks)
                 {
                     if (_isRoot)
-                        _header.WriteLine($"    void WriteUpdate(ByteBuffer& data, UpdateMask<{_bitCounter}> const& changesMask, bool ignoreNestedChangesMask, {_owningObjectType} const* owner, Player const* receiver) const;");
+                        _header.WriteLine($"    void WriteUpdate(ByteBuffer& data, Mask const& changesMask, bool ignoreNestedChangesMask, {_owningObjectType} const* owner, Player const* receiver) const;");
 
                     if (_allUsedFlags != UpdateFieldFlag.None)
                     {
-                        _header.WriteLine($"    void AppendAllowedFieldsMaskForFlag(UpdateMask<{_bitCounter}>& allowedMaskForTarget, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags) const;");
-                        _header.WriteLine($"    void FilterDisallowedFieldsMaskForFlag(UpdateMask<{_bitCounter}>& changesMask, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags) const;");
+                        _header.WriteLine($"    void AppendAllowedFieldsMaskForFlag(Mask& allowedMaskForTarget, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags) const;");
+                        _header.WriteLine($"    void FilterDisallowedFieldsMaskForFlag(Mask& changesMask, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags) const;");
                     }
 
                     _header.WriteLine("    void ClearChangesMask();");
@@ -198,7 +198,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     var noneFlags = new int[(_bitCounter + 31) / 32];
                     bitMaskByFlag[UpdateFieldFlag.None].CopyTo(noneFlags, 0);
 
-                    _source.WriteLine($"    UpdateMask<{_bitCounter}> allowedMaskForTarget({{ {string.Join(", ", noneFlags.Select(v => "0x" + v.ToString("X8") + "u"))} }});");
+                    _source.WriteLine($"    Mask allowedMaskForTarget({{ {string.Join(", ", noneFlags.Select(v => "0x" + v.ToString("X8") + "u"))} }});");
                     _source.WriteLine($"    AppendAllowedFieldsMaskForFlag(allowedMaskForTarget, fieldVisibilityFlags);");
                     _source.WriteLine($"    WriteUpdate(data, {_changesMaskName} & allowedMaskForTarget, false, owner, receiver);");
                 }
@@ -213,7 +213,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
                 if (_allUsedFlags != UpdateFieldFlag.None)
                 {
-                    _source.WriteLine($"void {RenameType(_structureType)}::AppendAllowedFieldsMaskForFlag(UpdateMask<{_bitCounter}>& allowedMaskForTarget, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags) const");
+                    _source.WriteLine($"void {RenameType(_structureType)}::AppendAllowedFieldsMaskForFlag(Mask& allowedMaskForTarget, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags) const");
                     _source.WriteLine("{");
                     for (var j = 0; j < 8; ++j)
                     {
@@ -227,7 +227,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                     _source.WriteLine("}");
                     _source.WriteLine();
-                    _source.WriteLine($"void {RenameType(_structureType)}::FilterDisallowedFieldsMaskForFlag(UpdateMask<{_bitCounter}>& changesMask, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags) const");
+                    _source.WriteLine($"void {RenameType(_structureType)}::FilterDisallowedFieldsMaskForFlag(Mask& changesMask, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags) const");
                     _source.WriteLine("{");
                     for (var j = 0; j < 8; ++j)
                     {
@@ -245,12 +245,12 @@ namespace UpdateFieldCodeGenerator.Formats
 
                 if (_isRoot)
                 {
-                    _source.WriteLine($"void {RenameType(_structureType)}::WriteUpdate(ByteBuffer& data, UpdateMask<{_bitCounter}> const& changesMask, bool ignoreNestedChangesMask, {_owningObjectType} const* owner, Player const* receiver) const");
+                    _source.WriteLine($"void {RenameType(_structureType)}::WriteUpdate(ByteBuffer& data, Mask const& changesMask, bool ignoreNestedChangesMask, {_owningObjectType} const* owner, Player const* receiver) const");
                     _source.WriteLine("{");
                 }
                 else
                 {
-                    _source.WriteLine($"    UpdateMask<{_bitCounter}> changesMask = _changesMask;");
+                    _source.WriteLine($"    Mask changesMask = _changesMask;");
                     _source.WriteLine( "    if (ignoreChangesMask)");
                     _source.WriteLine( "        changesMask.SetAll();");
                     _source.WriteLine();
