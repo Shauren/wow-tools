@@ -19,7 +19,7 @@ namespace UpdateFieldCodeGenerator.Formats
         private readonly Type _optionalUpdateFieldType = CppTypes.CreateType("OptionalUpdateField", "T", "BlockBit", "Bit");
 
         private UpdateFieldFlag _allUsedFlags;
-        private readonly IDictionary<int, UpdateFieldFlag> _flagByUpdateBit = new Dictionary<int, UpdateFieldFlag>();
+        private readonly IDictionary<int, ISet<UpdateFieldFlag>> _flagByUpdateBit = new Dictionary<int, ISet<UpdateFieldFlag>>();
 
         private readonly string _changesMaskName = "_changesMask";
         private string _owningObjectType;
@@ -100,7 +100,7 @@ namespace UpdateFieldCodeGenerator.Formats
             base.OnStructureBegin(structureType, objectType, create, writeUpdateMasks);
             _allUsedFlags = UpdateFieldFlag.None;
             _flagByUpdateBit.Clear();
-            _flagByUpdateBit[0] = UpdateFieldFlag.None;
+            _flagByUpdateBit[0] = new SortedSet<UpdateFieldFlag>() { UpdateFieldFlag.None };
             _owningObjectType = GetClassForObjectType(objectType);
             _delayedHeaderWrites.Clear();
             _changesMaskClears.Clear();
@@ -185,11 +185,10 @@ namespace UpdateFieldCodeGenerator.Formats
                 {
                     for (var i = 0; i < _bitCounter; ++i)
                     {
-                        if (_flagByUpdateBit.TryGetValue(i, out var flag) && flag != UpdateFieldFlag.None)
+                        if (_flagByUpdateBit.TryGetValue(i, out var flags))
                         {
-                            for (var j = 0; j < 8; ++j)
-                                if ((flag & (UpdateFieldFlag)(1 << j)) != UpdateFieldFlag.None)
-                                    bitMaskByFlag.ComputeIfAbsent((UpdateFieldFlag)(1 << j), k => new BitArray(_bitCounter)).Set(i, true);
+                            foreach (var flag in flags)
+                                bitMaskByFlag.ComputeIfAbsent(flag, k => new BitArray(_bitCounter)).Set(i, true);
                         }
                         else
                             bitMaskByFlag.ComputeIfAbsent(UpdateFieldFlag.None, k => new BitArray(_bitCounter)).Set(i, true);
@@ -579,9 +578,9 @@ namespace UpdateFieldCodeGenerator.Formats
             }
 
             if (_flagByUpdateBit.ContainsKey(bitIndex[0]))
-                _flagByUpdateBit[bitIndex[0]] |= updateField.Flag;
+                _flagByUpdateBit[bitIndex[0]].UnionWith(updateField.Flag.ToFlagSet());
             else
-                _flagByUpdateBit[bitIndex[0]] = updateField.Flag;
+                _flagByUpdateBit[bitIndex[0]] = new SortedSet<UpdateFieldFlag>(updateField.Flag.ToFlagSet());
 
             if (updateField.Type.IsArray)
             {
@@ -593,7 +592,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
                 flowControl.Insert(arrayLoopBlockIndex + 1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]} + i])" });
                 for (var i = 0; i < updateField.Size; ++i)
-                    _flagByUpdateBit[bitIndex[1] + i] = updateField.Flag;
+                    _flagByUpdateBit[bitIndex[1] + i] = new SortedSet<UpdateFieldFlag>(updateField.Flag.ToFlagSet());
             }
             else
             {
