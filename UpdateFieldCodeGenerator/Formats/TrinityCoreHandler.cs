@@ -227,18 +227,15 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                     _source.WriteLine("}");
                     _source.WriteLine();
+
+                    var noneFlags = new int[(_bitCounter + 31) / 32];
+                    bitMaskByFlag[UpdateFieldFlag.None].CopyTo(noneFlags, 0);
+
                     _source.WriteLine($"void {RenameType(_structureType)}::FilterDisallowedFieldsMaskForFlag(Mask& changesMask, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags) const");
                     _source.WriteLine("{");
-                    for (var j = 0; j < 8; ++j)
-                    {
-                        if ((_allUsedFlags & (UpdateFieldFlag)(1 << j)) != UpdateFieldFlag.None)
-                        {
-                            var flagArray = new int[(_bitCounter + 31) / 32];
-                            bitMaskByFlag[(UpdateFieldFlag)(1 << j)].CopyTo(flagArray, 0);
-                            _source.WriteLine($"    if (!fieldVisibilityFlags.HasFlag(UpdateFieldFlag::{(UpdateFieldFlag)(1 << j)}))");
-                            _source.WriteLine($"        changesMask &= {{ {string.Join(", ", flagArray.Select(v => "0x" + (~(uint)v).ToString("X8") + "u"))} }};");
-                        }
-                    }
+                    _source.WriteLine($"    Mask allowedMaskForTarget({{ {string.Join(", ", noneFlags.Select(v => "0x" + v.ToString("X8") + "u"))} }});");
+                    _source.WriteLine($"    AppendAllowedFieldsMaskForFlag(allowedMaskForTarget, fieldVisibilityFlags);");
+                    _source.WriteLine($"    changesMask &= allowedMaskForTarget;");
                     _source.WriteLine("}");
                     _source.WriteLine();
                 }
