@@ -231,7 +231,8 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
-            if (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional))
+            if ((allFields.ContainsKey(CreateTypeOrder.DefaultWithBits) || allFields.ContainsKey(CreateTypeOrder.ArrayWithBits))
+                && (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional)))
             {
                 fieldHandler.FinishControlBlocks();
                 fieldHandler.FinishBitPack();
