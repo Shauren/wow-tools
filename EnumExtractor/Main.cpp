@@ -32,7 +32,7 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 
 void DumpUIErrors(std::shared_ptr<Process> wow)
 {
-    static std::uintptr_t const UIErrorsOffset = 0x2CD9780;
+    static std::uintptr_t const UIErrorsOffset = 0x33AD770;
     static std::size_t const UIErrorsSize = 1058;
 
     Enum uiErrors;
@@ -51,7 +51,7 @@ void DumpUIErrors(std::shared_ptr<Process> wow)
 
 int main()
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 36839, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 37899, true);
     if (!wow)
         return 1;
 
