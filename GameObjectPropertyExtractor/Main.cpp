@@ -78,7 +78,7 @@ char const* GetIntType(TypeType typeType, GameObjectPropertyTypeInfo const& type
 
 struct GameObjectProperty
 {
-    static constexpr std::uintptr_t PROPERTY_DATA = 0x2693BF0; // don't find
+    static constexpr std::uintptr_t PROPERTY_DATA = 0x2D6DFF0;
     static constexpr std::size_t MAX_PROPERTY_INDEX = 242;
 
     std::uint32_t Index;

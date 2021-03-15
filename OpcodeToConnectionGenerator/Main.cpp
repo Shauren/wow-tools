@@ -19,7 +19,7 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 void DumpSpellFailures()
 {
     typedef char*(__cdecl* pGetErrorString)(int);
-    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0xEB9410);
+    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0x7E6900);
 
     Enum spellFailures;
     spellFailures.SetName("SpellCastResult");
