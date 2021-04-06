@@ -222,6 +222,16 @@ namespace UpdateFieldCodeGenerator.Formats
                         var researchData = _fieldWrites[researchDataIndex];
                         _fieldWrites.RemoveAt(researchDataIndex);
                         _fieldWrites.Insert(researchSizeIndex + 1, researchData);
+
+                        if (!_create)
+                        {
+                            FinishControlBlocks(null);
+                            FinishBitPack();
+
+                            var finishBitPack = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
+                            _fieldWrites.RemoveRange(_fieldWrites.Count - 2, 2);
+                            _fieldWrites.InsertRange(researchSizeIndex + 2, finishBitPack);
+                        }
                     }
                 }
 
