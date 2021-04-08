@@ -698,6 +698,7 @@ namespace UpdateFieldCodeGenerator.Formats
         {
             var fieldGeneratedType = CppTypes.GetCppType(declarationType.Type);
             string typeName;
+            string line;
             if (_writeUpdateMasks)
             {
                 var bit = CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][0]);
@@ -748,18 +749,23 @@ namespace UpdateFieldCodeGenerator.Formats
                         bit);
                 }
 
-                _header.WriteLine($"    {TypeHandler.GetFriendlyName(fieldGeneratedType)} {name};");
+                line = $"    {TypeHandler.GetFriendlyName(fieldGeneratedType)} {name};";
             }
             else if (fieldGeneratedType.IsArray)
             {
                 typeName = TypeHandler.GetFriendlyName(fieldGeneratedType.GetElementType());
-                _header.WriteLine($"    {typeName} {name}[{declarationType.Size}];");
+                line = $"    {typeName} {name}[{declarationType.Size}];";
             }
             else
             {
                 typeName = TypeHandler.GetFriendlyName(PrepareFieldType(fieldGeneratedType));
-                _header.WriteLine($"    {typeName} {name};");
+                line = $"    {typeName} {name};";
             }
+
+            _header.Write(line);
+            if (declarationType.Comment != null)
+                _header.Write($"{new string(' ', Math.Max(1, 80 - line.Length))}// {declarationType.Comment}");
+            _header.WriteLine();
 
             if ((declarationType.CustomFlag & CustomUpdateFieldFlag.ViewerDependent) != CustomUpdateFieldFlag.None)
                 _header.WriteLine($"    struct {name}Tag : ViewerDependentValueTag<{typeName}> {{}};");
