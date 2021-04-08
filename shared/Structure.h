@@ -6,13 +6,14 @@
 
 struct StructureMember
 {
-    StructureMember(std::uint32_t ordinal, std::string const& type, std::string const& name, std::string const& comment)
-        : Offset(ordinal), TypeName(type), ValueName(name), Comment(comment) { }
+    StructureMember(std::uint32_t ordinal, std::string const& type, std::string const& name, std::string const& comment, bool isFunction = false)
+        : Offset(ordinal), TypeName(type), ValueName(name), Comment(comment), IsFunction(isFunction) { }
 
     std::uint32_t Offset;
     std::string TypeName;
     std::string ValueName;
     std::string Comment;
+    bool IsFunction;
 
     bool operator<(StructureMember const& right) const { return Offset < right.Offset; }
 };
@@ -53,11 +54,16 @@ public:
 
     void ProcessMember(std::ostream& stream, Structure const& structure, Structure::Member const& member, std::uint32_t indent) override
     {
+        if (member.IsFunction)
+            stream << std::endl;
+
         stream << std::string(indent + 4, ' ') << member.TypeName;
         if (!member.ValueName.empty())
             stream << ' ' << member.ValueName;
 
-        stream << ';';
+        if (!member.IsFunction)
+            stream << ';';
+
         if (!member.Comment.empty())
         {
             std::int32_t commentPaddingLength = structure.GetValueCommentPadding();
