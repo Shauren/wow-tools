@@ -99,11 +99,11 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 875);
         public static readonly UpdateField honor = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField honorNextLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpRewardAchieved = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField pvpRewardAchieved = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField pvpTierMaxFromWins = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpLastWeeksRewardAchieved = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField pvpLastWeeksRewardAchieved = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField pvpLastWeeksTierMaxFromWins = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpLastWeeksRewardClaimed = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField pvpLastWeeksRewardClaimed = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField numBankSlots = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField researchSites = new UpdateField(typeof(DynamicUpdateField<ushort>), UpdateFieldFlag.None);
         public static readonly UpdateField researchSiteProgress = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
@@ -132,6 +132,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField disabledSpells = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField uiChromieTimeExpansionID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField transportServerTime = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField weeklyRewardsPeriodSinceOrigin = new UpdateField(typeof(uint), UpdateFieldFlag.None, comment: "week count since Cfg_RegionsEntry::ChallengeOrigin");
         public static readonly UpdateField backpackAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField bankAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField sortBagsRightToLeft = new UpdateField(typeof(bool), UpdateFieldFlag.None);

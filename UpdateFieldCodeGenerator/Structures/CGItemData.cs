@@ -22,7 +22,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_maxDurability = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_createPlayedTime = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_context = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_createTime = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField m_createTime = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField m_artifactXP = new UpdateField(typeof(ulong), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_itemAppearanceModID = new UpdateField(typeof(byte), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_modifiers = new UpdateField(typeof(JamMirrorItemModList_C), UpdateFieldFlag.None);
