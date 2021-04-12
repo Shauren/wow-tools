@@ -18,8 +18,8 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 
 void DumpSpellFailures()
 {
-    typedef char*(__cdecl* pGetErrorString)(int);
-    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(NULL) + 0xEB9410);
+    using pGetErrorString = char*(__cdecl*)(int);
+    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(nullptr) + 0x1472880);
 
     Enum spellFailures;
     spellFailures.SetName("SpellCastResult");
@@ -51,10 +51,10 @@ void DumpInventoryErrors()
         std::uint32_t ChatMsgType;
     };
 
-    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(NULL) + 0x2CD9780);
+    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(nullptr) + 0x3510770);
 
-    typedef int(__cdecl* GetGameErrorFn)(int);
-    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(NULL) + 0x1219D80);
+    using GetGameErrorFn = int(__cdecl*)(int);
+    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(nullptr) + 0x17E4920);
 
     Enum spellFailures;
     spellFailures.SetName("InventoryResult");
