@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <sstream>
 #include <regex>
+#include <map>
+#include <bitset>
 
 enum class TypeType
 {
@@ -168,6 +170,7 @@ char const* TCEnumName[GameObjectPropertyInfo::MAX_GAMEOBJECT_TYPE] =
 };
 
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type);
+std::int32_t GetPropDefault(std::shared_ptr<Process> wow, GameObjectPropertyTypeInfo const& type);
 
 std::string FixName(std::string name)
 {
@@ -184,6 +187,8 @@ int main(int argc, char* argv[])
         return 1;
 
     std::vector<GameObjectProperty> props = wow->ReadArray<GameObjectProperty>(GameObjectProperty::PROPERTY_DATA, GameObjectProperty::MAX_PROPERTY_INDEX);
+    std::unordered_map<std::string, std::int32_t> propDefaults;
+    std::unordered_map<std::string, std::string> propTypes;
     std::string propertyNames[GameObjectProperty::MAX_PROPERTY_INDEX];
     for (std::uint32_t i = 0; i < props.size(); ++i)
         propertyNames[i] = wow->Read<std::string>(props[i].Name);
@@ -193,9 +198,12 @@ int main(int argc, char* argv[])
     Structure templateUnion;
     templateUnion.SetName("GameObjectTemplateData");
 
+    std::vector<Structure> typeStructures;
+    typeStructures.resize(typeData.size());
+
     for (std::uint32_t i = 0; i < typeData.size(); ++i)
     {
-        Structure typeStructure;
+        Structure& typeStructure = typeStructures[i];
         typeStructure.SetComment(std::to_string(i) + " " + TCEnumName[i]);
         typeStructure.SetValueCommentPadding(56);
 
@@ -208,6 +216,8 @@ int main(int argc, char* argv[])
             GameObjectPropertyTypeInfo typeValue = wow->Read<GameObjectPropertyTypeInfo>(type);
             TypeType typeType = GuessType(wow, typeValue);
             std::string fixedName = FixName(name);
+            propDefaults[fixedName] = GetPropDefault(wow, typeValue);
+            propTypes[fixedName] = GetIntType(typeType, typeValue);
             typeStructure.AddMember(Structure::Member(std::uint32_t(j), GetIntType(typeType, typeValue), fixedName,
                 (std::ostringstream() << j << " " << name << ", "
                     << FormatType(wow, props[propIndexes[j]].TypeIndex, typeValue)).str()));
@@ -216,6 +226,9 @@ int main(int argc, char* argv[])
         std::string typeName = FixName(wow->Read<std::string>(typeData[i].TypeName));
         templateUnion.AddMember(Structure::Member(i,
             (std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), typeStructure, 4)).str(), typeName, ""));
+
+        // Set name after converting to string and adding to union
+        typeStructure.SetName(typeName);
     }
 
     Structure raw;
@@ -223,6 +236,36 @@ int main(int argc, char* argv[])
 
     templateUnion.AddMember(Structure::Member(GameObjectPropertyInfo::MAX_GAMEOBJECT_TYPE,
         (std::ostringstream() << SourceOutput<Structure>(std::make_unique<CppStruct>(true), raw, 4)).str(), "raw", ""));
+
+    // Generate accessor functions
+    std::map<std::string, std::bitset<GameObjectPropertyInfo::MAX_GAMEOBJECT_TYPE>> propUsedByTypes;
+
+    for (std::size_t i = 0; i < typeStructures.size(); ++i)
+        for (StructureMember const& member : typeStructures[i].GetMembers())
+            propUsedByTypes[member.ValueName][i] = true;
+
+    for (auto itr = propUsedByTypes.begin(); itr != propUsedByTypes.end(); ++itr)
+    {
+        if (itr->second.count() <= 1 && propDefaults[itr->first] == 0)
+            continue;
+
+        std::string typeName = propTypes[itr->first] + " Get" + (char)std::toupper(itr->first[0]) + itr->first.substr(1) + "() const";
+        std::string valueName = "\n"
+            "    {\n"
+            "        switch (type)\n"
+            "        {\n";
+
+        for (std::size_t bit = 0; bit < GameObjectPropertyInfo::MAX_GAMEOBJECT_TYPE; ++bit)
+            if (itr->second[bit])
+                valueName = valueName + "            case " + TCEnumName[bit] + ": return " + typeStructures[bit].GetName() + '.' + itr->first + ";\n";
+
+        valueName +=
+            "            default: return " + std::to_string(propDefaults[itr->first]) + ";\n"
+            "        }\n"
+            "    }";
+
+        templateUnion.AddMember(Structure::Member(-1, typeName, valueName, "", true));
+    }
 
     std::ofstream structure("GameObjectTemplate.h");
     structure << SourceOutput<Structure>(std::make_unique<CppUnion>(false), templateUnion, 0);
@@ -263,4 +306,21 @@ std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, Ga
     }
 
     return stream.str();
+}
+
+std::int32_t GetPropDefault(std::shared_ptr<Process> wow, GameObjectPropertyTypeInfo const& type)
+{
+    switch (GuessType(wow, type))
+    {
+        case TypeType::DB_REF:
+            return type.DbRef.InvalidRefValue;
+        case TypeType::ENUM:
+            return type.Enum.DefaultValue;
+        case TypeType::INTEGER:
+            return type.Int.DefaultValue;
+        default:
+            break;
+    }
+
+    return 0;
 }
