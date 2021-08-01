@@ -11,6 +11,7 @@
         public static readonly UpdateField m_weeklyBestRating = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_seasonBestRating = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_pvpTierID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField m_weeklyBestWinPvpTierID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_disqualified = new UpdateField(typeof(bool), UpdateFieldFlag.None, bitSize: 1);
     }
 }

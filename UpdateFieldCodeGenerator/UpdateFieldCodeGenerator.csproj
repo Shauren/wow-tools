@@ -60,6 +60,9 @@
     <Compile Include="BlzOptionalField.cs" />
     <Compile Include="CppTypes.cs" />
     <Compile Include="DictionaryExtensions.cs" />
+    <Compile Include="DontStoreInWowPacketParserAttribute.cs" />
+    <Compile Include="DungeonScoreData.cs" />
+    <Compile Include="DungeonScoreSummary.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="Formats\FlowControlBlock.cs" />
     <Compile Include="Formats\IUpdateFieldHandler.cs" />

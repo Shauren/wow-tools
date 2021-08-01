@@ -161,6 +161,20 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                 }
             }
+            else if (_structureType == typeof(CGPlayerData))
+            {
+                if (_create)
+                {
+                    var dungeonScoreIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("dungeonScore"));
+                    if (dungeonScoreIndex != -1)
+                    {
+                        // move to just-before-end (end is a write for closing all brackets)
+                        var dungeonScore = _fieldWrites[dungeonScoreIndex];
+                        _fieldWrites.RemoveAt(dungeonScoreIndex);
+                        _fieldWrites.Insert(_fieldWrites.Count - 1, dungeonScore);
+                    }
+                }
+            }
             else if (_structureType == typeof(CGActivePlayerData))
             {
                 if (!_create)
@@ -246,6 +260,18 @@ namespace UpdateFieldCodeGenerator.Formats
                         _fieldWrites.Insert(questSessionBit, field_1410);
                     }
                 }
+
+                var dungeonScoreIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("dungeonScore"));
+                if (dungeonScoreIndex != -1)
+                {
+                    var questSession = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession") && !fw.IsSize);
+                    if (questSession != -1)
+                    {
+                        var dungeonScore = _fieldWrites[dungeonScoreIndex];
+                        _fieldWrites.RemoveAt(dungeonScoreIndex);
+                        _fieldWrites.Insert(questSession, dungeonScore);
+                    }
+                }
             }
             else if (_structureType == typeof(CGAreaTriggerData))
             {
@@ -273,6 +299,21 @@ namespace UpdateFieldCodeGenerator.Formats
                         var overrideScaleCurve = _fieldWrites[overrideScaleCurveIndex];
                         _fieldWrites.RemoveAt(overrideScaleCurveIndex);
                         _fieldWrites.Insert(0, overrideScaleCurve);
+                    }
+                }
+            }
+            else if (_structureType == typeof(CGConversationData))
+            {
+                if (_create)
+                {
+                    var dontPlayBroadcastTextSoundsIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("m_dontPlayBroadcastTextSounds"));
+                    var actorsSizeIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("m_actors") && fw.IsSize);
+                    if (actorsSizeIndex != -1)
+                    {
+                        // move to just-before-end (end is a write for closing all brackets)
+                        var dontPlayBroadcastTextSounds = _fieldWrites[dontPlayBroadcastTextSoundsIndex];
+                        _fieldWrites.RemoveAt(dontPlayBroadcastTextSoundsIndex);
+                        _fieldWrites.Insert(actorsSizeIndex, dontPlayBroadcastTextSounds);
                     }
                 }
             }

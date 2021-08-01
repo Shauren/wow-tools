@@ -18,7 +18,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField skill = new UpdateField(typeof(JamMirrorSkillInfo_C), UpdateFieldFlag.None);
         public static readonly UpdateField characterPoints = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField maxTalentTiers = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField trackCreatureMask = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField trackCreatureMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField trackResourceMask = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField mainhandExpertise = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField offhandExpertise = new UpdateField(typeof(float), UpdateFieldFlag.None);
@@ -43,7 +43,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField versatilityBonus = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField pvpPowerDamage = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField pvpPowerHealing = new UpdateField(typeof(float), UpdateFieldFlag.None);
-        public static readonly UpdateField exploredZones = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 192);
+        public static readonly UpdateField exploredZones = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 240);
         public static readonly UpdateField restInfo = new UpdateField(typeof(JamMirrorRestInfo_C[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField modDamageDonePos = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);
         public static readonly UpdateField modDamageDoneNeg = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);
@@ -99,11 +99,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 875);
         public static readonly UpdateField honor = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField honorNextLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpRewardAchieved = new UpdateField(typeof(long), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpTierMaxFromWins = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpLastWeeksRewardAchieved = new UpdateField(typeof(long), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpLastWeeksTierMaxFromWins = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpLastWeeksRewardClaimed = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField numBankSlots = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField researchSites = new UpdateField(typeof(DynamicUpdateField<ushort>), UpdateFieldFlag.None);
         public static readonly UpdateField researchSiteProgress = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
@@ -133,6 +128,8 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField uiChromieTimeExpansionID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField transportServerTime = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField weeklyRewardsPeriodSinceOrigin = new UpdateField(typeof(uint), UpdateFieldFlag.None, comment: "week count since Cfg_RegionsEntry::ChallengeOrigin");
+        public static readonly UpdateField DEBUGSoulbindConduitRank = new UpdateField(typeof(short), UpdateFieldFlag.None);
+        public static readonly UpdateField dungeonScore = new UpdateField(typeof(DungeonScoreData), UpdateFieldFlag.None);
         public static readonly UpdateField backpackAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField bankAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField sortBagsRightToLeft = new UpdateField(typeof(bool), UpdateFieldFlag.None);

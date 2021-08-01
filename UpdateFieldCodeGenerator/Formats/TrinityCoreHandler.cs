@@ -618,12 +618,10 @@ namespace UpdateFieldCodeGenerator.Formats
             switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Object:
-                    if (type == typeof(WowGuid))
+                    if (type == typeof(WowGuid) || type == typeof(Vector2) || type == typeof(DungeonScoreSummary) || type == typeof(DungeonScoreData))
                         _source.WriteLine($"data << {name};");
                     else if (type == typeof(Bits))
                         _source.WriteLine($"data.WriteBits({name}, {bitSize});");
-                    else if (type == typeof(Vector2))
-                        _source.WriteLine($"data << {name};");
                     else if (type == typeof(Quaternion))
                     {
                         _source.WriteLine($"data << float({name}{access}x);");

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace UpdateFieldCodeGenerator.Formats
 {
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private const string ModuleName = "V9_0_1_36216";
-        private const string Version = "V9_0_5_37862";
+        private const string Version = "V9_1_0_39185";
 
         public WowPacketParserHandler() : base(new StreamWriter("UpdateFieldsHandler.cs"), null)
         {
@@ -237,7 +238,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             ));
 
-            if (_create && updateField.SizeForField == null)
+            if (_create && updateField.SizeForField == null && declarationType.GetCustomAttribute<DontStoreInWowPacketParserAttribute>() == null)
                 WriteFieldDeclaration(name, updateField, declarationType, declarationSettable);
 
             return flowControl;
@@ -445,6 +446,10 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"data.{outputFieldName} = packet.ReadVector2(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(Quaternion))
                         _source.WriteLine($"data.{outputFieldName} = packet.ReadQuaternion(\"{name}\", indexes{nextIndex});");
+                    else if (type == typeof(DungeonScoreSummary))
+                        _source.WriteLine($"Substructures.MythicPlusHandler.ReadDungeonScoreSummary(packet, indexes{nextIndex}, \"{name}\");");
+                    else if (type == typeof(DungeonScoreData))
+                        _source.WriteLine($"Substructures.MythicPlusHandler.ReadDungeonScoreData(packet, indexes{nextIndex}, \"{name}\");");
                     else if (_create)
                         _source.WriteLine($"data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     else
