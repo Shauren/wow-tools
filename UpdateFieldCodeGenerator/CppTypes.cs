@@ -35,7 +35,9 @@ namespace UpdateFieldCodeGenerator
                 { typeof(WowGuid), CreateType("ObjectGuid") },
                 { typeof(Bits), CreateType("uint32") },
                 { typeof(Vector2), CreateType("TaggedPosition", "Tag").MakeGenericType(CreateType("Position::XY")) },
-                { typeof(Quaternion), CreateType("QuaternionData") }
+                { typeof(Quaternion), CreateType("QuaternionData") },
+                { typeof(DungeonScoreSummary), CreateType("WorldPackets::MythicPlus::DungeonScoreSummary") },
+                { typeof(DungeonScoreData), CreateType("WorldPackets::MythicPlus::DungeonScoreData") },
             };
             return typeMap;
         }

@@ -45,6 +45,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _header.WriteLine("#define UpdateFields_h__");
             _header.WriteLine();
             _header.WriteLine("#include \"EnumFlag.h\"");
+            _header.WriteLine("#include \"MythicPlusPacketsCommon.h\"");
             _header.WriteLine("#include \"ObjectGuid.h\"");
             _header.WriteLine("#include \"Position.h\"");
             _header.WriteLine("#include \"QuaternionData.h\"");
