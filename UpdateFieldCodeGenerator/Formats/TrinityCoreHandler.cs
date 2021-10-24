@@ -387,7 +387,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
 
             if ((updateField.CustomFlag & CustomUpdateFieldFlag.ViewerDependent) != CustomUpdateFieldFlag.None)
-                nameUsedToWrite = $"ViewerDependentValue<{name}Tag>::GetValue({nameUsedToWrite}{allIndexes}, owner, receiver)";
+                nameUsedToWrite = $"ViewerDependentValue<{name}Tag>::GetValue(this{allIndexes}, owner, receiver)";
 
             if (!_create && _writeUpdateMasks)
             {
