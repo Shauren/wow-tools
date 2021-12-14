@@ -19,7 +19,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField characterPoints = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField maxTalentTiers = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField trackCreatureMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField trackResourceMask = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField mainhandExpertise = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField offhandExpertise = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField rangedExpertise = new UpdateField(typeof(float), UpdateFieldFlag.None);

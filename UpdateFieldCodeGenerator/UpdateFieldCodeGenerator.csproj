@@ -110,6 +110,7 @@
     <Compile Include="Structures\JamMirrorVisibleItem_C.cs" />
     <Compile Include="Structures\JamMirrorQuestSession_C.cs" />
     <Compile Include="Structures\JamMirrorReplayedQuest_C.cs" />
+    <Compile Include="Structures\JamMirrorVisualAnim_C.cs" />
     <Compile Include="TypeHandler.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="WowGuid.cs" />

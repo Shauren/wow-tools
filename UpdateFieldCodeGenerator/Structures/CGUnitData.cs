@@ -36,10 +36,10 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField displayPower = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField overrideDisplayPowerID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField health = new UpdateField(typeof(long), UpdateFieldFlag.None);
-        public static readonly UpdateField power = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 6);
-        public static readonly UpdateField maxPower = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 6);
-        public static readonly UpdateField powerRegenFlatModifier = new UpdateField(typeof(float[]), UpdateFieldFlag.Owner | UpdateFieldFlag.UnitAll, 6);
-        public static readonly UpdateField powerRegenInterruptedFlatModifier = new UpdateField(typeof(float[]), UpdateFieldFlag.Owner | UpdateFieldFlag.UnitAll, 6);
+        public static readonly UpdateField power = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);
+        public static readonly UpdateField maxPower = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);
+        public static readonly UpdateField powerRegenFlatModifier = new UpdateField(typeof(float[]), UpdateFieldFlag.Owner | UpdateFieldFlag.UnitAll, 7);
+        public static readonly UpdateField powerRegenInterruptedFlatModifier = new UpdateField(typeof(float[]), UpdateFieldFlag.Owner | UpdateFieldFlag.UnitAll, 7);
         public static readonly UpdateField maxHealth = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField level = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField effectiveLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -123,6 +123,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField maxItemLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField azeriteItemLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField wildBattlePetLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField field_220 = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField battlePetCompanionNameTimestamp = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField interactSpellID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scaleDuration = new UpdateField(typeof(int), UpdateFieldFlag.None);

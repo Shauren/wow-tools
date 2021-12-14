@@ -282,10 +282,10 @@ namespace UpdateFieldCodeGenerator.Formats
                 });
                 if (extraScaleCurveIndex != -1)
                 {
-                    // move to just-before-end (end is a write for closing all brackets)
+                    // move to just-before-last field
                     var extraScaleCurve = _fieldWrites[extraScaleCurveIndex];
                     _fieldWrites.RemoveAt(extraScaleCurveIndex);
-                    _fieldWrites.Insert(_fieldWrites.Count - 1, extraScaleCurve);
+                    _fieldWrites.Insert(_fieldWrites.Count - 2, extraScaleCurve);
                 }
                 if (_create)
                 {

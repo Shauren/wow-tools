@@ -18,8 +18,8 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 
 void DumpSpellFailures()
 {
-    using pGetErrorString = char*(__cdecl*)(int);
-    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(nullptr) + 0x1537900);
+    using pGetErrorString = char* (__fastcall*)(int);
+    pGetErrorString GetStringReason = (pGetErrorString)((DWORD_PTR)GetModuleHandle(nullptr) + 0x169D570);
 
     Enum spellFailures;
     spellFailures.SetName("SpellCastResult");
@@ -51,10 +51,10 @@ void DumpInventoryErrors()
         std::uint32_t ChatMsgType;
     };
 
-    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(nullptr) + 0x35875F0);
+    UIErrorInfo* uis = (UIErrorInfo*)((DWORD_PTR)GetModuleHandle(nullptr) + 0x3611090);
 
-    using GetGameErrorFn = int(__cdecl*)(int);
-    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(nullptr) + 0x18637E0);
+    using GetGameErrorFn = int(__fastcall*)(int);
+    GetGameErrorFn CGBag_C_GetGameError = (GetGameErrorFn)((DWORD_PTR)GetModuleHandle(nullptr) + 0x19D4840);
 
     Enum spellFailures;
     spellFailures.SetName("InventoryResult");
@@ -62,10 +62,10 @@ void DumpInventoryErrors()
     int err = 0;
     int error = CGBag_C_GetGameError(err);
     std::multimap<std::string, int> duplicates;
-    while (err <= 110)
+    while (err <= 111)
     {
         std::string err_name = "EQUIP_";
-        if (error < 1067)
+        if (error < 1098)
             err_name += uis[error].ErrorName;
         else
             err_name += "NONE";
