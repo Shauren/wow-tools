@@ -123,7 +123,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField maxItemLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField azeriteItemLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField wildBattlePetLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField currentBattlePetExperience = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField battlePetCompanionExperience = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField battlePetCompanionNameTimestamp = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField interactSpellID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scaleDuration = new UpdateField(typeof(int), UpdateFieldFlag.None);
