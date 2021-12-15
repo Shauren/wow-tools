@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace UpdateFieldCodeGenerator.Formats
 {
-    public class FlowControlBlock
+    public class FlowControlBlock : IStatement
     {
+        public bool IsBlock => true;
         public string Statement { get; set; }
 
-        public static bool AreChainsAlmostEqual(IReadOnlyList<FlowControlBlock> oldFlow, IReadOnlyList<FlowControlBlock> newFlow)
+        public static bool AreChainsAlmostEqual(IReadOnlyList<IStatement> oldFlow, IReadOnlyList<IStatement> newFlow)
         {
             if (newFlow.Count == 0 || oldFlow == null)
                 return false;
@@ -20,13 +19,20 @@ namespace UpdateFieldCodeGenerator.Formats
                 if (o >= oldFlow.Count)
                     break;
 
-                if (oldFlow[o].Statement == newFlow[n].Statement)
+                if (oldFlow[o].Equals(newFlow[n]))
                     ++n;
 
                 ++o;
             } while (n < newFlow.Count);
 
             return n >= newFlow.Count;
+        }
+
+        public bool Equals(IStatement other)
+        {
+            if (other is FlowControlBlock block)
+                return block.Statement == Statement;
+            return false;
         }
 
         public override string ToString() => Statement;

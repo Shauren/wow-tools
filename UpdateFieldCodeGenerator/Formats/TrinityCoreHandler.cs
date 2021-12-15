@@ -295,7 +295,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
             }
 
-            List<FlowControlBlock> previousFlowControl = null;
+            List<IStatement> previousFlowControl = null;
             foreach (var (_, _, Write) in _fieldWrites)
                 previousFlowControl = Write(previousFlowControl);
 
@@ -330,13 +330,13 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.Flush();
         }
 
-        public override IReadOnlyList<FlowControlBlock> OnField(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public override IReadOnlyList<IStatement> OnField(string name, UpdateField updateField, IReadOnlyList<IStatement> previousControlFlow)
         {
             _allUsedFlags |= updateField.Flag;
 
             name = RenameField(name);
 
-            var flowControl = new List<FlowControlBlock>();
+            var flowControl = new List<IStatement>();
             if (_create && updateField.Flag != UpdateFieldFlag.None)
                 flowControl.Add(new FlowControlBlock { Statement = $"if (fieldVisibilityFlags.HasFlag({updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag::")}))" });
 
@@ -422,11 +422,11 @@ namespace UpdateFieldCodeGenerator.Formats
             return flowControl;
         }
 
-        public override IReadOnlyList<FlowControlBlock> OnDynamicFieldSizeCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public override IReadOnlyList<IStatement> OnDynamicFieldSizeCreate(string name, UpdateField updateField, IReadOnlyList<IStatement> previousControlFlow)
         {
             name = RenameField(name);
 
-            var flowControl = new List<FlowControlBlock>();
+            var flowControl = new List<IStatement>();
             if (_create && updateField.Flag != UpdateFieldFlag.None)
                 flowControl.Add(new FlowControlBlock { Statement = $"if (fieldVisibilityFlags.HasFlag({updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag::")}))" });
 
@@ -450,11 +450,11 @@ namespace UpdateFieldCodeGenerator.Formats
             return flowControl;
         }
 
-        public override IReadOnlyList<FlowControlBlock> OnDynamicFieldSizeUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public override IReadOnlyList<IStatement> OnDynamicFieldSizeUpdate(string name, UpdateField updateField, IReadOnlyList<IStatement> previousControlFlow)
         {
             name = RenameField(name);
 
-            var flowControl = new List<FlowControlBlock>();
+            var flowControl = new List<IStatement>();
             if (_create && updateField.Flag != UpdateFieldFlag.None)
                 flowControl.Add(new FlowControlBlock { Statement = $"if (fieldVisibilityFlags.HasFlag({updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag::")}))" });
 
@@ -484,11 +484,11 @@ namespace UpdateFieldCodeGenerator.Formats
             return flowControl;
         }
 
-        public override IReadOnlyList<FlowControlBlock> OnOptionalFieldInitCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public override IReadOnlyList<IStatement> OnOptionalFieldInitCreate(string name, UpdateField updateField, IReadOnlyList<IStatement> previousControlFlow)
         {
             name = RenameField(name);
 
-            var flowControl = new List<FlowControlBlock>();
+            var flowControl = new List<IStatement>();
             if (_create && updateField.Flag != UpdateFieldFlag.None)
                 flowControl.Add(new FlowControlBlock { Statement = $"if (fieldVisibilityFlags.HasFlag({updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag::")}))" });
 
@@ -510,11 +510,11 @@ namespace UpdateFieldCodeGenerator.Formats
             return flowControl;
         }
 
-        public override IReadOnlyList<FlowControlBlock> OnOptionalFieldInitUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public override IReadOnlyList<IStatement> OnOptionalFieldInitUpdate(string name, UpdateField updateField, IReadOnlyList<IStatement> previousControlFlow)
         {
             name = RenameField(name);
 
-            var flowControl = new List<FlowControlBlock>();
+            var flowControl = new List<IStatement>();
 
             var nameUsedToWrite = name;
             var arrayLoopBlockIndex = -1;
@@ -542,7 +542,7 @@ namespace UpdateFieldCodeGenerator.Formats
             return flowControl;
         }
 
-        private void GenerateBitIndexConditions(UpdateField updateField, string name, List<FlowControlBlock> flowControl, IReadOnlyList<FlowControlBlock> previousControlFlow, int arrayLoopBlockIndex)
+        private void GenerateBitIndexConditions(UpdateField updateField, string name, List<IStatement> flowControl, IReadOnlyList<IStatement> previousControlFlow, int arrayLoopBlockIndex)
         {
             var newField = false;
             var nameForIndex = updateField.SizeForField != null ? RenameField(updateField.SizeForField.Name) : name;
@@ -770,12 +770,12 @@ namespace UpdateFieldCodeGenerator.Formats
                 _header.WriteLine($"    struct {name}Tag : ViewerDependentValueTag<{typeName}> {{}};");
         }
 
-        public override void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public override void FinishControlBlocks(IReadOnlyList<IStatement> previousControlFlow)
         {
             _fieldWrites.Add((string.Empty, false, (pcf) =>
             {
                 FinishControlBlocks(_source, pcf);
-                return new List<FlowControlBlock>();
+                return new List<IStatement>();
             }
             ));
         }
@@ -785,7 +785,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((string.Empty, false, (pcf) =>
             {
                 _source.WriteLine($"{GetIndent()}data.FlushBits();");
-                return new List<FlowControlBlock>();
+                return new List<IStatement>();
             }));
         }
 

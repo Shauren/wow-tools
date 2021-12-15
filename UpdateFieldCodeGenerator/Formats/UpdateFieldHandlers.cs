@@ -6,7 +6,7 @@ namespace UpdateFieldCodeGenerator.Formats
     public class UpdateFieldHandlers : IDisposable
     {
         private readonly ICollection<IUpdateFieldHandler> _handlers;
-        private readonly Dictionary<IUpdateFieldHandler, IReadOnlyList<FlowControlBlock>> _previousControlFlowDict;
+        private readonly Dictionary<IUpdateFieldHandler, IReadOnlyList<IStatement>> _previousControlFlowDict;
 
         public UpdateFieldHandlers()
         {
@@ -15,7 +15,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 new TrinityCoreHandler(),
                 new WowPacketParserHandler()
             };
-            _previousControlFlowDict = new Dictionary<IUpdateFieldHandler, IReadOnlyList<FlowControlBlock>>();
+            _previousControlFlowDict = new Dictionary<IUpdateFieldHandler, IReadOnlyList<IStatement>>();
             foreach (var handler in _handlers)
                 _previousControlFlowDict[handler] = null;
         }

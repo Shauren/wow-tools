@@ -21,7 +21,7 @@ namespace UpdateFieldCodeGenerator.Formats
         protected int _bitCounter;
         protected int _blockGroupBit;
         protected int _nonArrayBitCounter;
-        protected List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)> _fieldWrites;
+        protected List<(string Name, bool IsSize, Func<List<IStatement>, List<IStatement>> Write)> _fieldWrites;
         protected List<string> _dynamicChangesMaskTypes;
 
         protected UpdateFieldHandlerBase(TextWriter source, TextWriter header)
@@ -35,45 +35,74 @@ namespace UpdateFieldCodeGenerator.Formats
             return "".PadLeft(_indent * 4);
         }
 
-        protected void WriteControlBlocks(TextWriter output, IReadOnlyList<FlowControlBlock> flowControlBlocks, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        protected void WriteControlBlocks(TextWriter output, IReadOnlyList<IStatement> flowControlBlocks, IReadOnlyList<IStatement> previousControlFlow)
         {
+            output.Flush();
             var blocksMatching = true;
+            int indent = 0;
             for (var i = 0; i < flowControlBlocks.Count; ++i)
             {
                 var currentBlock = flowControlBlocks[i];
                 if (blocksMatching)
                 {
                     var previousFieldBlock = previousControlFlow != null && i < previousControlFlow.Count ? previousControlFlow[i] : null;
-                    if (previousFieldBlock?.Statement != currentBlock.Statement)
+                    if (!currentBlock.Equals(previousFieldBlock))
                     {
                         blocksMatching = false;
                         // write closing brackets
                         if (previousFieldBlock != null)
-                            for (var j = previousControlFlow.Count; j > i; --j)
-                                output.WriteLine($"{"".PadLeft((j + _indent - 1) * 4)}}}");
+                        {
+                            var extraIndent = previousControlFlow.Count(stmt => stmt.IsBlock);
+                            for (var j = previousControlFlow.Count - 1; j >= i; --j)
+                                if (previousControlFlow[j].IsBlock)
+                                {
+                                    output.WriteLine($"{"".PadLeft((extraIndent + _indent - 1) * 4)}}}");
+                                    extraIndent--;
+                                }
+                        }
                     }
                 }
 
                 if (!blocksMatching)
                 {
-                    var pad = "".PadLeft((i + _indent) * 4);
+                    var pad = "".PadLeft((indent + _indent) * 4);
                     output.WriteLine($"{pad}{currentBlock.Statement}");
-                    output.WriteLine($"{pad}{{");
+                    if (currentBlock.IsBlock)
+                        output.WriteLine($"{pad}{{");
                 }
+                if (currentBlock.IsBlock)
+                    indent++;
             }
 
             if (blocksMatching && previousControlFlow != null && previousControlFlow.Count > flowControlBlocks.Count)
-                for (var i = previousControlFlow.Count; i > flowControlBlocks.Count; --i)
-                    output.WriteLine($"{"".PadLeft((i + _indent - 1) * 4)}}}");
-
-            _indent += flowControlBlocks.Count;
+            {
+                var extraIndent = previousControlFlow.Count(stmt => stmt.IsBlock);
+                for (var i = previousControlFlow.Count - 1; i >= flowControlBlocks.Count; --i)
+                    if (previousControlFlow[i].IsBlock)
+                    {
+                        output.WriteLine($"{"".PadLeft((extraIndent + _indent - 1) * 4)}}}");
+                        extraIndent--;
+                    }
+            }
+            _indent += indent;
         }
 
-        public void FinishControlBlocks(TextWriter output, IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public void FinishControlBlocks(TextWriter output, IReadOnlyList<IStatement> previousControlFlow)
         {
-            if (previousControlFlow != null)
-                for (var i = previousControlFlow.Count; i > 0; --i)
-                    output.WriteLine($"{"".PadLeft((i + _indent - 1) * 4)}}}");
+            if (previousControlFlow == null)
+                return;
+            
+            var indent = 0;
+            foreach (var stmt in previousControlFlow)
+                if (stmt.IsBlock)
+                    indent++;
+            
+            for (var i = previousControlFlow.Count - 1; i >= 0; --i)
+                if (previousControlFlow[i].IsBlock)
+                {
+                    output.WriteLine($"{"".PadLeft((indent + _indent - 1) * 4)}}}");
+                    indent--;
+                }
         }
 
         public virtual void BeforeStructures()
@@ -102,19 +131,19 @@ namespace UpdateFieldCodeGenerator.Formats
             _bitCounter = HasNonArrayFields(structureType) && CountFields(structureType, field => true) > 1 ? 0 : -1;
             _blockGroupBit = 0;
             _nonArrayBitCounter = 0;
-            _fieldWrites = new List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)>();
+            _fieldWrites = new List<(string Name, bool IsSize, Func<List<IStatement>, List<IStatement>> Write)>();
             _dynamicChangesMaskTypes = new List<string>();
         }
 
         public abstract void OnStructureEnd(bool needsFlush, bool forceMaskMask);
 
-        public abstract IReadOnlyList<FlowControlBlock> OnField(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousBlock);
-        public abstract IReadOnlyList<FlowControlBlock> OnDynamicFieldSizeCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
-        public abstract IReadOnlyList<FlowControlBlock> OnDynamicFieldSizeUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
-        public abstract IReadOnlyList<FlowControlBlock> OnOptionalFieldInitCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
-        public abstract IReadOnlyList<FlowControlBlock> OnOptionalFieldInitUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
+        public abstract IReadOnlyList<IStatement> OnField(string name, UpdateField updateField, IReadOnlyList<IStatement> previousBlock);
+        public abstract IReadOnlyList<IStatement> OnDynamicFieldSizeCreate(string name, UpdateField updateField, IReadOnlyList<IStatement> previousControlFlow);
+        public abstract IReadOnlyList<IStatement> OnDynamicFieldSizeUpdate(string name, UpdateField updateField, IReadOnlyList<IStatement> previousControlFlow);
+        public abstract IReadOnlyList<IStatement> OnOptionalFieldInitCreate(string name, UpdateField updateField, IReadOnlyList<IStatement> previousControlFlow);
+        public abstract IReadOnlyList<IStatement> OnOptionalFieldInitUpdate(string name, UpdateField updateField, IReadOnlyList<IStatement> previousControlFlow);
 
-        public abstract void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow);
+        public abstract void FinishControlBlocks(IReadOnlyList<IStatement> previousControlFlow);
 
         public abstract void FinishBitPack();
 

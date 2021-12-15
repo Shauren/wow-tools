@@ -65,7 +65,9 @@
     <Compile Include="DungeonScoreSummary.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="Formats\FlowControlBlock.cs" />
+    <Compile Include="Formats\IStatement.cs" />
     <Compile Include="Formats\IUpdateFieldHandler.cs" />
+    <Compile Include="Formats\SimpleStatement.cs" />
     <Compile Include="Formats\TrinityCoreHandler.cs" />
     <Compile Include="Formats\UpdateFieldHandlerBase.cs" />
     <Compile Include="Formats\WowPacketParserHandler.cs" />
