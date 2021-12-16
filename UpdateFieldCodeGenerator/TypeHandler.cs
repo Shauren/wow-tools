@@ -19,6 +19,14 @@ namespace UpdateFieldCodeGenerator
             return _codeDomProvider.GetTypeOutput(ResolveTypeReference(type));
         }
 
+        private static Type MakeNullable(Type type)
+        {
+            if (type.IsValueType)
+                return typeof(Nullable<>).MakeGenericType(type);
+            else
+                return type;
+        }
+
         private static CodeTypeReference ResolveTypeReference(Type type)
         {
             if (type.Assembly != Assembly.GetExecutingAssembly() && !type.Assembly.IsDynamic)
@@ -30,16 +38,16 @@ namespace UpdateFieldCodeGenerator
             return new CodeTypeReference(type.Name, type.GenericTypeArguments.Select(genericType => ResolveTypeReference(genericType)).ToArray());
         }
 
-        public static Type ConvertToInterfaces(Type genericOrArrayType, Func<string, string> nameConverter)
+        public static Type ConvertToInterfaces(Type genericOrArrayType, Func<string, string> nameConverter, bool asNullable)
         {
             if (genericOrArrayType.IsArray)
-                return ConvertToInterfaces(genericOrArrayType.GetElementType(), nameConverter).MakeArrayType();
+                return ConvertToInterfaces(genericOrArrayType.GetElementType(), nameConverter, asNullable).MakeArrayType();
 
-            if (genericOrArrayType.IsGenericType)
+            if (genericOrArrayType.IsGenericType && Nullable.GetUnderlyingType(genericOrArrayType) == null)
             {
                 var genericTemplate = genericOrArrayType.GetGenericTypeDefinition();
                 var genericArguments = genericOrArrayType.GenericTypeArguments
-                    .Select(genericArgument => ConvertToInterfaces(genericArgument, nameConverter))
+                    .Select(genericArgument => ConvertToInterfaces(genericArgument, nameConverter, asNullable))
                     .ToArray();
                 return genericTemplate.MakeGenericType(genericArguments);
             }
@@ -51,7 +59,7 @@ namespace UpdateFieldCodeGenerator
             if (genericOrArrayType.Assembly == Assembly.GetExecutingAssembly() || genericOrArrayType.Assembly.IsDynamic)
                 return CreateInterfaceTypeFor(genericOrArrayType, nameConverter);
 
-            return genericOrArrayType;
+            return asNullable ? MakeNullable(genericOrArrayType) : genericOrArrayType;
         }
 
         public static Type CreateInterfaceTypeFor(Type type, Func<string, string> nameConverter)
