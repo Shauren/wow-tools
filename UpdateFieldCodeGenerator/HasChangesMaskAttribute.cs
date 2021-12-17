@@ -2,7 +2,7 @@
 
 namespace UpdateFieldCodeGenerator
 {
-    public class HasChangesMaskAttribute : Attribute
+    public sealed class HasChangesMaskAttribute : Attribute
     {
         public bool ForceMaskMask { get; }
 

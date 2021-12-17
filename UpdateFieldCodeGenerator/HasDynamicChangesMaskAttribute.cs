@@ -2,7 +2,7 @@
 
 namespace UpdateFieldCodeGenerator
 {
-    public class HasDynamicChangesMaskAttribute : Attribute
+    public sealed class HasDynamicChangesMaskAttribute : Attribute
     {
     }
 }

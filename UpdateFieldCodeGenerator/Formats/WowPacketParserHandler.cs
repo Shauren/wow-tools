@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using UpdateFieldCodeGenerator.Structures;
 
 namespace UpdateFieldCodeGenerator.Formats
 {
@@ -567,8 +566,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
         private bool HasMutableInterface(Type type)
         {
-            return type == typeof(CGObjectData) || type == typeof(CGUnitData) || 
-                   type == typeof(CGGameObjectData) || type == typeof(CGConversationData);
+            return type.GetCustomAttribute<HasMutableInterfaceAttribute>() != null;
         }
     }
 }
