@@ -73,6 +73,7 @@
     <Compile Include="BlzVectorField.cs" />
     <Compile Include="DynamicUpdateField.cs" />
     <Compile Include="HasChangesMaskAttribute.cs" />
+    <Compile Include="HasMutableInterfaceAttribute.cs" />
     <Compile Include="HasDynamicChangesMaskAttribute.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="StructureReferenceType.cs" />

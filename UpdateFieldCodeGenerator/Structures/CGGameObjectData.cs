@@ -3,6 +3,7 @@
 namespace UpdateFieldCodeGenerator.Structures
 {
     [HasChangesMask]
+    [HasMutableInterface]
     public class CGGameObjectData
     {
         public static readonly ObjectType ObjectType = ObjectType.GameObject;
