@@ -206,7 +206,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                 }
 
-                var questSessionBitIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession.is_initialized()"));
+                var questSessionBitIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession.has_value()"));
                 if (questSessionBitIndex != -1)
                 {
                     var newQuestSessionPos = _fieldWrites.FindIndex(fw => !fw.IsSize && fw.Name == RenameField(_create ? "characterRestrictions" : "invSlots"));

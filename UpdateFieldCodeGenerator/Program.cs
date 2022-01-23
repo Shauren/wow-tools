@@ -365,7 +365,7 @@ namespace UpdateFieldCodeGenerator
                 return (field, fieldInfo.Name);
 
             if (typeof(BlzOptionalField).IsAssignableFrom(field.Type))
-                return (new UpdateField(typeof(Bits), field.Flag, field.SizeForField, bitSize: 1, order: field.Order), field.SizeForField.Name + ".is_initialized()");
+                return (new UpdateField(typeof(Bits), field.Flag, field.SizeForField, bitSize: 1, order: field.Order), field.SizeForField.Name + ".has_value()");
 
             return (new UpdateField(typeof(uint), field.Flag, field.SizeForField, order: field.Order), field.SizeForField.Name + "{0}size()");
         }

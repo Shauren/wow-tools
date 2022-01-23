@@ -382,7 +382,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             if (typeof(BlzOptionalField).IsAssignableFrom(type))
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"if ({name}.is_initialized())" });
+                flowControl.Add(new FlowControlBlock { Statement = $"if ({name}.has_value())" });
                 type = type.GenericTypeArguments[0];
             }
 
@@ -392,8 +392,8 @@ namespace UpdateFieldCodeGenerator.Formats
             if (!_create && _writeUpdateMasks)
             {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
-                if (name.EndsWith("is_initialized()"))
-                    flowControl.RemoveAt(1); // bit generated but not checked for is_initialized
+                if (name.EndsWith("has_value()"))
+                    flowControl.RemoveAt(1); // bit generated but not checked for has_value
             }
 
             RegisterDynamicChangesMaskFieldType(type);
@@ -502,7 +502,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}data.WriteBit({nameUsedToWrite}.is_initialized());");
+                _source.WriteLine($"{GetIndent()}data.WriteBit({nameUsedToWrite}.has_value());");
                 _indent = 1;
                 return flowControl;
             }
@@ -528,13 +528,13 @@ namespace UpdateFieldCodeGenerator.Formats
             if (_writeUpdateMasks)
             {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
-                flowControl.RemoveAt(1); // bit generated but not checked for is_initialized
+                flowControl.RemoveAt(1); // bit generated but not checked for has_value
             }
 
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}data.WriteBit({nameUsedToWrite}.is_initialized());");
+                _source.WriteLine($"{GetIndent()}data.WriteBit({nameUsedToWrite}.has_value());");
                 _indent = 1;
                 return flowControl;
             }

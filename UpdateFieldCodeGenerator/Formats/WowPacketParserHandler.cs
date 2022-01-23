@@ -209,8 +209,8 @@ namespace UpdateFieldCodeGenerator.Formats
             if (!_create && _writeUpdateMasks)
             {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
-                if (name.EndsWith("is_initialized()"))
-                    flowControl.RemoveAt(1); // bit generated but not checked for is_initialized
+                if (name.EndsWith("has_value()"))
+                    flowControl.RemoveAt(1); // bit generated but not checked for has_value
             }
 
             Type interfaceType = null;
@@ -339,7 +339,7 @@ namespace UpdateFieldCodeGenerator.Formats
             if (_writeUpdateMasks)
             {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
-                flowControl.RemoveAt(1); // bit generated but not checked for is_initialized
+                flowControl.RemoveAt(1); // bit generated but not checked for has_value
             }
 
             _fieldWrites.Add((name, true, (pcf) =>
@@ -422,7 +422,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 return;
             }
 
-            if (name.EndsWith("is_initialized()"))
+            if (name.EndsWith("has_value()"))
             {
                 outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 17);
                 _source.WriteLine($"var has{outputFieldName} = packet.ReadBit(\"Has{outputFieldName}\", indexes);");
