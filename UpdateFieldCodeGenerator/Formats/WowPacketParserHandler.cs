@@ -424,7 +424,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
             if (name.EndsWith("has_value()"))
             {
-                outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 17);
+                outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 12);
                 _source.WriteLine($"var has{outputFieldName} = packet.ReadBit(\"Has{outputFieldName}\", indexes);");
                 return;
             }
