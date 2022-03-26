@@ -136,7 +136,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField passiveSpells = new UpdateField(typeof(DynamicUpdateField<JamMirrorPassiveSpellHistory_C>), UpdateFieldFlag.None);
         public static readonly UpdateField worldEffects = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField channelObjects = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.None);
-        public static readonly UpdateField skinningOwnerGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField silencedSchoolMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField nameplateAttachToGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "When set, nameplate of this unit will instead appear on that object");
     }
