@@ -258,7 +258,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 {
                     if (maskBlocks >= 32)
                     {
-                        _source.WriteLine($"    for (std::size_t i = 0; i < {maskBlocks / 32}; ++i)");
+                        _source.WriteLine($"    for (uint32 i = 0; i < {maskBlocks / 32}; ++i)");
                         _source.WriteLine($"        data << uint32(changesMask.GetBlocksMask(i));");
                         if ((maskBlocks % 32) != 0)
                             _source.WriteLine($"    data.WriteBits(changesMask.GetBlocksMask({maskBlocks / 32}), {maskBlocks % 32});");
@@ -268,7 +268,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
                     if (maskBlocks > 1)
                     {
-                        _source.WriteLine($"    for (std::size_t i = 0; i < {maskBlocks}; ++i)");
+                        _source.WriteLine($"    for (uint32 i = 0; i < {maskBlocks}; ++i)");
                         _source.WriteLine("        if (changesMask.GetBlock(i))");
                         _source.WriteLine("            data.WriteBits(changesMask.GetBlock(i), 32);");
                     }
@@ -348,7 +348,7 @@ namespace UpdateFieldCodeGenerator.Formats
             var allIndexes = "";
             if (type.IsArray)
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t {indexLetter} = 0; {indexLetter} < {updateField.Size}; ++{indexLetter})" });
+                flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 {indexLetter} = 0; {indexLetter} < {updateField.Size}; ++{indexLetter})" });
                 nameUsedToWrite += $"[{indexLetter}]";
                 access = ".";
                 type = type.GetElementType();
@@ -358,7 +358,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             if (typeof(DynamicUpdateField).IsAssignableFrom(type))
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t {indexLetter} = 0; {indexLetter} < {nameUsedToWrite}.size(); ++{indexLetter})" });
+                flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 {indexLetter} = 0; {indexLetter} < {nameUsedToWrite}.size(); ++{indexLetter})" });
                 if (!_create)
                     flowControl.Add(new FlowControlBlock { Statement = $"if ({nameUsedToWrite}.HasChanged({indexLetter}) || {(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")})" });
 
@@ -370,7 +370,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             if (typeof(BlzVectorField).IsAssignableFrom(type))
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t {indexLetter} = 0; {indexLetter} < {name}{access}size(); ++{indexLetter})" });
+                flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 {indexLetter} = 0; {indexLetter} < {name}{access}size(); ++{indexLetter})" });
                 if (_writeUpdateMasks)
                     nameUsedToWrite = $"(*{nameUsedToWrite})";
 
@@ -433,7 +433,7 @@ namespace UpdateFieldCodeGenerator.Formats
             var nameUsedToWrite = name;
             if (updateField.Type.IsArray)
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t i = 0; i < {updateField.Size}; ++i)" });
+                flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 i = 0; i < {updateField.Size}; ++i)" });
                 nameUsedToWrite += "[i]";
             }
 
@@ -462,7 +462,7 @@ namespace UpdateFieldCodeGenerator.Formats
             var arrayLoopBlockIndex = -1;
             if (updateField.Type.IsArray)
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t i = 0; i < {updateField.Size}; ++i)" });
+                flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 i = 0; i < {updateField.Size}; ++i)" });
                 nameUsedToWrite += "[i]";
                 arrayLoopBlockIndex = flowControl.Count;
             }
@@ -495,7 +495,7 @@ namespace UpdateFieldCodeGenerator.Formats
             var nameUsedToWrite = name;
             if (updateField.Type.IsArray)
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t i = 0; i < {updateField.Size}; ++i)" });
+                flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 i = 0; i < {updateField.Size}; ++i)" });
                 nameUsedToWrite += "[i]";
             }
 
@@ -520,7 +520,7 @@ namespace UpdateFieldCodeGenerator.Formats
             var arrayLoopBlockIndex = -1;
             if (updateField.Type.IsArray)
             {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (std::size_t i = 0; i < {updateField.Size}; ++i)" });
+                flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 i = 0; i < {updateField.Size}; ++i)" });
                 nameUsedToWrite += "[i]";
                 arrayLoopBlockIndex = flowControl.Count;
             }
