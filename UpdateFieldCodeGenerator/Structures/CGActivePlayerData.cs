@@ -66,7 +66,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField numRespecs = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField pvpMedals = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField buybackPrice = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 12);
-        public static readonly UpdateField buybackTimestamp = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 12);
+        public static readonly UpdateField buybackTimestamp = new UpdateField(typeof(long[]), UpdateFieldFlag.None, 12);
         public static readonly UpdateField todayHonorableKills = new UpdateField(typeof(ushort), UpdateFieldFlag.None);
         public static readonly UpdateField yesterdayHonorableKills = new UpdateField(typeof(ushort), UpdateFieldFlag.None);
         public static readonly UpdateField lifetimeHonorableKills = new UpdateField(typeof(uint), UpdateFieldFlag.None);
