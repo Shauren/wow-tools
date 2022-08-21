@@ -29,5 +29,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_artifactPowers = new UpdateField(typeof(DynamicUpdateField<JamMirrorArtifactPower_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_gems = new UpdateField(typeof(DynamicUpdateField<JamMirrorSocketedGem_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_dynamicFlags2 = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
+        public static readonly UpdateField m_DEBUGItemLevel = new UpdateField(typeof(ushort), UpdateFieldFlag.Owner);
     }
 }

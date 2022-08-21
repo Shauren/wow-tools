@@ -151,12 +151,12 @@ namespace UpdateFieldCodeGenerator.Formats
                 {
                     if (!_create)
                     {
-                        var dynamicFlags2Index = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("m_dynamicFlags2"));
-                        if (dynamicFlags2Index != -1)
+                        var debugItemLevelIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("m_DEBUGItemLevel"));
+                        if (debugItemLevelIndex != -1)
                         {
                             var modifiers = _fieldWrites[modifiersIndex];
                             _fieldWrites.RemoveAt(modifiersIndex);
-                            _fieldWrites.Insert(dynamicFlags2Index, modifiers);
+                            _fieldWrites.Insert(debugItemLevelIndex, modifiers);
                         }
                     }
                 }
