@@ -29,7 +29,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnumExtractor", "EnumExtrac
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateFieldExtractor", "UpdateFieldExtractor\UpdateFieldExtractor.vcxproj", "{85A7502E-E6A3-4638-B369-5831629C24E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateFieldCodeGenerator", "UpdateFieldCodeGenerator\UpdateFieldCodeGenerator.csproj", "{DC651AE9-755F-406A-8969-F893909CBAF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UpdateFieldCodeGenerator", "UpdateFieldCodeGenerator\UpdateFieldCodeGenerator.csproj", "{4FFF2D4D-0BEA-4F9B-BAA3-7A70FBB1A6DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,14 +95,14 @@ Global
 		{85A7502E-E6A3-4638-B369-5831629C24E1}.Release|Win32.Build.0 = Release|Win32
 		{85A7502E-E6A3-4638-B369-5831629C24E1}.Release|x64.ActiveCfg = Release|x64
 		{85A7502E-E6A3-4638-B369-5831629C24E1}.Release|x64.Build.0 = Release|x64
-		{DC651AE9-755F-406A-8969-F893909CBAF1}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{DC651AE9-755F-406A-8969-F893909CBAF1}.Debug|Win32.Build.0 = Debug|Any CPU
-		{DC651AE9-755F-406A-8969-F893909CBAF1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{DC651AE9-755F-406A-8969-F893909CBAF1}.Debug|x64.Build.0 = Debug|Any CPU
-		{DC651AE9-755F-406A-8969-F893909CBAF1}.Release|Win32.ActiveCfg = Release|Any CPU
-		{DC651AE9-755F-406A-8969-F893909CBAF1}.Release|Win32.Build.0 = Release|Any CPU
-		{DC651AE9-755F-406A-8969-F893909CBAF1}.Release|x64.ActiveCfg = Release|Any CPU
-		{DC651AE9-755F-406A-8969-F893909CBAF1}.Release|x64.Build.0 = Release|Any CPU
+		{4FFF2D4D-0BEA-4F9B-BAA3-7A70FBB1A6DD}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{4FFF2D4D-0BEA-4F9B-BAA3-7A70FBB1A6DD}.Debug|Win32.Build.0 = Debug|Any CPU
+		{4FFF2D4D-0BEA-4F9B-BAA3-7A70FBB1A6DD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4FFF2D4D-0BEA-4F9B-BAA3-7A70FBB1A6DD}.Debug|x64.Build.0 = Debug|Any CPU
+		{4FFF2D4D-0BEA-4F9B-BAA3-7A70FBB1A6DD}.Release|Win32.ActiveCfg = Release|Any CPU
+		{4FFF2D4D-0BEA-4F9B-BAA3-7A70FBB1A6DD}.Release|Win32.Build.0 = Release|Any CPU
+		{4FFF2D4D-0BEA-4F9B-BAA3-7A70FBB1A6DD}.Release|x64.ActiveCfg = Release|Any CPU
+		{4FFF2D4D-0BEA-4F9B-BAA3-7A70FBB1A6DD}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

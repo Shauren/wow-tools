@@ -9,7 +9,7 @@ namespace UpdateFieldCodeGenerator
     public static class CppTypes
     {
         private static readonly ModuleBuilder _moduleBuilder = AssemblyBuilder
-            .DefineDynamicAssembly(new AssemblyName("CppTypes"), AssemblyBuilderAccess.ReflectionOnly)
+            .DefineDynamicAssembly(new AssemblyName("CppTypes"), AssemblyBuilderAccess.RunAndCollect)
             .DefineDynamicModule("CppTypes.dll");
 
         private static readonly Dictionary<Type, Type> _csharpToCppTypeDictionary = CreateTypeMapping();

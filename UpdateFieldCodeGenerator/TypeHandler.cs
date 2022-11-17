@@ -10,8 +10,8 @@ namespace UpdateFieldCodeGenerator
     public static class TypeHandler
     {
         private static readonly CodeDomProvider _codeDomProvider = CodeDomProvider.CreateProvider("CSharp");
-        private static readonly ModuleBuilder _moduleBuilder = AppDomain.CurrentDomain
-            .DefineDynamicAssembly(new AssemblyName("UpdateFieldCodeGeneratorDynamic"), AssemblyBuilderAccess.ReflectionOnly)
+        private static readonly ModuleBuilder _moduleBuilder = AssemblyBuilder
+            .DefineDynamicAssembly(new AssemblyName("UpdateFieldCodeGeneratorDynamic"), AssemblyBuilderAccess.RunAndCollect)
             .DefineDynamicModule("UpdateFieldCodeGeneratorDynamic.dll");
 
         public static string GetFriendlyName(Type type)

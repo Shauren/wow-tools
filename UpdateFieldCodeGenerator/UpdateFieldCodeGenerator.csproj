@@ -1,153 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DC651AE9-755F-406A-8969-F893909CBAF1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>UpdateFieldCodeGenerator</RootNamespace>
-    <AssemblyName>UpdateFieldCodeGenerator</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <Description>Code generator for post-8.1.0 updatefields for both TrinityCore and WowPacketParser</Description>
+    <Authors>Shauren</Authors>
+    <Copyright>Copyright © 2019 Shauren &lt;https://github.com/Shauren&gt;</Copyright>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Shauren/wow-tools</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\x64\Release\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BlzOptionalField.cs" />
-    <Compile Include="CppTypes.cs" />
-    <Compile Include="DictionaryExtensions.cs" />
-    <Compile Include="DontStoreInWowPacketParserAttribute.cs" />
-    <Compile Include="DungeonScoreData.cs" />
-    <Compile Include="DungeonScoreSummary.cs" />
-    <Compile Include="EnumExtensions.cs" />
-    <Compile Include="Formats\FlowControlBlock.cs" />
-    <Compile Include="Formats\IUpdateFieldHandler.cs" />
-    <Compile Include="Formats\TrinityCoreHandler.cs" />
-    <Compile Include="Formats\UpdateFieldHandlerBase.cs" />
-    <Compile Include="Formats\WowPacketParserHandler.cs" />
-    <Compile Include="Bits.cs" />
-    <Compile Include="BlzVectorField.cs" />
-    <Compile Include="DynamicUpdateField.cs" />
-    <Compile Include="HasChangesMaskAttribute.cs" />
-    <Compile Include="HasMutableInterfaceAttribute.cs" />
-    <Compile Include="HasDynamicChangesMaskAttribute.cs" />
-    <Compile Include="Quaternion.cs" />
-    <Compile Include="StructureReferenceType.cs" />
-    <Compile Include="Structures\CGActivePlayerData.cs" />
-    <Compile Include="Structures\CGAreaTriggerData.cs" />
-    <Compile Include="Structures\CGCorpseData.cs" />
-    <Compile Include="Structures\CGDynamicObjectData.cs" />
-    <Compile Include="Structures\CGGameObjectData.cs" />
-    <Compile Include="Structures\CGPlayerData.cs" />
-    <Compile Include="Structures\CGSceneObjectData.cs" />
-    <Compile Include="Structures\CGUnitData.cs" />
-    <Compile Include="Structures\JamMirrorActivePlayerUnk901_C.cs" />
-    <Compile Include="Structures\JamMirrorArenaCooldown_C.cs" />
-    <Compile Include="Structures\JamMirrorCharacterRestriction_C.cs" />
-    <Compile Include="Structures\JamMirrorChrCustomizationChoice_C.cs" />
-    <Compile Include="Structures\JamMirrorCTROptions_C.cs" />
-    <Compile Include="Structures\JamMirrorItemModList_C.cs" />
-    <Compile Include="Structures\JamMirrorItemMod_C.cs" />
-    <Compile Include="Structures\JamMirrorMawPower_C.cs" />
-    <Compile Include="Structures\JamMirrorMultiFloorExplore_C.cs" />
-    <Compile Include="Structures\JamMirrorPassiveSpellHistory_C.cs" />
-    <Compile Include="Structures\JamMirrorPVPInfo_C.cs" />
-    <Compile Include="Structures\JamMirrorQuestLog_C.cs" />
-    <Compile Include="Structures\JamMirrorRecipeProgressionInfo_C.cs" />
-    <Compile Include="Structures\JamMirrorResearch_C.cs" />
-    <Compile Include="Structures\JamMirrorRestInfo_C.cs" />
-    <Compile Include="Structures\JamMirrorScaleCurve_C.cs" />
-    <Compile Include="Structures\JamMirrorSelectedAzeriteEssences_C.cs" />
-    <Compile Include="Structures\JamMirrorSkillInfo_C.cs" />
-    <Compile Include="Structures\JamMirrorSpellCastVisual_C.cs" />
-    <Compile Include="Structures\JamMirrorSpellFlatModByLabel_C.cs" />
-    <Compile Include="Structures\JamMirrorSpellPctModByLabel_C.cs" />
-    <Compile Include="Structures\JamMirrorUnitChannel_C.cs" />
-    <Compile Include="Structures\JamMirrorUnlockedAzeriteEssence_C.cs" />
-    <Compile Include="Structures\JamMirrorVisibleItem_C.cs" />
-    <Compile Include="Structures\JamMirrorQuestSession_C.cs" />
-    <Compile Include="Structures\JamMirrorReplayedQuest_C.cs" />
-    <Compile Include="Structures\JamMirrorVisualAnim_C.cs" />
-    <Compile Include="TypeHandler.cs" />
-    <Compile Include="Vector2.cs" />
-    <Compile Include="WowGuid.cs" />
-    <Compile Include="ObjectType.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Structures\CGAzeriteEmpoweredItemData.cs" />
-    <Compile Include="Structures\CGAzeriteItemData.cs" />
-    <Compile Include="Structures\CGContainerData.cs" />
-    <Compile Include="Structures\CGConversationData.cs" />
-    <Compile Include="Structures\CGItemData.cs" />
-    <Compile Include="Structures\CGObjectData.cs" />
-    <Compile Include="Structures\JamMirrorArtifactPower_C.cs" />
-    <Compile Include="Structures\JamMirrorConversationActor_C.cs" />
-    <Compile Include="Structures\JamMirrorConversationLine_C.cs" />
-    <Compile Include="Structures\JamMirrorItemEnchantment_C.cs" />
-    <Compile Include="Structures\JamMirrorSocketedGem_C.cs" />
-    <Compile Include="TypeOrdering.cs" />
-    <Compile Include="UpdateField.cs" />
-    <Compile Include="UpdateFieldFlag.cs" />
-    <Compile Include="Formats\UpdateFieldHandlers.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
