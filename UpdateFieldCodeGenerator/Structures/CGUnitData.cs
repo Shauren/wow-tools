@@ -55,7 +55,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField virtualItems = new UpdateField(typeof(JamMirrorVisibleItem_C[]), UpdateFieldFlag.None, 3);
         public static readonly UpdateField flags = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField flags2 = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField flags3 = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField flags3 = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField auraState = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField attackRoundBaseTime = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField rangedAttackRoundBaseTime = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
