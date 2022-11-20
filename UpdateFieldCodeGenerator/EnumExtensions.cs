@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace UpdateFieldCodeGenerator
+﻿namespace UpdateFieldCodeGenerator
 {
     public static class EnumExtensions
     {

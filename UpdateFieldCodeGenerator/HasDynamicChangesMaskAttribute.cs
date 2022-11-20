@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace UpdateFieldCodeGenerator
+﻿namespace UpdateFieldCodeGenerator
 {
     public sealed class HasDynamicChangesMaskAttribute : Attribute
     {

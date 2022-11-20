@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace UpdateFieldCodeGenerator.Formats
+﻿namespace UpdateFieldCodeGenerator.Formats
 {
     public class UpdateFieldHandlers : IDisposable
     {

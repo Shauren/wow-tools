@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace UpdateFieldCodeGenerator
+﻿namespace UpdateFieldCodeGenerator
 {
     [Flags]
     public enum UpdateFieldFlag : byte

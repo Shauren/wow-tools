@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace UpdateFieldCodeGenerator
+﻿namespace UpdateFieldCodeGenerator
 {
     public class DontStoreInWowPacketParserAttribute : Attribute
     {

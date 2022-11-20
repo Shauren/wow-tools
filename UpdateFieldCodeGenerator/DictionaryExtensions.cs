@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace UpdateFieldCodeGenerator
+﻿namespace UpdateFieldCodeGenerator
 {
     public static class DictionaryExtensions
     {
