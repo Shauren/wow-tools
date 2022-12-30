@@ -32,9 +32,14 @@ namespace UpdateFieldCodeGenerator
                 { typeof(WowGuid), CreateType("ObjectGuid") },
                 { typeof(Bits), CreateType("uint32") },
                 { typeof(Vector2), CreateType("TaggedPosition", "Tag").MakeGenericType(CreateType("Position::XY")) },
+                { typeof(Vector3), CreateType("TaggedPosition", "Tag").MakeGenericType(CreateType("Position::XYZ")) },
                 { typeof(Quaternion), CreateType("QuaternionData") },
                 { typeof(DungeonScoreSummary), CreateType("WorldPackets::MythicPlus::DungeonScoreSummary") },
                 { typeof(DungeonScoreData), CreateType("WorldPackets::MythicPlus::DungeonScoreData") },
+                { typeof(ItemBonusKey), CreateType("WorldPackets::Item::ItemBonusKey") },
+                { typeof(ItemInstance), CreateType("WorldPackets::Item::ItemInstance") },
+                { typeof(ItemEnchantData), CreateType("WorldPackets::Item::ItemEnchantData") },
+                { typeof(ItemGemData), CreateType("WorldPackets::Item::ItemGemData") }
             };
             return typeMap;
         }

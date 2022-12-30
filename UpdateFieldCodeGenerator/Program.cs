@@ -364,7 +364,7 @@ namespace UpdateFieldCodeGenerator
             if (typeof(BlzOptionalField).IsAssignableFrom(field.Type))
                 return (new UpdateField(typeof(Bits), field.Flag, field.SizeForField, bitSize: 1, order: field.Order), field.SizeForField.Name + ".has_value()");
 
-            return (new UpdateField(typeof(uint), field.Flag, field.SizeForField, order: field.Order), field.SizeForField.Name + "{0}size()");
+            return (new UpdateField(typeof(uint), field.Flag, field.SizeForField, bitSize: field.BitSize, order: field.Order), field.SizeForField.Name + "{0}size()");
         }
 
         private static CreateTypeOrder GetCreateTypeOrder(UpdateField fieldType)
@@ -387,7 +387,7 @@ namespace UpdateFieldCodeGenerator
                     return CreateTypeOrder.ArrayWithBits;
             }
 
-            if (StructureHasBitFields(fieldType.Type))
+            if (StructureHasBitFields(fieldType.Type) || fieldType.BitSize > 0)
                 return CreateTypeOrder.DefaultWithBits;
 
             return CreateTypeOrder.Default;
@@ -462,7 +462,7 @@ namespace UpdateFieldCodeGenerator
             return type.GetFields(BindingFlags.Static | BindingFlags.Public)
                 .Where(field => typeof(UpdateField).IsAssignableFrom(field.FieldType))
                 .Select(field => field.GetValue(null) as UpdateField)
-                .Count(field => field.Type == typeof(bool) || (field.SizeForField == null && field.BitSize > 0)) > 0;
+                .Any(field => field.Type == typeof(bool) || (field.SizeForField == null && field.BitSize > 0));
         }
     }
 }

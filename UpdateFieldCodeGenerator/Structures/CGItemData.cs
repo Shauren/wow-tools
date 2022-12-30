@@ -1,14 +1,10 @@
-﻿using System.Reflection;
-
-namespace UpdateFieldCodeGenerator.Structures
+﻿namespace UpdateFieldCodeGenerator.Structures
 {
     [HasChangesMask]
     public class CGItemData
     {
         public static readonly ObjectType ObjectType = ObjectType.Item;
 
-        public static readonly UpdateField m_bonusListIDsSize = new UpdateField(typeof(BlzVectorField<int>), UpdateFieldFlag.None, typeof(CGItemData).GetField("m_bonusListIDs", BindingFlags.Static | BindingFlags.Public));
-        public static readonly UpdateField m_bonusListIDs = new UpdateField(typeof(BlzVectorField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField m_owner = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_containedIn = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_creator = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
@@ -29,6 +25,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_artifactPowers = new UpdateField(typeof(DynamicUpdateField<JamMirrorArtifactPower_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_gems = new UpdateField(typeof(DynamicUpdateField<JamMirrorSocketedGem_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_dynamicFlags2 = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
+        public static readonly UpdateField m_itemBonusKey = new UpdateField(typeof(ItemBonusKey), UpdateFieldFlag.None);
         public static readonly UpdateField m_DEBUGItemLevel = new UpdateField(typeof(ushort), UpdateFieldFlag.Owner);
     }
 }

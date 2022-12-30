@@ -32,6 +32,7 @@
         public static readonly UpdateField avgItemLevel = new UpdateField(typeof(float[]), UpdateFieldFlag.None, 6);
         public static readonly UpdateField currentBattlePetBreedQuality = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField honorLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField logoutTime = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField arenaCooldowns = new UpdateField(typeof(DynamicUpdateField<JamMirrorArenaCooldown_C>), UpdateFieldFlag.None);
         public static readonly UpdateField field_B0 = new UpdateField(typeof(int), UpdateFieldFlag.None); // these 2 are both quest ids and are used in condition to trigger PlayerCliQuestGiverAcceptQuest
         public static readonly UpdateField field_B4 = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -41,5 +42,6 @@
         public static readonly UpdateField hasQuestSession = new UpdateField(typeof(bool), UpdateFieldFlag.PartyMember);
         public static readonly UpdateField hasLevelLink = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField dungeonScore = new UpdateField(typeof(DungeonScoreSummary), UpdateFieldFlag.None);
+        public static readonly UpdateField visualItemReplacements = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
     }
 }

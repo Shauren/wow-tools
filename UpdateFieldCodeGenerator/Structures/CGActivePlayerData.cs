@@ -7,7 +7,7 @@ namespace UpdateFieldCodeGenerator.Structures
     {
         public static readonly ObjectType ObjectType = ObjectType.ActivePlayer;
 
-        public static readonly UpdateField invSlots = new UpdateField(typeof(WowGuid[]), UpdateFieldFlag.None, 199);
+        public static readonly UpdateField invSlots = new UpdateField(typeof(WowGuid[]), UpdateFieldFlag.None, 218);
         public static readonly UpdateField farsightObject = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField summonedBattlePetGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField knownTitles = new UpdateField(typeof(DynamicUpdateField<ulong>), UpdateFieldFlag.None);
@@ -72,7 +72,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField lifetimeHonorableKills = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField watchedFactionIndex = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField combatRatings = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 32);
-        public static readonly UpdateField pvpInfo = new UpdateField(typeof(JamMirrorPVPInfo_C[]), UpdateFieldFlag.None, 6);
+        public static readonly UpdateField pvpInfo = new UpdateField(typeof(DynamicUpdateField<JamMirrorPVPInfo_C>), UpdateFieldFlag.None);
         public static readonly UpdateField maxLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scalingPlayerLevelDelta = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField maxCreatureScalingLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -93,7 +93,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField overrideZonePVPType = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField bnetAccount = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField guildClubMemberID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
-        public static readonly UpdateField bagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 4);
+        public static readonly UpdateField bagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 5);
         public static readonly UpdateField bankBagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 7);
         public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 875);
         public static readonly UpdateField honor = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -129,6 +129,9 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField weeklyRewardsPeriodSinceOrigin = new UpdateField(typeof(uint), UpdateFieldFlag.None, comment: "week count since Cfg_RegionsEntry::ChallengeOrigin");
         public static readonly UpdateField DEBUGSoulbindConduitRank = new UpdateField(typeof(short), UpdateFieldFlag.None);
         public static readonly UpdateField dungeonScore = new UpdateField(typeof(DungeonScoreData), UpdateFieldFlag.None);
+        public static readonly UpdateField traitConfigs = new UpdateField(typeof(DynamicUpdateField<JamMirrorTraitConfig_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField activeCombatTraitConfigID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField craftingOrders = new UpdateField(typeof(DynamicUpdateField<JamMirrorCraftingOrder_C>), UpdateFieldFlag.None);
         public static readonly UpdateField backpackAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField bankAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField sortBagsRightToLeft = new UpdateField(typeof(bool), UpdateFieldFlag.None);

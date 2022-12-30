@@ -4,8 +4,8 @@ namespace UpdateFieldCodeGenerator.Formats
 {
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
-        private const string ModuleName = "V9_0_1_36216";
-        private const string Version = "V9_2_7_45114";
+        private const string ModuleName = "V10_0_0_46181";
+        private const string Version = "V10_0_2_46479";
 
         public WowPacketParserHandler() : base(new StreamWriter("UpdateFieldsHandler.cs"), null)
         {
@@ -206,14 +206,24 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
                 if (name.EndsWith("has_value()"))
-                    flowControl.RemoveAt(1); // bit generated but not checked for has_value
+                {
+                    if (_blockGroupSize > 0)
+                        flowControl.RemoveAt(1); // bit generated but not checked for has_value
+                    else
+                        flowControl.RemoveAt(0);
+                }
             }
+
+            if (_create)
+                foreach (var (fieldToCompare, operatorAndConstant) in updateField.Conditions)
+                    flowControl.Add(new FlowControlBlock { Statement = $"if (data.{RenameField(fieldToCompare.Name)} {operatorAndConstant})" });
 
             Type interfaceType = null;
             if (updateField.SizeForField != null)
             {
                 type = (updateField.SizeForField.GetValue(null) as UpdateField).Type;
-                type = type.GenericTypeArguments[0];
+                if (type.GenericTypeArguments.Length > 0)
+                    type = type.GenericTypeArguments[0];
                 interfaceType = TypeHandler.ConvertToInterfaces(type, rawName => RenameType(rawName), _writeUpdateMasks);
             }
 
@@ -300,11 +310,9 @@ namespace UpdateFieldCodeGenerator.Formats
             if (_create && updateField.Flag != UpdateFieldFlag.None)
                 flowControl.Add(new FlowControlBlock { Statement = $"if ((flags & {updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag.", "", "(", ")")}) != UpdateFieldFlag.None)" });
 
-            var nameUsedToWrite = name;
             if (updateField.Type.IsArray)
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"for (var i = 0; i < {updateField.Size}; ++i)" });
-                nameUsedToWrite += "[i]";
             }
 
             _fieldWrites.Add((name, true, (pcf) =>
@@ -323,12 +331,10 @@ namespace UpdateFieldCodeGenerator.Formats
             name = RenameField(name);
             var flowControl = new List<FlowControlBlock>();
 
-            var nameUsedToWrite = name;
             var arrayLoopBlockIndex = -1;
             if (updateField.Type.IsArray)
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"for (var i = 0; i < {updateField.Size}; ++i)" });
-                nameUsedToWrite += "[i]";
                 arrayLoopBlockIndex = flowControl.Count;
             }
 
@@ -361,7 +367,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     if (!updateField.Type.IsArray)
                     {
                         ++_nonArrayBitCounter;
-                        if (_nonArrayBitCounter == 32)
+                        if (_nonArrayBitCounter == _blockGroupSize)
                         {
                             _blockGroupBit = ++_bitCounter;
                             _nonArrayBitCounter = 1;
@@ -370,7 +376,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
                     bitIndex.Add(++_bitCounter);
 
-                    if (!updateField.Type.IsArray)
+                    if (!updateField.Type.IsArray && _blockGroupSize > 0)
                         bitIndex.Add(_blockGroupBit);
                 }
                 else
@@ -397,8 +403,13 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             else
             {
-                flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{_blockGroupBit}])" });
-                flowControl.Insert(1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
+                if (_blockGroupSize > 0)
+                {
+                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{_blockGroupBit}])" });
+                    flowControl.Insert(1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
+                }
+                else
+                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
             }
 
             _previousFieldCounters = bitIndex;
@@ -412,7 +423,13 @@ namespace UpdateFieldCodeGenerator.Formats
                 outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 9);
                 var interfaceName = RenameType(TypeHandler.GetFriendlyName(interfaceType));
                 if (_create || !_isRoot)
-                    _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[packet.ReadUInt32()];");
+                {
+                    var sizeReadExpression = bitSize > 0 ? $"packet.ReadBits({bitSize})" : "packet.ReadUInt32()";
+                    if (type != typeof(string))
+                        _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[{sizeReadExpression}];");
+                    else
+                        _source.WriteLine($"data.{outputFieldName} = new string('*', (int){sizeReadExpression});");
+                }
                 else
                     _source.WriteLine($"data.{outputFieldName} = Enumerable.Range(0, (int)packet.ReadBits(32)).Select(x => new {RenameType(TypeHandler.GetFriendlyName(type))}()).Cast<{interfaceName}>().ToArray();");
                 return;
@@ -434,12 +451,22 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"data.{outputFieldName} = packet.ReadBits(\"{name}\", {bitSize}, indexes{nextIndex});");
                     else if (type == typeof(Vector2))
                         _source.WriteLine($"data.{outputFieldName} = packet.ReadVector2(\"{name}\", indexes{nextIndex});");
+                    else if (type == typeof(Vector3))
+                        _source.WriteLine($"data.{outputFieldName} = packet.ReadVector3(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(Quaternion))
                         _source.WriteLine($"data.{outputFieldName} = packet.ReadQuaternion(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(DungeonScoreSummary))
                         _source.WriteLine($"Substructures.MythicPlusHandler.ReadDungeonScoreSummary(packet, indexes{nextIndex}, \"{name}\");");
                     else if (type == typeof(DungeonScoreData))
                         _source.WriteLine($"Substructures.MythicPlusHandler.ReadDungeonScoreData(packet, indexes{nextIndex}, \"{name}\");");
+                    else if (type == typeof(ItemBonusKey))
+                        _source.WriteLine($"Substructures.ItemHandler.ReadItemBonusKey(packet, indexes{nextIndex}, \"{name}\");");
+                    else if (type == typeof(ItemInstance))
+                        _source.WriteLine($"Substructures.ItemHandler.ReadItemInstance(packet, indexes{nextIndex}, \"{name}\");");
+                    else if (type == typeof(ItemEnchantData))
+                        _source.WriteLine($"Substructures.ItemHandler.ReadItemEnchantData(packet, indexes{nextIndex}, \"{name}\");");
+                    else if (type == typeof(ItemGemData))
+                        _source.WriteLine($"Substructures.ItemHandler.ReadItemGemData(packet, indexes{nextIndex}, \"{name}\");");
                     else if (_create)
                         _source.WriteLine($"data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     else
@@ -485,6 +512,9 @@ namespace UpdateFieldCodeGenerator.Formats
                     break;
                 case TypeCode.Single:
                     _source.WriteLine($"data.{outputFieldName} = packet.ReadSingle(\"{name}\", indexes{nextIndex});");
+                    break;
+                case TypeCode.String:
+                    _source.WriteLine($"data.{outputFieldName} = packet.ReadWoWString(\"{name}\", data.{outputFieldName}.Length, indexes{nextIndex});");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
@@ -538,6 +568,8 @@ namespace UpdateFieldCodeGenerator.Formats
         protected override string RenameField(string name)
         {
             name = name.Replace("m_", "");
+            if (name.Length == 0)
+                return name;
             return char.ToUpperInvariant(name[0]) + name.Substring(1);
         }
 

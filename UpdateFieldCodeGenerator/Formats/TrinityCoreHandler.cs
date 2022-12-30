@@ -41,6 +41,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _header.WriteLine("#define UpdateFields_h__");
             _header.WriteLine();
             _header.WriteLine("#include \"EnumFlag.h\"");
+            _header.WriteLine("#include \"ItemPacketsCommon.h\"");
             _header.WriteLine("#include \"MythicPlusPacketsCommon.h\"");
             _header.WriteLine("#include \"ObjectGuid.h\"");
             _header.WriteLine("#include \"Position.h\"");
@@ -389,7 +390,17 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
                 if (name.EndsWith("has_value()"))
-                    flowControl.RemoveAt(1); // bit generated but not checked for has_value
+                {
+                    if (_blockGroupSize > 0)
+                        flowControl.RemoveAt(1); // bit generated but not checked for has_value
+                    else
+                        flowControl.RemoveAt(0);
+                }
+            }
+
+            foreach (var (fieldToCompare, operatorAndConstant) in updateField.Conditions)
+            {
+                flowControl.Add(new FlowControlBlock { Statement = $"if ({RenameField(fieldToCompare.Name)} {operatorAndConstant})" });
             }
 
             RegisterDynamicChangesMaskFieldType(type);
@@ -550,7 +561,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     if (!updateField.Type.IsArray)
                     {
                         ++_nonArrayBitCounter;
-                        if (_nonArrayBitCounter == 32)
+                        if (_nonArrayBitCounter == _blockGroupSize)
                         {
                             _blockGroupBit = ++_bitCounter;
                             _nonArrayBitCounter = 1;
@@ -559,7 +570,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
                     bitIndex.Add(++_bitCounter);
 
-                    if (!updateField.Type.IsArray)
+                    if (!updateField.Type.IsArray && _blockGroupSize > 0)
                         bitIndex.Add(_blockGroupBit);
                 }
                 else
@@ -593,8 +604,13 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             else
             {
-                flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{_blockGroupBit}])" });
-                flowControl.Insert(1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
+                if (_blockGroupSize > 0)
+                {
+                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{_blockGroupBit}])" });
+                    flowControl.Insert(1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
+                }
+                else
+                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
             }
 
             _previousFieldCounters = bitIndex;
@@ -606,7 +622,10 @@ namespace UpdateFieldCodeGenerator.Formats
             if (name.EndsWith("size()"))
             {
                 if (_create || !_isRoot)
-                    _source.WriteLine($"data << uint32({name});");
+                {
+                    var sizeWriteExpression = bitSize > 0 ? $".WriteBits({name}, {bitSize})" : $" << uint32({name})";
+                    _source.WriteLine($"data{sizeWriteExpression};");
+                }
                 else
                     _source.WriteLine($"data.WriteBits({name}, 32);");
                 return;
@@ -615,7 +634,9 @@ namespace UpdateFieldCodeGenerator.Formats
             switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Object:
-                    if (type == typeof(WowGuid) || type == typeof(Vector2) || type == typeof(DungeonScoreSummary) || type == typeof(DungeonScoreData))
+                    if (type == typeof(WowGuid) || type == typeof(Vector2) || type == typeof(Vector3) || type == typeof(DungeonScoreSummary)
+                        || type == typeof(DungeonScoreData) || type == typeof(ItemBonusKey) || type == typeof(ItemInstance) || type == typeof(ItemEnchantData)
+                        || type == typeof(ItemGemData))
                         _source.WriteLine($"data << {name};");
                     else if (type == typeof(Bits))
                         _source.WriteLine($"data.WriteBits({name}, {bitSize});");
@@ -672,6 +693,9 @@ namespace UpdateFieldCodeGenerator.Formats
                 case TypeCode.Single:
                     _source.WriteLine($"data << float({name});");
                     break;
+                case TypeCode.String:
+                    _source.WriteLine($"data.WriteString({name});");
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
             }
@@ -697,6 +721,7 @@ namespace UpdateFieldCodeGenerator.Formats
             if (_writeUpdateMasks)
             {
                 var bit = CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][0]);
+                var blockIndex = _fieldBitIndex[name].Count > 1 ? _fieldBitIndex[name][1] : -1;
                 if (fieldGeneratedType.IsArray)
                 {
                     if (typeof(DynamicUpdateField).IsAssignableFrom(fieldGeneratedType.GetElementType()))
@@ -707,7 +732,7 @@ namespace UpdateFieldCodeGenerator.Formats
                             _dynamicUpdateFieldBaseType.MakeGenericType(elementType),
                             CppTypes.CreateConstantForTemplateParameter(declarationType.Size),
                             bit,
-                            CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][1]));
+                            CppTypes.CreateConstantForTemplateParameter(blockIndex));
                     }
                     else
                     {
@@ -716,7 +741,7 @@ namespace UpdateFieldCodeGenerator.Formats
                         fieldGeneratedType = _arrayUpdateFieldType.MakeGenericType(elementType,
                             CppTypes.CreateConstantForTemplateParameter(declarationType.Size),
                             bit,
-                            CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][1]));
+                            CppTypes.CreateConstantForTemplateParameter(blockIndex));
                     }
                 }
                 else if (typeof(DynamicUpdateField).IsAssignableFrom(declarationType.Type))
@@ -724,7 +749,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     var elementType = PrepareFieldType(fieldGeneratedType.GenericTypeArguments[0]);
                     typeName = TypeHandler.GetFriendlyName(elementType);
                     fieldGeneratedType = _dynamicUpdateFieldType.MakeGenericType(PrepareFieldType(fieldGeneratedType.GenericTypeArguments[0]),
-                        CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][1]),
+                        CppTypes.CreateConstantForTemplateParameter(blockIndex),
                         bit);
                 }
                 else if (typeof(BlzOptionalField).IsAssignableFrom(declarationType.Type))
@@ -732,7 +757,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     var elementType = PrepareFieldType(fieldGeneratedType.GenericTypeArguments[0]);
                     typeName = TypeHandler.GetFriendlyName(elementType);
                     fieldGeneratedType = _optionalUpdateFieldType.MakeGenericType(elementType,
-                        CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][1]),
+                        CppTypes.CreateConstantForTemplateParameter(blockIndex),
                         bit);
                 }
                 else
@@ -740,7 +765,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     var elementType = PrepareFieldType(declarationType.Type);
                     typeName = TypeHandler.GetFriendlyName(elementType);
                     fieldGeneratedType = _updateFieldType.MakeGenericType(PrepareFieldType(declarationType.Type),
-                        CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][1]),
+                        CppTypes.CreateConstantForTemplateParameter(blockIndex),
                         bit);
                 }
 
@@ -804,6 +829,8 @@ namespace UpdateFieldCodeGenerator.Formats
         protected override string RenameField(string name)
         {
             name = name.Replace("m_", "");
+            if (name.Length == 0)
+                return name;
             return char.ToUpperInvariant(name[0]) + name.Substring(1);
         }
 

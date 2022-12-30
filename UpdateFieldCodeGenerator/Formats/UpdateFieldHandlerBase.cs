@@ -14,8 +14,9 @@ namespace UpdateFieldCodeGenerator.Formats
         protected int _indent = 1;
         protected readonly IDictionary<string, List<int>> _fieldBitIndex = new Dictionary<string, List<int>>();
         protected List<int> _previousFieldCounters;
-        protected int _bitCounter;
         protected int _blockGroupBit;
+        protected int _blockGroupSize;
+        protected int _bitCounter;
         protected int _nonArrayBitCounter;
         protected List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)> _fieldWrites;
         protected List<string> _dynamicChangesMaskTypes;
@@ -95,8 +96,9 @@ namespace UpdateFieldCodeGenerator.Formats
             {
             }
             _fieldBitIndex.Clear();
-            _bitCounter = HasNonArrayFields(structureType) && CountFields(structureType, field => true) > 1 ? 0 : -1;
             _blockGroupBit = 0;
+            _blockGroupSize = structureType.GetCustomAttribute<HasChangesMaskAttribute>()?.BlockGroupSize ?? 32;
+            _bitCounter = HasNonArrayFields(structureType) && CountFields(structureType, field => true) > 1 && _blockGroupSize > 0 ? 0 : -1;
             _nonArrayBitCounter = 0;
             _fieldWrites = new List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)>();
             _dynamicChangesMaskTypes = new List<string>();
@@ -133,61 +135,52 @@ namespace UpdateFieldCodeGenerator.Formats
             return type.Name;
         }
 
-        protected virtual string RenameField(string name)
-        {
-            return name;
-        }
+        protected abstract string RenameField(string name);
 
         protected void PostProcessFieldWrites()
         {
+            Action<string, string, bool> moveFieldBeforeField = (fieldToMove, where, whereIsSize) =>
+            {
+                fieldToMove = RenameField(fieldToMove);
+                where = RenameField(where);
+                var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == fieldToMove && !fieldWrite.IsSize);
+                var whereFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == where && fieldWrite.IsSize == whereIsSize);
+                if (movedFieldIndex != -1 && whereFieldIndex != -1)
+                {
+                    // move to just-before-last field
+                    var movedField = _fieldWrites[movedFieldIndex];
+                    _fieldWrites.RemoveAt(movedFieldIndex);
+                    _fieldWrites.Insert(whereFieldIndex < movedFieldIndex ? whereFieldIndex : whereFieldIndex - 1, movedField);
+                }
+            };
+
+            Action<string> moveFieldToEnd = (fieldToMove) =>
+            {
+                fieldToMove = RenameField(fieldToMove);
+                var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == fieldToMove && !fieldWrite.IsSize);
+                if (movedFieldIndex != -1)
+                {
+                    // move to just-before-last field
+                    var movedField = _fieldWrites[movedFieldIndex];
+                    _fieldWrites.RemoveAt(movedFieldIndex);
+                    _fieldWrites.Insert(_fieldWrites.Count - 1, movedField);
+                }
+            };
+
             if (_structureType == typeof(CGItemData))
             {
-                var modifiersIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("m_modifiers"));
-                if (modifiersIndex != -1)
-                {
-                    if (!_create)
-                    {
-                        var debugItemLevelIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("m_DEBUGItemLevel"));
-                        if (debugItemLevelIndex != -1)
-                        {
-                            var modifiers = _fieldWrites[modifiersIndex];
-                            _fieldWrites.RemoveAt(modifiersIndex);
-                            _fieldWrites.Insert(debugItemLevelIndex, modifiers);
-                        }
-                    }
-                }
+                if (!_create)
+                    moveFieldBeforeField("m_modifiers", "m_spellCharges", false);
             }
             else if (_structureType == typeof(CGPlayerData))
             {
                 if (_create)
-                {
-                    var dungeonScoreIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("dungeonScore"));
-                    if (dungeonScoreIndex != -1)
-                    {
-                        // move to just-before-end (end is a write for closing all brackets)
-                        var dungeonScore = _fieldWrites[dungeonScoreIndex];
-                        _fieldWrites.RemoveAt(dungeonScoreIndex);
-                        _fieldWrites.Insert(_fieldWrites.Count - 1, dungeonScore);
-                    }
-                }
+                    moveFieldToEnd("dungeonScore");
             }
             else if (_structureType == typeof(CGActivePlayerData))
             {
                 if (!_create)
                 {
-                    var name = RenameField("pvpInfo");
-                    var pvpInfoIndex = _fieldWrites.FindIndex(fieldWrite =>
-                    {
-                        return fieldWrite.Name == name;
-                    });
-                    if (pvpInfoIndex != -1)
-                    {
-                        // move to just-before-end (end is a write for closing all brackets)
-                        var pvpInfo = _fieldWrites[pvpInfoIndex];
-                        _fieldWrites.RemoveAt(pvpInfoIndex);
-                        _fieldWrites.Insert(_fieldWrites.Count - 1, pvpInfo);
-                    }
-
                     var spellFlatModByLabelIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("spellFlatModByLabel") && fieldWrite.IsSize);
                     if (spellFlatModByLabelIndex != -1)
                     {
@@ -202,24 +195,32 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                 }
 
-                var questSessionBitIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession.has_value()"));
-                if (questSessionBitIndex != -1)
+                if (_create)
                 {
-                    var newQuestSessionPos = _fieldWrites.FindIndex(fw => !fw.IsSize && fw.Name == RenameField(_create ? "characterRestrictions" : "invSlots"));
-                    if (newQuestSessionPos != -1)
+                    moveFieldBeforeField("questSession.has_value()", "pvpInfo", false);
+                    moveFieldBeforeField("questSession", "pvpInfo", false);
+                }
+                else
+                {
+                    var questSessionBitIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession.has_value()"));
+                    if (questSessionBitIndex != -1)
                     {
-                        var movedCount = 3;
+                        var newQuestSessionPos = _fieldWrites.FindIndex(fw => !fw.IsSize && fw.Name == RenameField("invSlots"));
+                        if (newQuestSessionPos != -1)
+                        {
+                            var movedCount = 3;
 
-                        var movedItems = _fieldWrites.GetRange(questSessionBitIndex, movedCount);
-                        _fieldWrites.RemoveRange(questSessionBitIndex, movedCount);
+                            var movedItems = _fieldWrites.GetRange(questSessionBitIndex, movedCount);
+                            _fieldWrites.RemoveRange(questSessionBitIndex, movedCount);
 
-                        FinishControlBlocks(null);
+                            FinishControlBlocks(null);
 
-                        movedItems.Insert(0, _fieldWrites[_fieldWrites.Count - 1]);
+                            movedItems.Insert(0, _fieldWrites[_fieldWrites.Count - 1]);
 
-                        _fieldWrites.RemoveRange(_fieldWrites.Count - 1, 1);
+                            _fieldWrites.RemoveRange(_fieldWrites.Count - 1, 1);
 
-                        _fieldWrites.InsertRange(newQuestSessionPos - movedCount, movedItems);
+                            _fieldWrites.InsertRange(newQuestSessionPos - movedCount, movedItems);
+                        }
                     }
                 }
 
@@ -245,17 +246,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                 }
 
-                var field_1410Index = _fieldWrites.FindIndex(fw => fw.Name == RenameField("field_1410"));
-                if (field_1410Index != -1)
-                {
-                    var questSessionBit = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession") && fw.IsSize);
-                    if (questSessionBit != -1)
-                    {
-                        var field_1410 = _fieldWrites[field_1410Index];
-                        _fieldWrites.RemoveAt(field_1410Index);
-                        _fieldWrites.Insert(questSessionBit, field_1410);
-                    }
-                }
+                moveFieldBeforeField("field_1410", "questSession", false);
 
                 var dungeonScoreIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("dungeonScore"));
                 if (dungeonScoreIndex != -1)
@@ -269,20 +260,38 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                 }
             }
+            else if (_structureType == typeof(JamMirrorTraitConfig_C))
+            {
+                moveFieldToEnd("m_name");
+                moveFieldBeforeField("m_name{0}size()", "m_name", false);
+            }
+            else if (_structureType == typeof(JamMirrorCraftingOrder_C))
+            {
+                if (_create)
+                {
+                    moveFieldBeforeField("m_data", "m_recraftItemInfo", false);
+                    moveFieldBeforeField("m_recraftItemInfo", "m_enchantments", false);
+                    moveFieldBeforeField("m_recraftItemInfo.has_value()", "m_enchantments", true);
+                }
+            }
+            else if (_structureType == typeof(JamMirrorCraftingOrderData_C))
+            {
+                if (_create)
+                {
+                    moveFieldToEnd("m_outputItem");
+                    moveFieldToEnd("m_outputItemData");
+                    moveFieldBeforeField("m_reagents", "m_customerNotes", false);
+                    moveFieldBeforeField("m_outputItem.has_value()", "m_reagents", false);
+                    moveFieldBeforeField("m_outputItemData.has_value()", "m_reagents", false);
+                }
+            }
+            else if (_structureType == typeof(JamMirrorCraftingOrderItem_C))
+            {
+                if (_create)
+                    moveFieldBeforeField("m_dataSlotIndex.has_value()", "m_dataSlotIndex", false);
+            }
             else if (_structureType == typeof(CGAreaTriggerData))
             {
-                var name = RenameField("m_extraScaleCurve");
-                var extraScaleCurveIndex = _fieldWrites.FindIndex(fieldWrite =>
-                {
-                    return fieldWrite.Name == name && !fieldWrite.IsSize;
-                });
-                if (extraScaleCurveIndex != -1)
-                {
-                    // move to just-before-last field
-                    var extraScaleCurve = _fieldWrites[extraScaleCurveIndex];
-                    _fieldWrites.RemoveAt(extraScaleCurveIndex);
-                    _fieldWrites.Insert(_fieldWrites.Count - 2, extraScaleCurve);
-                }
                 if (_create)
                 {
                     var overrideScaleCurveIndex = _fieldWrites.FindIndex(fieldWrite =>
@@ -296,6 +305,26 @@ namespace UpdateFieldCodeGenerator.Formats
                         _fieldWrites.RemoveAt(overrideScaleCurveIndex);
                         _fieldWrites.Insert(0, overrideScaleCurve);
                     }
+                }
+                else
+                {
+                    Action<string> moveBeforeVisualAnim = field =>
+                    {
+                        field = RenameField(field);
+                        var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == field && !fieldWrite.IsSize);
+                        if (movedFieldIndex != -1)
+                        {
+                            // move to just-before-last field
+                            var movedField = _fieldWrites[movedFieldIndex];
+                            _fieldWrites.RemoveAt(movedFieldIndex);
+                            _fieldWrites.Insert(_fieldWrites.Count - 2, movedField);
+                        }
+                    };
+
+                    moveBeforeVisualAnim("m_extraScaleCurve");
+                    moveBeforeVisualAnim("m_field_C38");
+                    moveBeforeVisualAnim("m_field_C54");
+                    moveBeforeVisualAnim("m_field_C70");
                 }
             }
             else if (_structureType == typeof(CGConversationData))

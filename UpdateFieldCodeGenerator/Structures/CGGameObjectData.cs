@@ -29,5 +29,9 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_customParam = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_level = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_animGroupInstance = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField m_uiWidgetItemID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField m_uiWidgetItemQuality = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField m_uiWidgetItemUnknown1000 = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField m_worldEffects = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
     }
 }

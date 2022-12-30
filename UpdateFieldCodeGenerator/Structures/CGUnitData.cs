@@ -29,6 +29,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField battlePetCompanionGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField battlePetDBID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
         public static readonly UpdateField channelData = new UpdateField(typeof(JamMirrorUnitChannel_C), UpdateFieldFlag.None);
+        public static readonly UpdateField spellEmpowerStage = new UpdateField(typeof(sbyte), UpdateFieldFlag.None);
         public static readonly UpdateField summonedByHomeRealm = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField race = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField classId = new UpdateField(typeof(byte), UpdateFieldFlag.None);
@@ -136,6 +137,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField passiveSpells = new UpdateField(typeof(DynamicUpdateField<JamMirrorPassiveSpellHistory_C>), UpdateFieldFlag.None);
         public static readonly UpdateField worldEffects = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField channelObjects = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.None);
+        public static readonly UpdateField flightCapabilityID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField silencedSchoolMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField nameplateAttachToGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "When set, nameplate of this unit will instead appear on that object");
     }
