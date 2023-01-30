@@ -5,7 +5,7 @@ namespace UpdateFieldCodeGenerator.Formats
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private const string ModuleName = "V10_0_0_46181";
-        private const string Version = "V10_0_2_46479";
+        private const string Version = "V10_0_5_47777";
 
         public WowPacketParserHandler() : base(new StreamWriter("UpdateFieldsHandler.cs"), null)
         {
@@ -467,6 +467,8 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"Substructures.ItemHandler.ReadItemEnchantData(packet, indexes{nextIndex}, \"{name}\");");
                     else if (type == typeof(ItemGemData))
                         _source.WriteLine($"Substructures.ItemHandler.ReadItemGemData(packet, indexes{nextIndex}, \"{name}\");");
+                    else if (type == typeof(PerksVendorItem))
+                        _source.WriteLine($"Substructures.PerksProgramHandler.ReadPerksVendorItem(packet, indexes{nextIndex}, \"{name}\");");
                     else if (_create)
                         _source.WriteLine($"data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     else

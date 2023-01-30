@@ -98,6 +98,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 875);
         public static readonly UpdateField honor = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField honorNextLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField perksProgramCurrency = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField numBankSlots = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField researchSites = new UpdateField(typeof(DynamicUpdateField<ushort>), UpdateFieldFlag.None);
         public static readonly UpdateField researchSiteProgress = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
@@ -119,6 +120,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField mawPowers = new UpdateField(typeof(DynamicUpdateField<JamMirrorMawPower_C>), UpdateFieldFlag.None);
         public static readonly UpdateField multiFloorExploration = new UpdateField(typeof(DynamicUpdateField<JamMirrorMultiFloorExplore_C>), UpdateFieldFlag.None);
         public static readonly UpdateField recipeProgression = new UpdateField(typeof(DynamicUpdateField<JamMirrorRecipeProgressionInfo_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField frozenPerksVendorItem = new UpdateField(typeof(PerksVendorItem), UpdateFieldFlag.None);
         public static readonly UpdateField questSessionExists = new UpdateField(typeof(BlzOptionalField<JamMirrorQuestSession_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("questSession", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField field_1410 = new UpdateField(typeof(JamMirrorActivePlayerUnk901_C), UpdateFieldFlag.None);
         public static readonly UpdateField questSession = new UpdateField(typeof(BlzOptionalField<JamMirrorQuestSession_C>), UpdateFieldFlag.None);
@@ -132,9 +134,11 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField traitConfigs = new UpdateField(typeof(DynamicUpdateField<JamMirrorTraitConfig_C>), UpdateFieldFlag.None);
         public static readonly UpdateField activeCombatTraitConfigID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField craftingOrders = new UpdateField(typeof(DynamicUpdateField<JamMirrorCraftingOrder_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField personalCraftingOrderCounts = new UpdateField(typeof(DynamicUpdateField<JamMirrorPersonalCraftingOrderCount_C>), UpdateFieldFlag.None);
         public static readonly UpdateField backpackAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField bankAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField sortBagsRightToLeft = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField insertItemsLeftToRight = new UpdateField(typeof(bool), UpdateFieldFlag.None);
+        public static readonly UpdateField hasPerksProgramPendingReward = new UpdateField(typeof(bool), UpdateFieldFlag.None);
     }
 }

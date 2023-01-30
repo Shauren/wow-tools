@@ -132,6 +132,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField looksLikeMountID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField looksLikeCreatureID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField lookAtControllerID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField perksVendorItemID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField taxiNodesID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField guildGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField passiveSpells = new UpdateField(typeof(DynamicUpdateField<JamMirrorPassiveSpellHistory_C>), UpdateFieldFlag.None);

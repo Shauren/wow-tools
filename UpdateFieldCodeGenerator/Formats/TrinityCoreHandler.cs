@@ -44,6 +44,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _header.WriteLine("#include \"ItemPacketsCommon.h\"");
             _header.WriteLine("#include \"MythicPlusPacketsCommon.h\"");
             _header.WriteLine("#include \"ObjectGuid.h\"");
+            _header.WriteLine("#include \"PerksProgramPacketsCommon.h\"");
             _header.WriteLine("#include \"Position.h\"");
             _header.WriteLine("#include \"QuaternionData.h\"");
             _header.WriteLine("#include \"UpdateField.h\"");
@@ -636,7 +637,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 case TypeCode.Object:
                     if (type == typeof(WowGuid) || type == typeof(Vector2) || type == typeof(Vector3) || type == typeof(DungeonScoreSummary)
                         || type == typeof(DungeonScoreData) || type == typeof(ItemBonusKey) || type == typeof(ItemInstance) || type == typeof(ItemEnchantData)
-                        || type == typeof(ItemGemData))
+                        || type == typeof(ItemGemData) || type == typeof(PerksVendorItem))
                         _source.WriteLine($"data << {name};");
                     else if (type == typeof(Bits))
                         _source.WriteLine($"data.WriteBits({name}, {bitSize});");

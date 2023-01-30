@@ -246,19 +246,13 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                 }
 
-                moveFieldBeforeField("field_1410", "questSession", false);
+                moveFieldBeforeField("frozenPerksVendorItem", "questSession", false);
+                if (_create)
+                    moveFieldBeforeField("dungeonScore", "pvpInfo", false);
+                else
+                    moveFieldBeforeField("dungeonScore", "invSlots", false);
 
-                var dungeonScoreIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("dungeonScore"));
-                if (dungeonScoreIndex != -1)
-                {
-                    var questSession = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession") && !fw.IsSize);
-                    if (questSession != -1)
-                    {
-                        var dungeonScore = _fieldWrites[dungeonScoreIndex];
-                        _fieldWrites.RemoveAt(dungeonScoreIndex);
-                        _fieldWrites.Insert(questSession, dungeonScore);
-                    }
-                }
+                moveFieldBeforeField("field_1410", "dungeonScore", false);
             }
             else if (_structureType == typeof(JamMirrorTraitConfig_C))
             {

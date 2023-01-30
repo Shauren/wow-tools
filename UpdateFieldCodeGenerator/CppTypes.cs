@@ -39,7 +39,8 @@ namespace UpdateFieldCodeGenerator
                 { typeof(ItemBonusKey), CreateType("WorldPackets::Item::ItemBonusKey") },
                 { typeof(ItemInstance), CreateType("WorldPackets::Item::ItemInstance") },
                 { typeof(ItemEnchantData), CreateType("WorldPackets::Item::ItemEnchantData") },
-                { typeof(ItemGemData), CreateType("WorldPackets::Item::ItemGemData") }
+                { typeof(ItemGemData), CreateType("WorldPackets::Item::ItemGemData") },
+                { typeof(PerksVendorItem), CreateType("WorldPackets::PerksProgram::PerksVendorItem") }
             };
             return typeMap;
         }
