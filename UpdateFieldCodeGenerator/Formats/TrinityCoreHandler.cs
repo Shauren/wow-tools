@@ -607,7 +607,7 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 if (_blockGroupSize > 0)
                 {
-                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{_blockGroupBit}])" });
+                    flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]}])" });
                     flowControl.Insert(1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
                 }
                 else
