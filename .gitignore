@@ -7,3 +7,4 @@ Release/
 *.VC.*db
 *.vs/
 **obj/
+_ReSharper*

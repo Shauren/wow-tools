@@ -299,26 +299,15 @@ namespace UpdateFieldCodeGenerator.Formats
                         _fieldWrites.RemoveAt(overrideScaleCurveIndex);
                         _fieldWrites.Insert(0, overrideScaleCurve);
                     }
+                    moveFieldBeforeField("m_field_260", "m_field_C38", false);
+                    moveFieldBeforeField("m_field_261", "m_field_C38", false);
                 }
                 else
                 {
-                    Action<string> moveBeforeVisualAnim = field =>
-                    {
-                        field = RenameField(field);
-                        var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == field && !fieldWrite.IsSize);
-                        if (movedFieldIndex != -1)
-                        {
-                            // move to just-before-last field
-                            var movedField = _fieldWrites[movedFieldIndex];
-                            _fieldWrites.RemoveAt(movedFieldIndex);
-                            _fieldWrites.Insert(_fieldWrites.Count - 2, movedField);
-                        }
-                    };
-
-                    moveBeforeVisualAnim("m_extraScaleCurve");
-                    moveBeforeVisualAnim("m_field_C38");
-                    moveBeforeVisualAnim("m_field_C54");
-                    moveBeforeVisualAnim("m_field_C70");
+                    moveFieldBeforeField("m_extraScaleCurve", "m_visualAnim", false);
+                    moveFieldBeforeField("m_field_C38", "m_visualAnim", false);
+                    moveFieldBeforeField("m_field_C54", "m_visualAnim", false);
+                    moveFieldBeforeField("m_field_C70", "m_visualAnim", false);
                 }
             }
             else if (_structureType == typeof(CGConversationData))

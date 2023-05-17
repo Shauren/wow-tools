@@ -7,6 +7,8 @@
 
         public static readonly UpdateField m_overrideScaleCurve = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
         public static readonly UpdateField m_extraScaleCurve = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
+        public static readonly UpdateField m_field_260 = new UpdateField(typeof(bool), UpdateFieldFlag.None, bitSize: 1);
+        public static readonly UpdateField m_field_261 = new UpdateField(typeof(bool), UpdateFieldFlag.None, bitSize: 1);
         public static readonly UpdateField m_field_C38 = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
         public static readonly UpdateField m_field_C54 = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
         public static readonly UpdateField m_field_C70 = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
