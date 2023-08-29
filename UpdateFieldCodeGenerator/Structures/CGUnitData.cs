@@ -93,6 +93,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField stats = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 4);
         public static readonly UpdateField statPosBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 4);
         public static readonly UpdateField statNegBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 4);
+        public static readonly UpdateField statSupportBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 4);
         public static readonly UpdateField resistances = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner | UpdateFieldFlag.Empath, 7);
         public static readonly UpdateField bonusResistanceMods = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 7);
         public static readonly UpdateField manaCostModifier = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 7);
@@ -106,10 +107,12 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField attackPowerModPos = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField attackPowerModNeg = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField attackPowerMultiplier = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
+        public static readonly UpdateField attackPowerModSupport = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField rangedAttackPower = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField rangedAttackPowerModPos = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField rangedAttackPowerModNeg = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField rangedAttackPowerMultiplier = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
+        public static readonly UpdateField rangedAttackPowerModSupport = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField mainHandWeaponAttackPower = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField offHandWeaponAttackPower = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField rangedWeaponAttackPower = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
@@ -139,7 +142,9 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField worldEffects = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField channelObjects = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.None);
         public static readonly UpdateField flightCapabilityID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField glideEventSpeedDivisor = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "Movement speed gets divided by this value when evaluating what GlideEvents to use");
         public static readonly UpdateField silencedSchoolMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField currentAreaID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField nameplateAttachToGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "When set, nameplate of this unit will instead appear on that object");
     }
 }

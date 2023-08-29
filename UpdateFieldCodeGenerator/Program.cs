@@ -232,7 +232,7 @@ namespace UpdateFieldCodeGenerator
                 && (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional)))
             {
                 fieldHandler.FinishControlBlocks();
-                fieldHandler.FinishBitPack();
+                fieldHandler.FinishBitPack(null);
             }
 
             if (allFields.TryGetValue(CreateTypeOrder.Bits, out fieldGroup))
@@ -291,7 +291,7 @@ namespace UpdateFieldCodeGenerator
                     fieldHandler.OnField(Name, Field);
 
                 fieldHandler.FinishControlBlocks();
-                fieldHandler.FinishBitPack();
+                fieldHandler.FinishBitPack(null);
             }
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicField, out fieldGroup))
@@ -305,7 +305,7 @@ namespace UpdateFieldCodeGenerator
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicFieldArray, out fieldGroup))
             {
                 foreach (var (Field, Name) in fieldGroup)
-                    fieldHandler.OnDynamicFieldSizeUpdate(Name, Field);
+                    fieldHandler.OnDynamicArrayFieldSizeUpdate(Name, Field);
 
                 fieldHandler.FinishControlBlocks();
             }
@@ -318,7 +318,7 @@ namespace UpdateFieldCodeGenerator
                 allFields.ContainsKey(UpdateTypeOrder.JamDynamicField) || allFields.ContainsKey(UpdateTypeOrder.JamDynamicFieldArray))
             {
                 fieldHandler.FinishControlBlocks();
-                fieldHandler.FinishBitPack();
+                fieldHandler.FinishBitPack(null);
             }
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicField, out fieldGroup))
@@ -337,7 +337,7 @@ namespace UpdateFieldCodeGenerator
             if (allFields.TryGetValue(UpdateTypeOrder.Optional, out fieldGroup))
             {
                 fieldHandler.FinishControlBlocks();
-                fieldHandler.FinishBitPack();
+                fieldHandler.FinishBitPack(null);
 
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnOptionalFieldInitUpdate(Name, Field);

@@ -60,6 +60,12 @@
                 _previousControlFlowDict[handler] = handler.OnDynamicFieldSizeUpdate(name, updateField, _previousControlFlowDict[handler]);
         }
 
+        public void OnDynamicArrayFieldSizeUpdate(string name, UpdateField updateField)
+        {
+            foreach (var handler in _handlers)
+                handler.OnDynamicFieldSizeUpdate(name, updateField, null);
+        }
+
         public void OnOptionalFieldInitCreate(string name, UpdateField updateField)
         {
             foreach (var handler in _handlers)
@@ -81,10 +87,10 @@
             }
         }
 
-        public void FinishBitPack()
+        public void FinishBitPack(string tag)
         {
             foreach (var handler in _handlers)
-                handler.FinishBitPack();
+                handler.FinishBitPack(tag);
         }
 
         public void Dispose()

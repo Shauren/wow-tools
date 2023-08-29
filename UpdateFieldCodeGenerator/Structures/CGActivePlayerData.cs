@@ -100,8 +100,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField honorNextLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField perksProgramCurrency = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField numBankSlots = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField researchSites = new UpdateField(typeof(DynamicUpdateField<ushort>), UpdateFieldFlag.None);
-        public static readonly UpdateField researchSiteProgress = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
         public static readonly UpdateField dailyQuestsCompleted = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField availableQuestLineXQuestIDs = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField heirlooms = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
@@ -116,7 +114,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField characterRestrictions = new UpdateField(typeof(DynamicUpdateField<JamMirrorCharacterRestriction_C>), UpdateFieldFlag.None);
         public static readonly UpdateField spellPctModByLabel = new UpdateField(typeof(DynamicUpdateField<JamMirrorSpellPctModByLabel_C>), UpdateFieldFlag.None);
         public static readonly UpdateField spellFlatModByLabel = new UpdateField(typeof(DynamicUpdateField<JamMirrorSpellFlatModByLabel_C>), UpdateFieldFlag.None);
-        public static readonly UpdateField research = new UpdateField(typeof(DynamicUpdateField<JamMirrorResearch_C>[]), UpdateFieldFlag.None, 1);
+        public static readonly UpdateField researchHistory = new UpdateField(typeof(JamMirrorResearchHistory_C), UpdateFieldFlag.None);
         public static readonly UpdateField mawPowers = new UpdateField(typeof(DynamicUpdateField<JamMirrorMawPower_C>), UpdateFieldFlag.None);
         public static readonly UpdateField multiFloorExploration = new UpdateField(typeof(DynamicUpdateField<JamMirrorMultiFloorExplore_C>), UpdateFieldFlag.None);
         public static readonly UpdateField recipeProgression = new UpdateField(typeof(DynamicUpdateField<JamMirrorRecipeProgressionInfo_C>), UpdateFieldFlag.None);
@@ -125,6 +123,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField field_1410 = new UpdateField(typeof(JamMirrorActivePlayerUnk901_C), UpdateFieldFlag.None);
         public static readonly UpdateField questSession = new UpdateField(typeof(BlzOptionalField<JamMirrorQuestSession_C>), UpdateFieldFlag.None);
         public static readonly UpdateField replayedQuests = new UpdateField(typeof(DynamicUpdateField<JamMirrorReplayedQuest_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField taskQuests = new UpdateField(typeof(DynamicUpdateField<JamMirrorQuestLog_C>), UpdateFieldFlag.None);
         public static readonly UpdateField disabledSpells = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField uiChromieTimeExpansionID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField transportServerTime = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -138,11 +137,23 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField categoryCooldownMods = new UpdateField(typeof(DynamicUpdateField<JamMirrorCategoryCooldownMod_C>), UpdateFieldFlag.None);
         public static readonly UpdateField weeklySpellUses = new UpdateField(typeof(DynamicUpdateField<JamMirrorWeeklySpellUse_C>), UpdateFieldFlag.None);
         public static readonly UpdateField itemUpgradeHighWatermark = new UpdateField(typeof(float[]), UpdateFieldFlag.None, 17);
+        public static readonly UpdateField itemUpgradeHighOnehandWeaponItemID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField itemUpgradeHighFingerItemID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField itemUpgradeHighFingerWatermark = new UpdateField(typeof(float), UpdateFieldFlag.None);
+        public static readonly UpdateField itemUpgradeHighTrinketItemID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField itemUpgradeHighTrinketWatermark = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField lootHistoryInstanceID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
+        public static readonly UpdateField petStableExists = new UpdateField(typeof(BlzOptionalField<JamMirrorStableInfo_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("petStable", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
+        public static readonly UpdateField petStable = new UpdateField(typeof(BlzOptionalField<JamMirrorStableInfo_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField trackedCollectableSources = new UpdateField(typeof(DynamicUpdateField<long>), UpdateFieldFlag.None);
+        public static readonly UpdateField requiredMountCapabilityFlags = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField backpackAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField bankAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField sortBagsRightToLeft = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField insertItemsLeftToRight = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField hasPerksProgramPendingReward = new UpdateField(typeof(bool), UpdateFieldFlag.None);
+        public static readonly UpdateField researchSites = new UpdateField(typeof(DynamicUpdateField<ushort>[]), UpdateFieldFlag.None, 1);
+        public static readonly UpdateField researchSiteProgress = new UpdateField(typeof(DynamicUpdateField<uint>[]), UpdateFieldFlag.None, 1);
+        public static readonly UpdateField research = new UpdateField(typeof(DynamicUpdateField<JamMirrorResearch_C>[]), UpdateFieldFlag.None, 1);
     }
 }

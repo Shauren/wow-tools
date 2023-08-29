@@ -16,6 +16,6 @@
 
         void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow);
 
-        void FinishBitPack();
+        void FinishBitPack(string tag);
     }
 }

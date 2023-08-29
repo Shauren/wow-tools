@@ -404,7 +404,8 @@ namespace UpdateFieldCodeGenerator.Formats
                 flowControl.Add(new FlowControlBlock { Statement = $"if ({RenameField(fieldToCompare.Name)} {operatorAndConstant})" });
             }
 
-            RegisterDynamicChangesMaskFieldType(type);
+            if (updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.HasDynamicChangesMask))
+                RegisterDynamicChangesMaskFieldType(type);
 
             _fieldWrites.Add((name, false, (pcf) =>
             {
@@ -802,12 +803,14 @@ namespace UpdateFieldCodeGenerator.Formats
             ));
         }
 
-        public override void FinishBitPack()
+        public override void FinishBitPack(string tag)
         {
-            _fieldWrites.Add((string.Empty, false, (pcf) =>
+            _fieldWrites.Add((tag ?? "FinishBitPack", false, (pcf) =>
             {
+                WriteControlBlocks(_source, pcf, pcf);
                 _source.WriteLine($"{GetIndent()}data.FlushBits();");
-                return new List<FlowControlBlock>();
+                _indent = 1;
+                return pcf;
             }));
         }
 

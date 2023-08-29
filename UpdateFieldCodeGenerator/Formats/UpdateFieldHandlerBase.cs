@@ -98,7 +98,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _fieldBitIndex.Clear();
             _blockGroupBit = 0;
             _blockGroupSize = structureType.GetCustomAttribute<HasChangesMaskAttribute>()?.BlockGroupSize ?? 32;
-            _bitCounter = HasNonArrayFields(structureType) && CountFields(structureType, field => true) > 1 && _blockGroupSize > 0 ? 0 : -1;
+            _bitCounter = HasNonArrayFields(structureType) && /*CountFields(structureType, _ => true) > 1 &&*/ _blockGroupSize > 0 ? 0 : -1;
             _nonArrayBitCounter = 0;
             _fieldWrites = new List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)>();
             _dynamicChangesMaskTypes = new List<string>();
@@ -114,7 +114,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
         public abstract void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow);
 
-        public abstract void FinishBitPack();
+        public abstract void FinishBitPack(string tag);
 
         protected static bool HasNonArrayFields(Type type)
         {
@@ -139,11 +139,11 @@ namespace UpdateFieldCodeGenerator.Formats
 
         protected void PostProcessFieldWrites()
         {
-            Action<string, string, bool> moveFieldBeforeField = (fieldToMove, where, whereIsSize) =>
+            Action<string, bool, string, bool> moveFieldBeforeField = (fieldToMove, fieldIsSize, where, whereIsSize) =>
             {
                 fieldToMove = RenameField(fieldToMove);
                 where = RenameField(where);
-                var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == fieldToMove && !fieldWrite.IsSize);
+                var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == fieldToMove && fieldWrite.IsSize == fieldIsSize);
                 var whereFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == where && fieldWrite.IsSize == whereIsSize);
                 if (movedFieldIndex != -1 && whereFieldIndex != -1)
                 {
@@ -170,7 +170,7 @@ namespace UpdateFieldCodeGenerator.Formats
             if (_structureType == typeof(CGItemData))
             {
                 if (!_create)
-                    moveFieldBeforeField("m_modifiers", "m_spellCharges", false);
+                    moveFieldBeforeField("m_modifiers", false, "m_spellCharges", false);
             }
             else if (_structureType == typeof(CGPlayerData))
             {
@@ -179,94 +179,59 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             else if (_structureType == typeof(CGActivePlayerData))
             {
-                if (!_create)
-                {
-                    var spellFlatModByLabelIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("spellFlatModByLabel") && fieldWrite.IsSize);
-                    if (spellFlatModByLabelIndex != -1)
-                    {
-                        // move after research
-                        var researchSizeIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("research") && fw.IsSize);
-                        if (researchSizeIndex != -1)
-                        {
-                            var researchSize = _fieldWrites[researchSizeIndex];
-                            _fieldWrites.RemoveAt(researchSizeIndex);
-                            _fieldWrites.Insert(spellFlatModByLabelIndex + 1, researchSize);
-                        }
-                    }
-                }
+                moveFieldBeforeField("researchSites", true, "dailyQuestsCompleted", true);
+                moveFieldBeforeField("researchSiteProgress", true, "dailyQuestsCompleted", true);
+                moveFieldBeforeField("research", true, "dailyQuestsCompleted", true);
+                moveFieldBeforeField("researchSites", false, "dailyQuestsCompleted", true);
+                moveFieldBeforeField("researchSiteProgress", false, "dailyQuestsCompleted", true);
+                moveFieldBeforeField("research", false, "dailyQuestsCompleted", true);
 
                 if (_create)
                 {
-                    moveFieldBeforeField("questSession.has_value()", "pvpInfo", false);
-                    moveFieldBeforeField("questSession", "pvpInfo", false);
+                    moveFieldToEnd("petStable");
+                    moveFieldBeforeField("dungeonScore", false, "pvpInfo", false);
                 }
                 else
                 {
-                    var questSessionBitIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("questSession.has_value()"));
-                    if (questSessionBitIndex != -1)
-                    {
-                        var newQuestSessionPos = _fieldWrites.FindIndex(fw => !fw.IsSize && fw.Name == RenameField("invSlots"));
-                        if (newQuestSessionPos != -1)
-                        {
-                            var movedCount = 3;
+                    moveFieldBeforeField("petStable", false, "invSlots", false);
+                    moveFieldBeforeField("dungeonScore", false, "petStable", false);
 
-                            var movedItems = _fieldWrites.GetRange(questSessionBitIndex, movedCount);
-                            _fieldWrites.RemoveRange(questSessionBitIndex, movedCount);
+                    FinishControlBlocks(null);
+                    FinishBitPack("FinishBitPack_afterResearch");
 
-                            FinishControlBlocks(null);
+                    var finishBitPack = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
+                    _fieldWrites.RemoveRange(_fieldWrites.Count - 2, 2);
 
-                            movedItems.Insert(0, _fieldWrites[_fieldWrites.Count - 1]);
-
-                            _fieldWrites.RemoveRange(_fieldWrites.Count - 1, 1);
-
-                            _fieldWrites.InsertRange(newQuestSessionPos - movedCount, movedItems);
-                        }
-                    }
+                    var researchIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && !fieldWrite.IsSize);
+                    _fieldWrites.InsertRange(researchIndex + 1, finishBitPack);
                 }
 
-                var researchDataIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && !fieldWrite.IsSize);
-                if (researchDataIndex != -1)
-                {
-                    var researchSizeIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && fieldWrite.IsSize);
-                    if (researchSizeIndex != -1)
-                    {
-                        var researchData = _fieldWrites[researchDataIndex];
-                        _fieldWrites.RemoveAt(researchDataIndex);
-                        _fieldWrites.Insert(researchSizeIndex + 1, researchData);
+                moveFieldBeforeField("field_1410", false, "dungeonScore", false);
+                moveFieldBeforeField("frozenPerksVendorItem", false, "field_1410", false);
+                moveFieldBeforeField("questSession", false, "frozenPerksVendorItem", false);
+                moveFieldBeforeField("researchHistory", false, "questSession", false);
+                moveFieldBeforeField("petStable.has_value()", false, "researchHistory", false);
+                moveFieldBeforeField("questSession.has_value()", false, "petStable.has_value()", false);
 
-                        if (!_create)
-                        {
-                            FinishControlBlocks(null);
-                            FinishBitPack();
-
-                            var finishBitPack = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
-                            _fieldWrites.RemoveRange(_fieldWrites.Count - 2, 2);
-                            _fieldWrites.InsertRange(researchSizeIndex + 2, finishBitPack);
-                        }
-                    }
-                }
-
-                moveFieldBeforeField("frozenPerksVendorItem", "questSession", false);
-                if (_create)
-                    moveFieldBeforeField("dungeonScore", "pvpInfo", false);
-                else
-                    moveFieldBeforeField("dungeonScore", "invSlots", false);
-
-                moveFieldBeforeField("field_1410", "dungeonScore", false);
+                FinishBitPack("FinishBitPack_afterOptionalBit");
+                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "researchHistory", false);
             }
             else if (_structureType == typeof(JamMirrorTraitConfig_C))
             {
                 moveFieldToEnd("m_name");
-                moveFieldBeforeField("m_name{0}size()", "m_name", false);
+                moveFieldBeforeField("m_name{0}size()", false, "m_name", false);
             }
             else if (_structureType == typeof(JamMirrorCraftingOrder_C))
             {
                 if (_create)
                 {
-                    moveFieldBeforeField("m_data", "m_recraftItemInfo", false);
-                    moveFieldBeforeField("m_recraftItemInfo", "m_enchantments", false);
-                    moveFieldBeforeField("m_recraftItemInfo.has_value()", "m_enchantments", true);
+                    moveFieldBeforeField("m_data", false, "m_recraftItemInfo", false);
+                    moveFieldBeforeField("m_recraftItemInfo", false, "m_enchantments", false);
+                    moveFieldBeforeField("m_recraftItemInfo.has_value()", false, "m_enchantments", true);
                 }
+
+                FinishBitPack("FinishBitPack_afterOptionalBit");
+                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_recraftItemInfo", false);
             }
             else if (_structureType == typeof(JamMirrorCraftingOrderData_C))
             {
@@ -274,15 +239,31 @@ namespace UpdateFieldCodeGenerator.Formats
                 {
                     moveFieldToEnd("m_outputItem");
                     moveFieldToEnd("m_outputItemData");
-                    moveFieldBeforeField("m_reagents", "m_customerNotes", false);
-                    moveFieldBeforeField("m_outputItem.has_value()", "m_reagents", false);
-                    moveFieldBeforeField("m_outputItemData.has_value()", "m_reagents", false);
+                    moveFieldBeforeField("m_reagents", false, "m_customerNotes", false);
+                    moveFieldBeforeField("m_outputItem.has_value()", false, "m_reagents", false);
+                    moveFieldBeforeField("m_outputItemData.has_value()", false, "m_reagents", false);
+
+                    FinishBitPack("FinishBitPack_afterOptionalBit");
+                    moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_reagents", false);
+                }
+                else
+                {
+                    FinishBitPack("FinishBitPack_afterOptionalBit");
+                    moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_outputItem", false);
                 }
             }
             else if (_structureType == typeof(JamMirrorCraftingOrderItem_C))
             {
                 if (_create)
-                    moveFieldBeforeField("m_dataSlotIndex.has_value()", "m_dataSlotIndex", false);
+                    moveFieldBeforeField("m_dataSlotIndex.has_value()", false, "m_dataSlotIndex", false);
+
+                FinishBitPack("FinishBitPack_afterOptionalBit");
+                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_dataSlotIndex", false);
+            }
+            else if (_structureType == typeof(JamMirrorStablePetInfo_C))
+            {
+                if (!_create)
+                    moveFieldBeforeField("m_petFlags", false, "m_name{0}size()", false);
             }
             else if (_structureType == typeof(CGAreaTriggerData))
             {
@@ -299,15 +280,17 @@ namespace UpdateFieldCodeGenerator.Formats
                         _fieldWrites.RemoveAt(overrideScaleCurveIndex);
                         _fieldWrites.Insert(0, overrideScaleCurve);
                     }
-                    moveFieldBeforeField("m_field_260", "m_field_C38", false);
-                    moveFieldBeforeField("m_field_261", "m_field_C38", false);
+
+                    moveFieldBeforeField("FinishBitPack", false, "m_overrideMoveCurveX", false);
+                    moveFieldBeforeField("m_heightIgnoresScale", false, "m_overrideMoveCurveX", false);
+                    moveFieldBeforeField("m_field_261", false, "m_overrideMoveCurveX", false);
                 }
                 else
                 {
-                    moveFieldBeforeField("m_extraScaleCurve", "m_visualAnim", false);
-                    moveFieldBeforeField("m_field_C38", "m_visualAnim", false);
-                    moveFieldBeforeField("m_field_C54", "m_visualAnim", false);
-                    moveFieldBeforeField("m_field_C70", "m_visualAnim", false);
+                    moveFieldBeforeField("m_extraScaleCurve", false, "m_visualAnim", false);
+                    moveFieldBeforeField("m_overrideMoveCurveX", false, "m_visualAnim", false);
+                    moveFieldBeforeField("m_overrideMoveCurveY", false, "m_visualAnim", false);
+                    moveFieldBeforeField("m_overrideMoveCurveZ", false, "m_visualAnim", false);
                 }
             }
             else if (_structureType == typeof(CGConversationData))
@@ -329,9 +312,6 @@ namespace UpdateFieldCodeGenerator.Formats
 
         protected void RegisterDynamicChangesMaskFieldType(Type fieldType)
         {
-            if (fieldType.GetCustomAttribute<HasDynamicChangesMaskAttribute>() == null)
-                return;
-
             if (_dynamicChangesMaskTypes.Contains(fieldType.Name))
                 return;
 

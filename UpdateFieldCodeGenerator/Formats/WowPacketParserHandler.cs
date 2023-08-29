@@ -5,7 +5,7 @@ namespace UpdateFieldCodeGenerator.Formats
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private const string ModuleName = "V10_0_0_46181";
-        private const string Version = "V10_1_0_49318";
+        private const string Version = "V10_1_5_50232";
 
         public WowPacketParserHandler() : base(new StreamWriter("UpdateFieldsHandler.cs"), null)
         {
@@ -81,8 +81,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 _header = null;
             }
 
-            if (needsFlush)
-                _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
+            _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
 
             if (!_create && _writeUpdateMasks)
             {
@@ -224,10 +223,11 @@ namespace UpdateFieldCodeGenerator.Formats
                 type = (updateField.SizeForField.GetValue(null) as UpdateField).Type;
                 if (type.GenericTypeArguments.Length > 0)
                     type = type.GenericTypeArguments[0];
-                interfaceType = TypeHandler.ConvertToInterfaces(type, rawName => RenameType(rawName), _writeUpdateMasks);
+                interfaceType = TypeHandler.ConvertToInterfaces(type, RenameType, _writeUpdateMasks);
             }
 
-            RegisterDynamicChangesMaskFieldType(type);
+            if (updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.HasDynamicChangesMask))
+                RegisterDynamicChangesMaskFieldType(type);
 
             _fieldWrites.Add((name, false, (pcf) =>
             {
@@ -478,11 +478,11 @@ namespace UpdateFieldCodeGenerator.Formats
                             _source.WriteLine($"if (no{RenameType(type.Name)}ChangesMask)");
                             _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                             _source.WriteLine($"{GetIndent()}else");
-                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, data.{outputFieldName} as {RenameType(type)}, indexes, \"{name}\"{nextIndex});");
+                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
 
                         }
                         else
-                            _source.WriteLine($"data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, data.{outputFieldName} as {RenameType(type)}, indexes, \"{name}\"{nextIndex});");
+                            _source.WriteLine($"data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     }
                     break;
                 case TypeCode.Boolean:
@@ -584,14 +584,13 @@ namespace UpdateFieldCodeGenerator.Formats
             }));
         }
 
-        public override void FinishBitPack()
+        public override void FinishBitPack(string tag)
         {
-            _fieldWrites.Add((string.Empty, false, (pcf) =>
+            _fieldWrites.Add((tag ?? "FinishBitPack", false, (pcf) =>
             {
                 _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
-                return new List<FlowControlBlock>();
-            }
-            ));
+                return pcf;
+            }));
         }
 
         private bool HasMutableInterface(Type type)
