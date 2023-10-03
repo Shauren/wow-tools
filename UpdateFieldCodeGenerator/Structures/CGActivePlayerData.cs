@@ -145,9 +145,10 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField lootHistoryInstanceID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
         public static readonly UpdateField petStableExists = new UpdateField(typeof(BlzOptionalField<JamMirrorStableInfo_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("petStable", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField petStable = new UpdateField(typeof(BlzOptionalField<JamMirrorStableInfo_C>), UpdateFieldFlag.None);
-        public static readonly UpdateField trackedCollectableSources = new UpdateField(typeof(DynamicUpdateField<long>), UpdateFieldFlag.None);
+        public static readonly UpdateField trackedCollectableSources = new UpdateField(typeof(DynamicUpdateField<JamMirrorCollectableSourceTrackedData_C>), UpdateFieldFlag.None);
         public static readonly UpdateField requiredMountCapabilityFlags = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField backpackAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
+        public static readonly UpdateField backpackSellJunkDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField bankAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField sortBagsRightToLeft = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField insertItemsLeftToRight = new UpdateField(typeof(bool), UpdateFieldFlag.None);

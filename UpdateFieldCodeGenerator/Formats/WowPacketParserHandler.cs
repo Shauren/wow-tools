@@ -1,11 +1,14 @@
 ﻿using System.Reflection;
+using System.Reflection.Emit;
 
 namespace UpdateFieldCodeGenerator.Formats
 {
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private const string ModuleName = "V10_0_0_46181";
-        private const string Version = "V10_1_5_50232";
+        private const string Version = "V10_1_7_51187";
+
+        private List<string> _optionalInitVariables;
 
         public WowPacketParserHandler() : base(new StreamWriter("UpdateFieldsHandler.cs"), null)
         {
@@ -36,6 +39,8 @@ namespace UpdateFieldCodeGenerator.Formats
         public override void OnStructureBegin(Type structureType, ObjectType objectType, bool create, bool writeUpdateMasks)
         {
             base.OnStructureBegin(structureType, objectType, create, writeUpdateMasks);
+            _optionalInitVariables = new List<string>();
+
             var structureName = RenameType(structureType);
 
             if (_create)
@@ -132,6 +137,9 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
             }
 
+            foreach (var optionalInitVariable in _optionalInitVariables)
+                _source.WriteLine($"{GetIndent()}var has{optionalInitVariable}");
+
             List<FlowControlBlock> previousFlowControl = null;
             foreach (var (_, _, Write) in _fieldWrites)
                 previousFlowControl = Write(previousFlowControl);
@@ -195,6 +203,15 @@ namespace UpdateFieldCodeGenerator.Formats
                 flowControl.Add(new FlowControlBlock { Statement = $"if (has{name})" });
                 type = type.GenericTypeArguments[0];
                 declarationType = type;
+                if (updateField.SizeForField == null)
+                {
+                    var initVar = $"{name} = false;";
+                    if (updateField.Type.IsArray)
+                        initVar = $"{name}[] = new bool[{updateField.Size}];";
+
+                    _optionalInitVariables.Add(initVar);
+                }
+
             }
             if (typeof(Bits).IsAssignableFrom(type))
             {
@@ -310,15 +327,19 @@ namespace UpdateFieldCodeGenerator.Formats
             if (_create && updateField.Flag != UpdateFieldFlag.None)
                 flowControl.Add(new FlowControlBlock { Statement = $"if ((flags & {updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag.", "", "(", ")")}) != UpdateFieldFlag.None)" });
 
+            var initVar = $"{name} = false;";
             if (updateField.Type.IsArray)
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"for (var i = 0; i < {updateField.Size}; ++i)" });
+                initVar = $"{name}[] = new bool[{updateField.Size}];";
             }
+
+            _optionalInitVariables.Add(initVar);
 
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}var has{name} = packet.ReadBit(\"Has{name}\", indexes);");
+                _source.WriteLine($"{GetIndent()}has{name} = packet.ReadBit(\"Has{name}\", indexes);");
                 _indent = 3;
                 return flowControl;
             }
@@ -332,10 +353,12 @@ namespace UpdateFieldCodeGenerator.Formats
             var flowControl = new List<FlowControlBlock>();
 
             var arrayLoopBlockIndex = -1;
+            var initVar = $"{name} = false;";
             if (updateField.Type.IsArray)
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"for (var i = 0; i < {updateField.Size}; ++i)" });
                 arrayLoopBlockIndex = flowControl.Count;
+                initVar = $"{name}[] = new bool[{updateField.Size}];";
             }
 
             if (_writeUpdateMasks)
@@ -344,10 +367,12 @@ namespace UpdateFieldCodeGenerator.Formats
                 flowControl.RemoveAt(1); // bit generated but not checked for has_value
             }
 
+            _optionalInitVariables.Add(initVar);
+
             _fieldWrites.Add((name, true, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
-                _source.WriteLine($"{GetIndent()}var has{name} = packet.ReadBit(\"Has{name}\", indexes);");
+                _source.WriteLine($"{GetIndent()}has{name} = packet.ReadBit(\"Has{name}\", indexes);");
                 _indent = 3;
                 return flowControl;
             }
@@ -438,7 +463,7 @@ namespace UpdateFieldCodeGenerator.Formats
             if (name.EndsWith("has_value()"))
             {
                 outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 12);
-                _source.WriteLine($"var has{outputFieldName} = packet.ReadBit(\"Has{outputFieldName}\", indexes);");
+                _source.WriteLine($"has{outputFieldName} = packet.ReadBit(\"Has{outputFieldName}\", indexes);");
                 return;
             }
 

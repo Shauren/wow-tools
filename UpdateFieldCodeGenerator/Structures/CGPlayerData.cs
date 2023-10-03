@@ -14,7 +14,7 @@
         public static readonly UpdateField guildDeleteDate = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField guildLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField customizations = new UpdateField(typeof(DynamicUpdateField<JamMirrorChrCustomizationChoice_C>), UpdateFieldFlag.None);
-        public static readonly UpdateField partyType = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField partyType = new UpdateField(typeof(byte[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField nativeSex = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField inebriation = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField pvpTitle = new UpdateField(typeof(byte), UpdateFieldFlag.None);
@@ -37,6 +37,7 @@
         public static readonly UpdateField field_B0 = new UpdateField(typeof(int), UpdateFieldFlag.None); // these 2 are both quest ids and are used in condition to trigger PlayerCliQuestGiverAcceptQuest
         public static readonly UpdateField field_B4 = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField currentBattlePetSpeciesID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField field_138 = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField ctrOptions = new UpdateField(typeof(JamMirrorCTROptions_C), UpdateFieldFlag.None);
         public static readonly UpdateField covenantID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField soulbindID = new UpdateField(typeof(int), UpdateFieldFlag.None);

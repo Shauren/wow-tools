@@ -213,8 +213,13 @@ namespace UpdateFieldCodeGenerator.Formats
                 moveFieldBeforeField("petStable.has_value()", false, "researchHistory", false);
                 moveFieldBeforeField("questSession.has_value()", false, "petStable.has_value()", false);
 
+                FinishControlBlocks(null);
                 FinishBitPack("FinishBitPack_afterOptionalBit");
-                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "researchHistory", false);
+                var finishBitPackAfterOptionalBit = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
+                _fieldWrites.RemoveRange(_fieldWrites.Count - 2, 2);
+
+                var researchHistoryIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("researchHistory") && !fieldWrite.IsSize);
+                _fieldWrites.InsertRange(researchHistoryIndex, finishBitPackAfterOptionalBit);
             }
             else if (_structureType == typeof(JamMirrorTraitConfig_C))
             {
