@@ -37,7 +37,7 @@
         public static readonly UpdateField field_B0 = new UpdateField(typeof(int), UpdateFieldFlag.None); // these 2 are both quest ids and are used in condition to trigger PlayerCliQuestGiverAcceptQuest
         public static readonly UpdateField field_B4 = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField currentBattlePetSpeciesID = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField field_138 = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
+        public static readonly UpdateField bnetAccount = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "For telemetry");
         public static readonly UpdateField ctrOptions = new UpdateField(typeof(JamMirrorCTROptions_C), UpdateFieldFlag.None);
         public static readonly UpdateField covenantID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField soulbindID = new UpdateField(typeof(int), UpdateFieldFlag.None);
