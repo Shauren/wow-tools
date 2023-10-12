@@ -112,7 +112,7 @@ namespace UpdateFieldCodeGenerator.Formats
         public abstract IReadOnlyList<FlowControlBlock> OnOptionalFieldInitCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
         public abstract IReadOnlyList<FlowControlBlock> OnOptionalFieldInitUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
 
-        public abstract void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow);
+        public abstract void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow, string tag);
 
         public abstract void FinishBitPack(string tag);
 
@@ -196,7 +196,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("petStable", false, "invSlots", false);
                     moveFieldBeforeField("dungeonScore", false, "petStable", false);
 
-                    FinishControlBlocks(null);
+                    FinishControlBlocks(null, string.Empty);
                     FinishBitPack("FinishBitPack_afterResearch");
 
                     var finishBitPack = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
@@ -213,7 +213,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 moveFieldBeforeField("petStable.has_value()", false, "researchHistory", false);
                 moveFieldBeforeField("questSession.has_value()", false, "petStable.has_value()", false);
 
-                FinishControlBlocks(null);
+                FinishControlBlocks(null, string.Empty);
                 FinishBitPack("FinishBitPack_afterOptionalBit");
                 var finishBitPackAfterOptionalBit = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
                 _fieldWrites.RemoveRange(_fieldWrites.Count - 2, 2);

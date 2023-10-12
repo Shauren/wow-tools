@@ -82,7 +82,7 @@
         {
             foreach (var handler in _handlers)
             {
-                handler.FinishControlBlocks(_previousControlFlowDict[handler]);
+                handler.FinishControlBlocks(_previousControlFlowDict[handler], string.Empty);
                 _previousControlFlowDict[handler] = null;
             }
         }

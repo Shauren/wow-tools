@@ -794,9 +794,9 @@ namespace UpdateFieldCodeGenerator.Formats
                 _header.WriteLine($"    struct {name}Tag : ViewerDependentValueTag<{typeName}> {{}};");
         }
 
-        public override void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public override void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow, string tag)
         {
-            _fieldWrites.Add((string.Empty, false, (pcf) =>
+            _fieldWrites.Add((tag, false, (pcf) =>
             {
                 FinishControlBlocks(_source, pcf);
                 return new List<FlowControlBlock>();

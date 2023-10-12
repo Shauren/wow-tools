@@ -14,7 +14,7 @@
         IReadOnlyList<FlowControlBlock> OnOptionalFieldInitCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
         IReadOnlyList<FlowControlBlock> OnOptionalFieldInitUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
 
-        void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow);
+        void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow, string tag);
 
         void FinishBitPack(string tag);
     }

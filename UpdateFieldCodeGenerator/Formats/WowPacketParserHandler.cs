@@ -601,9 +601,9 @@ namespace UpdateFieldCodeGenerator.Formats
             return char.ToUpperInvariant(name[0]) + name.Substring(1);
         }
 
-        public override void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow)
+        public override void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow, string tag)
         {
-            _fieldWrites.Add((string.Empty, false, (pcf) =>
+            _fieldWrites.Add((tag, false, (pcf) =>
             {
                 FinishControlBlocks(_source, pcf);
                 return new List<FlowControlBlock>();
