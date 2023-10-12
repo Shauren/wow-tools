@@ -387,7 +387,8 @@ namespace UpdateFieldCodeGenerator.Formats
             if (!_fieldBitIndex.TryGetValue(nameForIndex, out var bitIndex))
             {
                 bitIndex = new List<int>();
-                if (flowControl.Count == 0 || !FlowControlBlock.AreChainsAlmostEqual(previousControlFlow, flowControl))
+                if (flowControl.Count == 0 || !FlowControlBlock.AreChainsAlmostEqual(previousControlFlow, flowControl)
+                    || updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.ForceNewBlockBit))
                 {
                     if (!updateField.Type.IsArray)
                     {

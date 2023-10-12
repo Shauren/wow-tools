@@ -20,5 +20,6 @@
         None = 0,
         ViewerDependent = 0x1,
         HasDynamicChangesMask = 0x2,
+        ForceNewBlockBit = 0x4,
     }
 }
