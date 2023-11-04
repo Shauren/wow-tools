@@ -189,12 +189,33 @@ namespace UpdateFieldCodeGenerator.Formats
                 if (_create)
                 {
                     moveFieldToEnd("petStable");
-                    moveFieldBeforeField("dungeonScore", false, "pvpInfo", false);
+
+                    moveFieldBeforeField("frozenPerksVendorItem", false, "characterRestrictions", false);
+                    moveFieldBeforeField("researchHistory", false, "frozenPerksVendorItem", false);
+                    moveFieldBeforeField("petStable.has_value()", false, "researchHistory", false);
+
+                    FinishControlBlocks(null, string.Empty);
+                    FinishBitPack("FinishBitPack_afterOptionalBit");
+                    var finishBitPackAfterOptionalBit = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
+                    _fieldWrites.RemoveRange(_fieldWrites.Count - 2, 2);
+
+                    var researchHistoryIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("researchHistory") && !fieldWrite.IsSize);
+                    _fieldWrites.InsertRange(researchHistoryIndex, finishBitPackAfterOptionalBit);
                 }
                 else
                 {
+                    moveFieldToEnd("pvpInfo");
+
+                    moveFieldBeforeField("numStableSlots", false, "petStable.has_value()", false);
                     moveFieldBeforeField("petStable", false, "invSlots", false);
-                    moveFieldBeforeField("dungeonScore", false, "petStable", false);
+
+                    FinishControlBlocks(null, "FinishControlBlocks_beforePetStable");
+                    FinishBitPack("FinishBitPack_beforePetStable");
+                    moveFieldBeforeField("FinishControlBlocks_beforePetStable", false, "petStable.has_value()", false);
+                    moveFieldBeforeField("FinishBitPack_beforePetStable", false, "petStable.has_value()", false);
+
+                    moveFieldBeforeField("frozenPerksVendorItem", false, "petStable", false);
+                    moveFieldBeforeField("researchHistory", false, "frozenPerksVendorItem", false);
 
                     FinishControlBlocks(null, string.Empty);
                     FinishBitPack("FinishBitPack_afterResearch");
@@ -206,64 +227,11 @@ namespace UpdateFieldCodeGenerator.Formats
                     _fieldWrites.InsertRange(researchIndex + 1, finishBitPack);
                 }
 
-                moveFieldBeforeField("field_1410", false, "dungeonScore", false);
-                moveFieldBeforeField("frozenPerksVendorItem", false, "field_1410", false);
-                moveFieldBeforeField("questSession", false, "frozenPerksVendorItem", false);
-                moveFieldBeforeField("researchHistory", false, "questSession", false);
-                moveFieldBeforeField("petStable.has_value()", false, "researchHistory", false);
-                moveFieldBeforeField("questSession.has_value()", false, "petStable.has_value()", false);
-
-                FinishControlBlocks(null, string.Empty);
-                FinishBitPack("FinishBitPack_afterOptionalBit");
-                var finishBitPackAfterOptionalBit = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
-                _fieldWrites.RemoveRange(_fieldWrites.Count - 2, 2);
-
-                var researchHistoryIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("researchHistory") && !fieldWrite.IsSize);
-                _fieldWrites.InsertRange(researchHistoryIndex, finishBitPackAfterOptionalBit);
             }
             else if (_structureType == typeof(JamMirrorTraitConfig_C))
             {
                 moveFieldToEnd("m_name");
                 moveFieldBeforeField("m_name{0}size()", false, "m_name", false);
-            }
-            else if (_structureType == typeof(JamMirrorCraftingOrder_C))
-            {
-                if (_create)
-                {
-                    moveFieldBeforeField("m_data", false, "m_recraftItemInfo", false);
-                    moveFieldBeforeField("m_recraftItemInfo", false, "m_enchantments", false);
-                    moveFieldBeforeField("m_recraftItemInfo.has_value()", false, "m_enchantments", true);
-                }
-
-                FinishBitPack("FinishBitPack_afterOptionalBit");
-                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_recraftItemInfo", false);
-            }
-            else if (_structureType == typeof(JamMirrorCraftingOrderData_C))
-            {
-                if (_create)
-                {
-                    moveFieldToEnd("m_outputItem");
-                    moveFieldToEnd("m_outputItemData");
-                    moveFieldBeforeField("m_reagents", false, "m_customerNotes", false);
-                    moveFieldBeforeField("m_outputItem.has_value()", false, "m_reagents", false);
-                    moveFieldBeforeField("m_outputItemData.has_value()", false, "m_reagents", false);
-
-                    FinishBitPack("FinishBitPack_afterOptionalBit");
-                    moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_reagents", false);
-                }
-                else
-                {
-                    FinishBitPack("FinishBitPack_afterOptionalBit");
-                    moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_outputItem", false);
-                }
-            }
-            else if (_structureType == typeof(JamMirrorCraftingOrderItem_C))
-            {
-                if (_create)
-                    moveFieldBeforeField("m_dataSlotIndex.has_value()", false, "m_dataSlotIndex", false);
-
-                FinishBitPack("FinishBitPack_afterOptionalBit");
-                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_dataSlotIndex", false);
             }
             else if (_structureType == typeof(JamMirrorStablePetInfo_C))
             {
@@ -298,20 +266,10 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("m_overrideMoveCurveZ", false, "m_visualAnim", false);
                 }
             }
-            else if (_structureType == typeof(CGConversationData))
+            else if (_structureType == typeof(JamMirrorConversationActor_C))
             {
                 if (_create)
-                {
-                    var dontPlayBroadcastTextSoundsIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("m_dontPlayBroadcastTextSounds"));
-                    var actorsSizeIndex = _fieldWrites.FindIndex(fw => fw.Name == RenameField("m_actors") && fw.IsSize);
-                    if (actorsSizeIndex != -1)
-                    {
-                        // move to just-before-end (end is a write for closing all brackets)
-                        var dontPlayBroadcastTextSounds = _fieldWrites[dontPlayBroadcastTextSoundsIndex];
-                        _fieldWrites.RemoveAt(dontPlayBroadcastTextSoundsIndex);
-                        _fieldWrites.Insert(actorsSizeIndex, dontPlayBroadcastTextSounds);
-                    }
-                }
+                    moveFieldBeforeField("m_type", false, "m_id", false);
             }
         }
 

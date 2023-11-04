@@ -5,8 +5,8 @@ namespace UpdateFieldCodeGenerator.Formats
 {
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
-        private const string ModuleName = "V10_0_0_46181";
-        private const string Version = "V10_1_7_51187";
+        private const string ModuleName = "V3_4_0_45166";
+        private const string Version = "V3_4_3_51666";
 
         private List<string> _optionalInitVariables;
 
@@ -230,7 +230,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
             }
 
-            if (_create)
+            if (_create || !_writeUpdateMasks)
                 foreach (var (fieldToCompare, operatorAndConstant) in updateField.Conditions)
                     flowControl.Add(new FlowControlBlock { Statement = $"if (data.{RenameField(fieldToCompare.Name)} {operatorAndConstant})" });
 

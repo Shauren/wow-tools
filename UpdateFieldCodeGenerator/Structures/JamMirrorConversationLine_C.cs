@@ -7,6 +7,5 @@
         public static readonly UpdateField m_uiCameraID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_actorIndex = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField m_flags = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField m_chatType = new UpdateField(typeof(byte), UpdateFieldFlag.None);
     }
 }
