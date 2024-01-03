@@ -175,7 +175,31 @@ namespace UpdateFieldCodeGenerator.Formats
             else if (_structureType == typeof(CGPlayerData))
             {
                 if (_create)
-                    moveFieldToEnd("dungeonScore");
+                {
+                    moveFieldToEnd("declinedNames");
+                    moveFieldBeforeField("name{0}size()", false, "hasQuestSession", false);
+                    moveFieldBeforeField("declinedNames.has_value()", false, "declinedNames", false);
+                    moveFieldBeforeField("dungeonScore", false, "declinedNames", false);
+                    moveFieldBeforeField("name", false, "declinedNames", false);
+                }
+                else
+                {
+                    FinishBitPack("FinishBitPack_afterDeclinedNamesBit");
+
+                    moveFieldBeforeField("name{0}size()", false, "partyType", false);
+                    moveFieldBeforeField("declinedNames.has_value()", false, "partyType", false);
+                    moveFieldBeforeField("FinishBitPack_afterDeclinedNamesBit", false, "partyType", false);
+                    moveFieldBeforeField("dungeonScore", false, "partyType", false);
+                    moveFieldBeforeField("name", false, "partyType", false);
+                    moveFieldBeforeField("declinedNames", false, "partyType", false);
+                }
+            }
+            else if (_structureType == typeof(JamMirrorDeclinedNames_C))
+            {
+                FinishControlBlocks(null, "SplitBits");
+                FinishBitPack("FinishBitPack_SplitBits");
+                moveFieldBeforeField("SplitBits", false, "m_name", false);
+                moveFieldBeforeField("FinishBitPack_SplitBits", false, "m_name", false);
             }
             else if (_structureType == typeof(CGActivePlayerData))
             {

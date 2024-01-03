@@ -1,12 +1,11 @@
 ﻿using System.Reflection;
-using System.Reflection.Emit;
 
 namespace UpdateFieldCodeGenerator.Formats
 {
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private const string ModuleName = "V10_0_0_46181";
-        private const string Version = "V10_1_7_51187";
+        private const string Version = "V10_2_0_52038";
 
         private List<string> _optionalInitVariables;
 
@@ -161,7 +160,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 flowControl.Add(new FlowControlBlock { Statement = $"if ((flags & {updateField.Flag.ToFlagsExpression(" | ", "UpdateFieldFlag.", "", "(", ")")}) != UpdateFieldFlag.None)" });
 
             var type = updateField.Type;
-            var outputFieldName = name;
+            var outputFieldName = updateField.SizeForField != null ? string.Format(name, "") : name;
             var nextIndex = string.Empty;
             var declarationType = updateField.Type;
             var declarationSettable = true;
@@ -170,7 +169,12 @@ namespace UpdateFieldCodeGenerator.Formats
             if (type.IsArray)
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"for (var {indexLetter} = 0; {indexLetter} < {updateField.Size}; ++{indexLetter})" });
-                outputFieldName += $"[{indexLetter}]";
+
+                if (updateField.SizeForField != null)
+                    outputFieldName = string.Format(name, $"[{indexLetter}]");
+                else
+                    outputFieldName += $"[{indexLetter}]";
+
                 type = type.GetElementType();
                 nextIndex += ", " + indexLetter;
                 declarationSettable = false;
@@ -230,7 +234,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
             }
 
-            if (_create)
+            if (_create || !_writeUpdateMasks)
                 foreach (var (fieldToCompare, operatorAndConstant) in updateField.Conditions)
                     flowControl.Add(new FlowControlBlock { Statement = $"if (data.{RenameField(fieldToCompare.Name)} {operatorAndConstant})" });
 
@@ -238,6 +242,8 @@ namespace UpdateFieldCodeGenerator.Formats
             if (updateField.SizeForField != null)
             {
                 type = (updateField.SizeForField.GetValue(null) as UpdateField).Type;
+                if (type.IsArray)
+                    type = type.GetElementType();
                 if (type.GenericTypeArguments.Length > 0)
                     type = type.GenericTypeArguments[0];
                 interfaceType = TypeHandler.ConvertToInterfaces(type, RenameType, _writeUpdateMasks);
@@ -446,9 +452,9 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.Write(GetIndent());
             if (name.EndsWith("size()"))
             {
-                outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 9);
+                outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 6);
                 var interfaceName = RenameType(TypeHandler.GetFriendlyName(interfaceType));
-                if (_create || !_isRoot)
+                if (_create || !_isRoot || type == typeof(string))
                 {
                     var sizeReadExpression = bitSize > 0 ? $"packet.ReadBits({bitSize})" : "packet.ReadUInt32()";
                     if (type != typeof(string))

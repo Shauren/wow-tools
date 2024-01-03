@@ -91,8 +91,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField overrideSpellsID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField lootSpecID = new UpdateField(typeof(ushort), UpdateFieldFlag.None);
         public static readonly UpdateField overrideZonePVPType = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField bnetAccount = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
-        public static readonly UpdateField guildClubMemberID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
         public static readonly UpdateField bagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 5);
         public static readonly UpdateField bankBagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 7);
         public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 875);

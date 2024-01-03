@@ -347,7 +347,12 @@ namespace UpdateFieldCodeGenerator.Formats
             if (type.IsArray)
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 {indexLetter} = 0; {indexLetter} < {updateField.Size}; ++{indexLetter})" });
-                nameUsedToWrite += $"[{indexLetter}]";
+
+                if (updateField.SizeForField != null)
+                    nameUsedToWrite = string.Format(name, $"[{indexLetter}].");
+                else
+                    nameUsedToWrite += $"[{indexLetter}]";
+
                 access = ".";
                 type = type.GetElementType();
                 arrayLoopBlockIndex = flowControl.Count;
