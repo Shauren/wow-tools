@@ -5,7 +5,7 @@ namespace UpdateFieldCodeGenerator.Formats
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private const string ModuleName = "V10_0_0_46181";
-        private const string Version = "V10_2_0_52038";
+        private const string Version = "V10_2_5_52902";
 
         private List<string> _optionalInitVariables;
 
@@ -426,12 +426,20 @@ namespace UpdateFieldCodeGenerator.Formats
             if (updateField.Type.IsArray)
             {
                 flowControl.Insert(0, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[0]}])" });
+                var bitsToGenerate = updateField.Size;
+                var conditionIncrement = " + i";
+                if (typeof(DynamicUpdateField).IsAssignableFrom(updateField.Type.GetElementType()))
+                {
+                    bitsToGenerate = 1;
+                    conditionIncrement = string.Empty;
+                }
+
                 if (newField)
                 {
-                    bitIndex.AddRange(Enumerable.Range(_bitCounter + 1, updateField.Size));
-                    _bitCounter += updateField.Size;
+                    bitIndex.AddRange(Enumerable.Range(_bitCounter + 1, bitsToGenerate));
+                    _bitCounter += bitsToGenerate;
                 }
-                flowControl.Insert(arrayLoopBlockIndex + 1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]} + i])" });
+                flowControl.Insert(arrayLoopBlockIndex + 1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]}{conditionIncrement}])" });
             }
             else
             {
@@ -609,7 +617,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
         public override void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow, string tag)
         {
-            _fieldWrites.Add((tag, false, (pcf) =>
+            _fieldWrites.Add((RenameField(tag), false, (pcf) =>
             {
                 FinishControlBlocks(_source, pcf);
                 return new List<FlowControlBlock>();
@@ -618,7 +626,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
         public override void FinishBitPack(string tag)
         {
-            _fieldWrites.Add((tag ?? "FinishBitPack", false, (pcf) =>
+            _fieldWrites.Add((tag != null ? RenameField(tag) : "FinishBitPack", false, (pcf) =>
             {
                 _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
                 return pcf;

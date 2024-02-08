@@ -203,6 +203,16 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             else if (_structureType == typeof(CGActivePlayerData))
             {
+                if (_create)
+                    moveFieldBeforeField("dataFlags", false, "restInfo", false);
+                else
+                {
+                    moveFieldBeforeField("dataFlags", false, "pvpInfo", true);
+                    moveFieldBeforeField("dataFlags", true, "dataFlags", false);
+                    FinishControlBlocks(null, "dataFlagsSplit");
+                    moveFieldBeforeField("dataFlagsSplit", false, "dataFlags", false);
+                }
+
                 moveFieldBeforeField("researchSites", true, "dailyQuestsCompleted", true);
                 moveFieldBeforeField("researchSiteProgress", true, "dailyQuestsCompleted", true);
                 moveFieldBeforeField("research", true, "dailyQuestsCompleted", true);
