@@ -130,7 +130,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField wildBattlePetLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField battlePetCompanionExperience = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField battlePetCompanionNameTimestamp = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField interactSpellID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField interactSpellID = new UpdateField(typeof(int), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField scaleDuration = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField looksLikeMountID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField looksLikeCreatureID = new UpdateField(typeof(int), UpdateFieldFlag.None);
