@@ -2,8 +2,8 @@
 {
     public class JamMirrorMawPower_C
     {
-        public static readonly UpdateField SpellID = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField MawPowerID = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField Stacks = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField m_spellID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField m_mawPowerID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField m_stacks = new UpdateField(typeof(int), UpdateFieldFlag.None);
     }
 }
