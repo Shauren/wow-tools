@@ -181,6 +181,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("declinedNames.has_value()", false, "declinedNames", false);
                     moveFieldBeforeField("dungeonScore", false, "declinedNames", false);
                     moveFieldBeforeField("name", false, "declinedNames", false);
+                    moveFieldBeforeField("visibleEquipableSpells", false, "declinedNames", false);
                 }
                 else
                 {
@@ -192,6 +193,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("dungeonScore", false, "partyType", false);
                     moveFieldBeforeField("name", false, "partyType", false);
                     moveFieldBeforeField("declinedNames", false, "partyType", false);
+                    moveFieldToEnd("visibleEquipableSpells");
                 }
             }
             else if (_structureType == typeof(JamMirrorDeclinedNames_C))
