@@ -50,8 +50,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField scalingLevelMax = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scalingLevelDelta = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scalingFactionGroup = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField scalingHealthItemLevelCurveID = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField scalingDamageItemLevelCurveID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField factionTemplate = new UpdateField(typeof(int), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField virtualItems = new UpdateField(typeof(JamMirrorVisibleItem_C[]), UpdateFieldFlag.None, 3);
         public static readonly UpdateField flags = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
@@ -143,6 +141,8 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField channelObjects = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.None);
         public static readonly UpdateField flightCapabilityID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField glideEventSpeedDivisor = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "Movement speed gets divided by this value when evaluating what GlideEvents to use");
+        public static readonly UpdateField field_308 = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField field_30C = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField silencedSchoolMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField currentAreaID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField nameplateAttachToGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "When set, nameplate of this unit will instead appear on that object");

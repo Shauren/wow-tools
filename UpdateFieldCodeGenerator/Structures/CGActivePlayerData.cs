@@ -42,7 +42,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField versatilityBonus = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField pvpPowerDamage = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField pvpPowerHealing = new UpdateField(typeof(float), UpdateFieldFlag.None);
-        public static readonly UpdateField dataFlags = new UpdateField(typeof(DynamicUpdateField<ulong>[]), UpdateFieldFlag.None, 8);
+        public static readonly UpdateField dataFlags = new UpdateField(typeof(DynamicUpdateField<ulong>[]), UpdateFieldFlag.None, 9);
         public static readonly UpdateField restInfo = new UpdateField(typeof(JamMirrorRestInfo_C[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField modDamageDonePos = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);
         public static readonly UpdateField modDamageDoneNeg = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);
@@ -124,6 +124,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField taskQuests = new UpdateField(typeof(DynamicUpdateField<JamMirrorQuestLog_C>), UpdateFieldFlag.None);
         public static readonly UpdateField disabledSpells = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField uiChromieTimeExpansionID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField timerunningSeasonID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField transportServerTime = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField weeklyRewardsPeriodSinceOrigin = new UpdateField(typeof(uint), UpdateFieldFlag.None, comment: "week count since Cfg_RegionsEntry::ChallengeOrigin");
         public static readonly UpdateField DEBUGSoulbindConduitRank = new UpdateField(typeof(short), UpdateFieldFlag.None);

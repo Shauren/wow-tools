@@ -44,6 +44,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField field_1AC = new UpdateField(typeof(int), UpdateFieldFlag.None); // these 2 are both quest ids and are used in condition to trigger PlayerCliQuestGiverAcceptQuest
         public static readonly UpdateField field_1B0 = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField currentBattlePetSpeciesID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField petNames = new UpdateField(typeof(DynamicUpdateField<JamMirrorPetCreatureName_C>), UpdateFieldFlag.None);
         public static readonly UpdateField ctrOptions = new UpdateField(typeof(JamMirrorCTROptions_C), UpdateFieldFlag.None);
         public static readonly UpdateField covenantID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField soulbindID = new UpdateField(typeof(int), UpdateFieldFlag.None);
