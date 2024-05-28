@@ -220,7 +220,7 @@ namespace UpdateFieldCodeGenerator.Formats
                             var flagArray = new int[(_bitCounter + 31) / 32];
                             bitMaskByFlag[(UpdateFieldFlag)(1 << j)].CopyTo(flagArray, 0);
                             _source.WriteLine($"    if (fieldVisibilityFlags.HasFlag(UpdateFieldFlag::{(UpdateFieldFlag)(1 << j)}))");
-                            _source.WriteLine($"        allowedMaskForTarget |= {{ {string.Join(", ", flagArray.Select(v => "0x" + v.ToString("X8") + "u"))} }};");
+                            _source.WriteLine($"        allowedMaskForTarget |= std::array<uint32, {flagArray.Length}>{{ {string.Join(", ", flagArray.Select(v => "0x" + v.ToString("X8") + "u"))} }};");
                         }
                     }
                     _source.WriteLine("}");
