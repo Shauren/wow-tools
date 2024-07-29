@@ -637,13 +637,13 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.Write(GetIndent());
             if (name.EndsWith("size()"))
             {
-                if (_create || !_isRoot || type == typeof(string))
+                if (_create || !_isRoot)
                 {
                     var sizeWriteExpression = bitSize > 0 ? $".WriteBits({name}, {bitSize})" : $" << uint32({name})";
                     _source.WriteLine($"data{sizeWriteExpression};");
                 }
                 else
-                    _source.WriteLine($"data.WriteBits({name}, 32);");
+                    _source.WriteLine($"data.WriteBits({name}, {(bitSize > 0 ? bitSize : 32)});");
                 return;
             }
 
