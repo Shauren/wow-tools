@@ -7,11 +7,12 @@ namespace UpdateFieldCodeGenerator.Structures
     {
         public static readonly ObjectType ObjectType = ObjectType.ActivePlayer;
 
-        public static readonly UpdateField invSlots = new UpdateField(typeof(WowGuid[]), UpdateFieldFlag.None, 227);
+        public static readonly UpdateField invSlots = new UpdateField(typeof(WowGuid[]), UpdateFieldFlag.None, 232);
         public static readonly UpdateField farsightObject = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField summonedBattlePetGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField knownTitles = new UpdateField(typeof(DynamicUpdateField<ulong>), UpdateFieldFlag.None);
         public static readonly UpdateField coinage = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
+        public static readonly UpdateField accountBankCoinage = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
         public static readonly UpdateField XP = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField nextLevelXP = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField trialXP = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -42,7 +43,9 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField versatilityBonus = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField pvpPowerDamage = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField pvpPowerHealing = new UpdateField(typeof(float), UpdateFieldFlag.None);
-        public static readonly UpdateField dataFlags = new UpdateField(typeof(DynamicUpdateField<ulong>[]), UpdateFieldFlag.None, 9);
+        public static readonly UpdateField bitVectors = new UpdateField(typeof(JamMirrorBitVectors_C), UpdateFieldFlag.None);
+        public static readonly UpdateField characterDataElements = new UpdateField(typeof(DynamicUpdateField<JamMirrorPlayerDataElement_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField accountDataElements = new UpdateField(typeof(DynamicUpdateField<JamMirrorPlayerDataElement_C>), UpdateFieldFlag.None);
         public static readonly UpdateField restInfo = new UpdateField(typeof(JamMirrorRestInfo_C[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField modDamageDonePos = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);
         public static readonly UpdateField modDamageDoneNeg = new UpdateField(typeof(int[]), UpdateFieldFlag.None, 7);
@@ -93,11 +96,12 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField overrideZonePVPType = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField bagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 5);
         public static readonly UpdateField bankBagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 7);
-        public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 950);
+        public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 960);
         public static readonly UpdateField honor = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField honorNextLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField perksProgramCurrency = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField numBankSlots = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField numAccountBankTabs = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField dailyQuestsCompleted = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField availableQuestLineXQuestIDs = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField heirlooms = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
@@ -133,6 +137,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField activeCombatTraitConfigID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField craftingOrders = new UpdateField(typeof(DynamicUpdateField<JamMirrorCraftingOrder_C>), UpdateFieldFlag.None);
         public static readonly UpdateField personalCraftingOrderCounts = new UpdateField(typeof(DynamicUpdateField<JamMirrorPersonalCraftingOrderCount_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField npcCraftingOrders = new UpdateField(typeof(DynamicUpdateField<JamMirrorNPCCraftingOrderInfo_C>), UpdateFieldFlag.None);
         public static readonly UpdateField categoryCooldownMods = new UpdateField(typeof(DynamicUpdateField<JamMirrorCategoryCooldownMod_C>), UpdateFieldFlag.None);
         public static readonly UpdateField weeklySpellUses = new UpdateField(typeof(DynamicUpdateField<JamMirrorWeeklySpellUse_C>), UpdateFieldFlag.None);
         public static readonly UpdateField itemUpgradeHighWatermark = new UpdateField(typeof(float[]), UpdateFieldFlag.None, 17);
@@ -146,6 +151,11 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField petStable = new UpdateField(typeof(BlzOptionalField<JamMirrorStableInfo_C>), UpdateFieldFlag.None);
         public static readonly UpdateField trackedCollectableSources = new UpdateField(typeof(DynamicUpdateField<JamMirrorCollectableSourceTrackedData_C>), UpdateFieldFlag.None);
         public static readonly UpdateField requiredMountCapabilityFlags = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField accountBankTabSettings = new UpdateField(typeof(DynamicUpdateField<JamMirrorBankTabSettings_C>), UpdateFieldFlag.None, bitSize: 3);
+        public static readonly UpdateField walkInDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorWalkInData_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("walkInData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
+        public static readonly UpdateField walkInData = new UpdateField(typeof(BlzOptionalField<JamMirrorWalkInData_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField delveDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorDelveData_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("delveData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
+        public static readonly UpdateField delveData = new UpdateField(typeof(BlzOptionalField<JamMirrorDelveData_C>), UpdateFieldFlag.None);
         public static readonly UpdateField backpackAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField backpackSellJunkDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField bankAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);

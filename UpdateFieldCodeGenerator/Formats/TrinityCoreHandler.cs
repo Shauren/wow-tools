@@ -608,15 +608,20 @@ namespace UpdateFieldCodeGenerator.Formats
                     bitsToGenerate = 1;
                     conditionIncrement = string.Empty;
                 }
+                if (updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.NoArrayElementBits))
+                    bitsToGenerate = 0;
 
                 if (newField)
                 {
                     bitIndex.AddRange(Enumerable.Range(_bitCounter + 1, bitsToGenerate));
                     _bitCounter += bitsToGenerate;
                 }
-                flowControl.Insert(arrayLoopBlockIndex + 1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]}{conditionIncrement}])" });
-                for (var i = 0; i < bitsToGenerate; ++i)
-                    _flagByUpdateBit[bitIndex[1] + i] = new SortedSet<UpdateFieldFlag>(updateField.Flag.ToFlagSet());
+                if (bitsToGenerate > 0)
+                {
+                    flowControl.Insert(arrayLoopBlockIndex + 1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]}{conditionIncrement}])" });
+                    for (var i = 0; i < bitsToGenerate; ++i)
+                        _flagByUpdateBit[bitIndex[1] + i] = new SortedSet<UpdateFieldFlag>(updateField.Flag.ToFlagSet());
+                }
             }
             else
             {

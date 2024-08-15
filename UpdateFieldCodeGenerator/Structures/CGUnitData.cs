@@ -9,7 +9,8 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly ObjectType ObjectType = ObjectType.Unit;
 
         public static readonly UpdateField displayID = new UpdateField(typeof(int), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField npcFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 2, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField npcFlags = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField npcFlags2 = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField stateSpellVisualID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField stateAnimID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField stateAnimKitID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
@@ -119,7 +120,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField minRangedDamage = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
         public static readonly UpdateField maxRangedDamage = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
         public static readonly UpdateField manaCostMultiplier = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
-        public static readonly UpdateField maxHealthModifier = new UpdateField(typeof(float), UpdateFieldFlag.Owner);
+        public static readonly UpdateField maxHealthModifier = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField hoverHeight = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField minItemLevelCutoff = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField minItemLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -141,10 +142,13 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField channelObjects = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.None);
         public static readonly UpdateField flightCapabilityID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField glideEventSpeedDivisor = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "Movement speed gets divided by this value when evaluating what GlideEvents to use");
-        public static readonly UpdateField field_308 = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField field_30C = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField maxHealthModifierFlatNeg = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField maxHealthModifierFlatPos = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField silencedSchoolMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField field_314 = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField currentAreaID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField field_31C = new UpdateField(typeof(float), UpdateFieldFlag.None);
+        public static readonly UpdateField field_320 = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "Soft targeting related? When UnitFlags3 & 0x40000000 is set, increases some range check using CombatReach by this amount");
         public static readonly UpdateField nameplateAttachToGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "When set, nameplate of this unit will instead appear on that object");
     }
 }

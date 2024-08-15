@@ -4,8 +4,8 @@ namespace UpdateFieldCodeGenerator.Formats
 {
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
-        private const string ModuleName = "V10_0_0_46181";
-        private const string Version = "V10_2_7_54577";
+        private const string ModuleName = "V11_0_0_55666";
+        private const string Version = "V11_0_0_55666";
 
         private List<string> _optionalInitVariables;
 
@@ -436,13 +436,16 @@ namespace UpdateFieldCodeGenerator.Formats
                     bitsToGenerate = 1;
                     conditionIncrement = string.Empty;
                 }
+                if (updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.NoArrayElementBits))
+                    bitsToGenerate = 0;
 
                 if (newField)
                 {
                     bitIndex.AddRange(Enumerable.Range(_bitCounter + 1, bitsToGenerate));
                     _bitCounter += bitsToGenerate;
                 }
-                flowControl.Insert(arrayLoopBlockIndex + 1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]}{conditionIncrement}])" });
+                if (bitsToGenerate > 0)
+                    flowControl.Insert(arrayLoopBlockIndex + 1, new FlowControlBlock { Statement = $"if (changesMask[{bitIndex[1]}{conditionIncrement}])" });
             }
             else
             {

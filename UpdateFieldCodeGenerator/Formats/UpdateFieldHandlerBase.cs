@@ -206,16 +206,6 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             else if (_structureType == typeof(CGActivePlayerData))
             {
-                if (_create)
-                    moveFieldBeforeField("dataFlags", false, "restInfo", false);
-                else
-                {
-                    moveFieldBeforeField("dataFlags", false, "pvpInfo", true);
-                    moveFieldBeforeField("dataFlags", true, "dataFlags", false);
-                    FinishControlBlocks(null, "dataFlagsSplit");
-                    moveFieldBeforeField("dataFlagsSplit", false, "dataFlags", false);
-                }
-
                 moveFieldBeforeField("researchSites", true, "dailyQuestsCompleted", true);
                 moveFieldBeforeField("researchSiteProgress", true, "dailyQuestsCompleted", true);
                 moveFieldBeforeField("research", true, "dailyQuestsCompleted", true);
@@ -225,12 +215,23 @@ namespace UpdateFieldCodeGenerator.Formats
 
                 if (_create)
                 {
-                    moveFieldToEnd("petStable");
+                    moveFieldToEnd("delveData");
+                    moveFieldBeforeField("walkInData", false, "delveData", false);
+                    moveFieldBeforeField("accountBankTabSettings", false, "walkInData", false);
+                    moveFieldBeforeField("petStable", false, "accountBankTabSettings", false);
+
                     moveFieldBeforeField("dungeonScore", false, "pvpInfo", false);
+                    moveFieldBeforeField("characterDataElements", false, "pvpInfo", false);
+                    moveFieldBeforeField("accountDataElements", false, "pvpInfo", false);
                 }
                 else
                 {
-                    moveFieldBeforeField("petStable", false, "invSlots", false);
+                    moveFieldBeforeField("accountBankTabSettings", true, "characterDataElements", false);
+                    moveFieldBeforeField("accountBankTabSettings", false, "farsightObject", false);
+
+                    moveFieldBeforeField("delveData", false, "invSlots", false);
+                    moveFieldBeforeField("walkInData", false, "delveData", false);
+                    moveFieldBeforeField("petStable", false, "walkInData", false);
                     moveFieldBeforeField("dungeonScore", false, "petStable", false);
 
                     FinishControlBlocks(null, string.Empty);
@@ -247,7 +248,19 @@ namespace UpdateFieldCodeGenerator.Formats
                 moveFieldBeforeField("frozenPerksVendorItem", false, "field_1410", false);
                 moveFieldBeforeField("questSession", false, "frozenPerksVendorItem", false);
                 moveFieldBeforeField("researchHistory", false, "questSession", false);
-                moveFieldBeforeField("petStable.has_value()", false, "researchHistory", false);
+                moveFieldBeforeField("delveData.has_value()", false, "researchHistory", false);
+                moveFieldBeforeField("walkInData.has_value()", false, "delveData.has_value()", false);
+
+                if (_create)
+                {
+                    moveFieldBeforeField("accountBankTabSettings", true, "walkInData.has_value()", false);
+                    moveFieldBeforeField("petStable.has_value()", false, "accountBankTabSettings", true);
+                }
+                else
+                {
+                    moveFieldBeforeField("petStable.has_value()", false, "walkInData.has_value()", false);
+                }
+
                 moveFieldBeforeField("questSession.has_value()", false, "petStable.has_value()", false);
 
                 FinishControlBlocks(null, string.Empty);
@@ -258,10 +271,24 @@ namespace UpdateFieldCodeGenerator.Formats
                 var researchHistoryIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("researchHistory") && !fieldWrite.IsSize);
                 _fieldWrites.InsertRange(researchHistoryIndex, finishBitPackAfterOptionalBit);
             }
+            else if (_structureType == typeof(JamMirrorPlayerDataElement_C))
+            {
+                if (_create)
+                    moveFieldBeforeField("m_type", false, "m_floatValue", false);
+            }
             else if (_structureType == typeof(JamMirrorTraitConfig_C))
             {
                 moveFieldToEnd("m_name");
                 moveFieldBeforeField("m_name{0}size()", false, "m_name", false);
+                if (_create)
+                    moveFieldBeforeField("m_subTrees", false, "m_name", false);
+
+            }
+            else if (_structureType == typeof(JamMirrorTraitSubTreeCache_C))
+            {
+                if (!_create)
+                    moveFieldBeforeField("m_traitSubTreeID", false, "m_entries{0}size()", false);
+
             }
             else if (_structureType == typeof(JamMirrorCraftingOrder_C))
             {
@@ -279,19 +306,15 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 if (_create)
                 {
+                    moveFieldToEnd("m_reagents");
+                    moveFieldToEnd("m_customerNotes");
+                    moveFieldToEnd("m_customer");
+                    moveFieldToEnd("m_npcCustomer");
                     moveFieldToEnd("m_outputItem");
                     moveFieldToEnd("m_outputItemData");
-                    moveFieldBeforeField("m_reagents", false, "m_customerNotes", false);
-                    moveFieldBeforeField("m_outputItem.has_value()", false, "m_reagents", false);
-                    moveFieldBeforeField("m_outputItemData.has_value()", false, "m_reagents", false);
 
                     FinishBitPack("FinishBitPack_afterOptionalBit");
                     moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_reagents", false);
-                }
-                else
-                {
-                    FinishBitPack("FinishBitPack_afterOptionalBit");
-                    moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_outputItem", false);
                 }
             }
             else if (_structureType == typeof(JamMirrorCraftingOrderItem_C))
@@ -306,6 +329,23 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 if (!_create)
                     moveFieldBeforeField("m_petFlags", false, "m_name{0}size()", false);
+            }
+            else if (_structureType == typeof(JamMirrorBankTabSettings_C))
+            {
+                moveFieldBeforeField("m_depositFlags", false, "m_name", false);
+            }
+            else if(_structureType == typeof(JamMirrorWalkInData_C))
+            {
+                if (!_create)
+                    moveFieldBeforeField("Field_18", false, "m_type", false);
+            }
+            else if(_structureType == typeof(JamMirrorDelveData_C))
+            {
+                if (!_create)
+                {
+                    moveFieldBeforeField("m_owners{0}size()", false, "m_started", false);
+                    moveFieldBeforeField("m_owners", false, "m_started", false);
+                }
             }
             else if (_structureType == typeof(CGAreaTriggerData))
             {
