@@ -39,6 +39,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField honorLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField logoutTime = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField arenaCooldowns = new UpdateField(typeof(DynamicUpdateField<JamMirrorArenaCooldown_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField forcedReactions = new UpdateField(typeof(JamMirrorZonePlayerForcedReaction_C[]), UpdateFieldFlag.None, 32);
         public static readonly UpdateField nameSize = new UpdateField(typeof(string), UpdateFieldFlag.None, typeof(CGPlayerData).GetField("name", BindingFlags.Static | BindingFlags.Public), bitSize: 6);
         public static readonly UpdateField name = new UpdateField(typeof(string), UpdateFieldFlag.None, bitSize: 6);
         public static readonly UpdateField field_1AC = new UpdateField(typeof(int), UpdateFieldFlag.None); // these 2 are both quest ids and are used in condition to trigger PlayerCliQuestGiverAcceptQuest
