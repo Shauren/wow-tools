@@ -20,7 +20,8 @@ namespace UpdateFieldCodeGenerator
             {ObjectType.Corpse, ObjectType.Object},
             {ObjectType.AreaTrigger, ObjectType.Object},
             {ObjectType.SceneObject, ObjectType.Object},
-            {ObjectType.Conversation, ObjectType.Object}
+            {ObjectType.Conversation, ObjectType.Object},
+            {ObjectType.Vendor, ObjectType.Vendor}
         };
 
         public static void Main()

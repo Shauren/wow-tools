@@ -916,6 +916,8 @@ namespace UpdateFieldCodeGenerator.Formats
                     return "Object";
                 case ObjectType.Conversation:
                     return "Conversation";
+                case ObjectType.Vendor:
+                    return "Creature";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(objectType));
             }

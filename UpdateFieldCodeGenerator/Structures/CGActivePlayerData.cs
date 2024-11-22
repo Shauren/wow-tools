@@ -96,7 +96,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField overrideZonePVPType = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField bagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 5);
         public static readonly UpdateField bankBagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 7);
-        public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 960);
+        public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 1000);
         public static readonly UpdateField honor = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField honorNextLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField perksProgramCurrency = new UpdateField(typeof(int), UpdateFieldFlag.None);

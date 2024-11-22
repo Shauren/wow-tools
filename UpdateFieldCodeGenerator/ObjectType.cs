@@ -15,6 +15,7 @@
         Corpse = 10,
         AreaTrigger = 11,
         SceneObject = 12,
-        Conversation = 13
+        Conversation = 13,
+        Vendor = 117
     }
 }

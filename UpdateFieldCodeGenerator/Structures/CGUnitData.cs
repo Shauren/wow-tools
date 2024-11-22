@@ -142,8 +142,8 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField channelObjects = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.None);
         public static readonly UpdateField flightCapabilityID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField glideEventSpeedDivisor = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "Movement speed gets divided by this value when evaluating what GlideEvents to use");
-        public static readonly UpdateField maxHealthModifierFlatNeg = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField maxHealthModifierFlatPos = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField maxHealthModifierFlatNeg = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField maxHealthModifierFlatPos = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField silencedSchoolMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField field_314 = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField currentAreaID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
