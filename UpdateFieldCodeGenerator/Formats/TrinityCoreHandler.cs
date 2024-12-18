@@ -254,7 +254,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 var maskBlocks = (_bitCounter + 31) / 32;
                 if (maskBlocks > 1 || forceMaskMask)
                 {
-                    if (maskBlocks >= 32)
+                    if (maskBlocks > 32)
                     {
                         _source.WriteLine($"    for (uint32 i = 0; i < {maskBlocks / 32}; ++i)");
                         _source.WriteLine($"        data << uint32(changesMask.GetBlocksMask(i));");

@@ -99,7 +99,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 if (maskBlocks > 1 || forceMaskMask)
                 {
                     _source.WriteLine($"{GetIndent()}var rawMaskMask = new int[{(maskBlocks + 31) / 32}];");
-                    if (maskBlocks >= 32)
+                    if (maskBlocks > 32)
                     {
                         _source.WriteLine($"{GetIndent()}for (var i = 0; i < {maskBlocks / 32}; ++i)");
                         _source.WriteLine($"{GetIndent()}    rawMaskMask[i] = packet.ReadInt32();");
