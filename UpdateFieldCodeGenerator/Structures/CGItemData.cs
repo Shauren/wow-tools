@@ -24,7 +24,7 @@
         public static readonly UpdateField m_modifiers = new UpdateField(typeof(JamMirrorItemModList_C), UpdateFieldFlag.None);
         public static readonly UpdateField m_artifactPowers = new UpdateField(typeof(DynamicUpdateField<JamMirrorArtifactPower_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_gems = new UpdateField(typeof(DynamicUpdateField<JamMirrorSocketedGem_C>), UpdateFieldFlag.None);
-        public static readonly UpdateField m_dynamicFlags2 = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
+        public static readonly UpdateField m_zoneFlags = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_itemBonusKey = new UpdateField(typeof(ItemBonusKey), UpdateFieldFlag.None);
         public static readonly UpdateField m_DEBUGItemLevel = new UpdateField(typeof(ushort), UpdateFieldFlag.Owner);
     }

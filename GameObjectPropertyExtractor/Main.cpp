@@ -80,7 +80,7 @@ char const* GetIntType(TypeType typeType, GameObjectPropertyTypeInfo const& type
 
 struct GameObjectProperty
 {
-    static constexpr std::uintptr_t PROPERTY_DATA = 0x39C1770;
+    static constexpr std::uintptr_t PROPERTY_DATA = 0x38C80C0;
     static constexpr std::size_t MAX_PROPERTY_INDEX = 259;
 
     std::uint32_t Index;
@@ -91,7 +91,7 @@ struct GameObjectProperty
 
 struct GameObjectPropertyInfo
 {
-    static constexpr std::uintptr_t GO_TYPE_DATA = 0x4161DB0;
+    static constexpr std::uintptr_t GO_TYPE_DATA = 0x40C6230;
     static constexpr std::size_t MAX_GAMEOBJECT_TYPE = 64;
 
     char const* TypeName;
@@ -185,7 +185,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow_11.0.5.57212-64_orig.exe"), 57212, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow_11.0.7.58046-T-64_orig.exe"), 58046, true);
     if (!wow)
         return 1;
 
