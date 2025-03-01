@@ -22,6 +22,7 @@ namespace UpdateFieldCodeGenerator.Formats
         private readonly IList<Action> _delayedHeaderWrites = new List<Action>();
         private readonly IList<string> _changesMaskClears = new List<string>();
         private readonly IList<string> _equalityComparisonFields = new List<string>();
+        private readonly IList<string> _viewerDependentVariables = new List<string>();
 
         public TrinityCoreHandler() : base(new StreamWriter("UpdateFields.cpp"), new StreamWriter("UpdateFields.h"))
         {
@@ -104,6 +105,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _delayedHeaderWrites.Clear();
             _changesMaskClears.Clear();
             _equalityComparisonFields.Clear();
+            _viewerDependentVariables.Clear();
 
             var structureName = RenameType(structureType);
 
@@ -284,6 +286,14 @@ namespace UpdateFieldCodeGenerator.Formats
 
             PostProcessFieldWrites();
 
+            if (_viewerDependentVariables.Count > 0)
+            {
+                foreach (var viewerDependentVariable in _viewerDependentVariables)
+                    _source.WriteLine($"    {viewerDependentVariable}");
+
+                _source.WriteLine();
+            }
+
             if (!_create)
             {
                 foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
@@ -371,18 +381,6 @@ namespace UpdateFieldCodeGenerator.Formats
                 allIndexes += ", " + indexLetter;
                 ++indexLetter;
             }
-            if (typeof(BlzVectorField).IsAssignableFrom(type))
-            {
-                flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 {indexLetter} = 0; {indexLetter} < {name}{access}size(); ++{indexLetter})" });
-                if (_writeUpdateMasks)
-                    nameUsedToWrite = $"(*{nameUsedToWrite})";
-
-                nameUsedToWrite += $"[{indexLetter}]";
-                access = ".";
-                type = type.GenericTypeArguments[0];
-                allIndexes += ", " + indexLetter;
-                ++indexLetter;
-            }
             if (typeof(BlzOptionalField).IsAssignableFrom(type))
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"if ({name}.has_value())" });
@@ -390,8 +388,39 @@ namespace UpdateFieldCodeGenerator.Formats
             }
 
             if ((updateField.CustomFlag & CustomUpdateFieldFlag.ViewerDependent) != CustomUpdateFieldFlag.None)
-                nameUsedToWrite = $"ViewerDependentValue<{name}Tag>::GetValue(this{allIndexes}, owner, receiver)";
+            {
+                if (typeof(BlzVectorField).IsAssignableFrom(type))
+                    nameUsedToWrite = char.ToLower(nameUsedToWrite[0]) + nameUsedToWrite[1..];
+                else if (updateField.SizeForField != null)
+                {
+                    nameUsedToWrite = char.ToLower(nameUsedToWrite[0]) + nameUsedToWrite[1..];
+                    var origName = RenameField(updateField.SizeForField.Name);
+                    var variableName = $"{char.ToLower(origName[0])}{origName[1..]}";
+                    _viewerDependentVariables.Add($"ViewerDependentValue<{origName}Tag>::value_type {variableName} = {{}};");
+                    _fieldWrites.Add((name + "_var_init", false, (pcf) =>
+                    {
+                        WriteControlBlocks(_source, flowControl, pcf);
+                        _source.Write(GetIndent());
+                        _source.WriteLine($"{variableName} = ViewerDependentValue<{origName}Tag>::GetValue(this{allIndexes}, owner, receiver);");
+                        _indent = 1;
+                        return flowControl;
+                    }));
+                }
+                else
+                    nameUsedToWrite = $"ViewerDependentValue<{name}Tag>::GetValue(this{allIndexes}, owner, receiver)";
+            }
 
+            if (typeof(BlzVectorField).IsAssignableFrom(type))
+            {
+                flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 {indexLetter} = 0; {indexLetter} < {nameUsedToWrite}{access}size(); ++{indexLetter})" });
+                if (_writeUpdateMasks)
+                    nameUsedToWrite = $"(*{nameUsedToWrite})";
+
+                nameUsedToWrite += $"[{indexLetter}]";
+                access = ".";
+                type = type.GenericTypeArguments[0];
+                ++indexLetter;
+            }
             if (!_create && _writeUpdateMasks)
             {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
