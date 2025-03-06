@@ -50,12 +50,13 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField scalingLevelMin = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scalingLevelMax = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scalingLevelDelta = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField scalingFactionGroup = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField scalingFactionGroup = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField factionTemplate = new UpdateField(typeof(int), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField virtualItems = new UpdateField(typeof(JamMirrorVisibleItem_C[]), UpdateFieldFlag.None, 3);
         public static readonly UpdateField flags = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField flags2 = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField flags3 = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField flags4 = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField auraState = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField attackRoundBaseTime = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField rangedAttackRoundBaseTime = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
@@ -63,7 +64,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField combatReach = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField displayScale = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField creatureFamily = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField creatureType = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField creatureType = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField nativeDisplayID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField nativeXDisplayScale = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField mountDisplayID = new UpdateField(typeof(int), UpdateFieldFlag.None);
@@ -142,6 +143,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField channelObjects = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.None);
         public static readonly UpdateField flightCapabilityID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField glideEventSpeedDivisor = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "Movement speed gets divided by this value when evaluating what GlideEvents to use");
+        public static readonly UpdateField driveCapabilityID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField maxHealthModifierFlatNeg = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField maxHealthModifierFlatPos = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField silencedSchoolMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);

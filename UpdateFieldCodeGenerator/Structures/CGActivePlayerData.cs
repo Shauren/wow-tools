@@ -67,7 +67,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField multiActionBars = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField lifetimeMaxRank = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField numRespecs = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpMedals = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField pvpMedals = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField buybackPrice = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 12);
         public static readonly UpdateField buybackTimestamp = new UpdateField(typeof(long[]), UpdateFieldFlag.None, 12);
         public static readonly UpdateField todayHonorableKills = new UpdateField(typeof(ushort), UpdateFieldFlag.None);
@@ -113,6 +113,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField selfResSpells = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField runeforgePowers = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
         public static readonly UpdateField transmogIllusions = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
+        public static readonly UpdateField warbandScenes = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
         public static readonly UpdateField characterRestrictions = new UpdateField(typeof(DynamicUpdateField<JamMirrorCharacterRestriction_C>), UpdateFieldFlag.None);
         public static readonly UpdateField spellPctModByLabel = new UpdateField(typeof(DynamicUpdateField<JamMirrorSpellPctModByLabel_C>), UpdateFieldFlag.None);
         public static readonly UpdateField spellFlatModByLabel = new UpdateField(typeof(DynamicUpdateField<JamMirrorSpellFlatModByLabel_C>), UpdateFieldFlag.None);

@@ -328,7 +328,10 @@ namespace UpdateFieldCodeGenerator.Formats
             else if (_structureType == typeof(JamMirrorStablePetInfo_C))
             {
                 if (!_create)
+                {
                     moveFieldBeforeField("m_petFlags", false, "m_name{0}size()", false);
+                    moveFieldBeforeField("m_specialization", false, "m_name{0}size()", false);
+                }
             }
             else if (_structureType == typeof(JamMirrorBankTabSettings_C))
             {

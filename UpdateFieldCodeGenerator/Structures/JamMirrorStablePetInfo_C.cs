@@ -13,5 +13,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_nameSize = new UpdateField(typeof(string), UpdateFieldFlag.None, typeof(JamMirrorStablePetInfo_C).GetField("m_name", BindingFlags.Static | BindingFlags.Public), bitSize: 8);
         public static readonly UpdateField m_name = new UpdateField(typeof(string), UpdateFieldFlag.None, bitSize: 8);
         public static readonly UpdateField m_petFlags = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField m_specialization = new UpdateField(typeof(uint), UpdateFieldFlag.None);
     }
 }
