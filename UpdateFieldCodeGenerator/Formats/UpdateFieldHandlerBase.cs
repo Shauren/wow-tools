@@ -130,16 +130,13 @@ namespace UpdateFieldCodeGenerator.Formats
                 .Count();
         }
 
-        protected virtual string RenameType(Type type)
-        {
-            return type.Name;
-        }
+        protected abstract string RenameType(Type type);
 
         protected abstract string RenameField(string name);
 
         protected void PostProcessFieldWrites()
         {
-            Action<string, bool, string, bool> moveFieldBeforeField = (fieldToMove, fieldIsSize, where, whereIsSize) =>
+            void moveFieldBeforeField(string fieldToMove, bool fieldIsSize, string where, bool whereIsSize)
             {
                 fieldToMove = RenameField(fieldToMove);
                 where = RenameField(where);
@@ -152,9 +149,9 @@ namespace UpdateFieldCodeGenerator.Formats
                     _fieldWrites.RemoveAt(movedFieldIndex);
                     _fieldWrites.Insert(whereFieldIndex < movedFieldIndex ? whereFieldIndex : whereFieldIndex - 1, movedField);
                 }
-            };
+            }
 
-            Action<string> moveFieldToEnd = (fieldToMove) =>
+            void moveFieldToEnd(string fieldToMove)
             {
                 fieldToMove = RenameField(fieldToMove);
                 var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == fieldToMove && !fieldWrite.IsSize);
@@ -165,7 +162,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     _fieldWrites.RemoveAt(movedFieldIndex);
                     _fieldWrites.Insert(_fieldWrites.Count - 1, movedField);
                 }
-            };
+            }
 
             if (_structureType == typeof(CGItemData))
             {
@@ -221,13 +218,10 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("petStable", false, "accountBankTabSettings", false);
 
                     moveFieldBeforeField("dungeonScore", false, "pvpInfo", false);
-                    moveFieldBeforeField("characterDataElements", false, "pvpInfo", false);
-                    moveFieldBeforeField("accountDataElements", false, "pvpInfo", false);
                 }
                 else
                 {
-                    moveFieldBeforeField("accountBankTabSettings", true, "characterDataElements", false);
-                    moveFieldBeforeField("accountBankTabSettings", false, "farsightObject", false);
+                    moveFieldBeforeField("accountBankTabSettings", true, "pvpInfo", false);
 
                     moveFieldBeforeField("delveData", false, "invSlots", false);
                     moveFieldBeforeField("walkInData", false, "delveData", false);

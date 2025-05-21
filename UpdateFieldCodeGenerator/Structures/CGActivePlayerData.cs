@@ -67,7 +67,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField multiActionBars = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField lifetimeMaxRank = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField numRespecs = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpMedals = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField pvpMedals = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField buybackPrice = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 12);
         public static readonly UpdateField buybackTimestamp = new UpdateField(typeof(long[]), UpdateFieldFlag.None, 12);
         public static readonly UpdateField todayHonorableKills = new UpdateField(typeof(ushort), UpdateFieldFlag.None);
@@ -96,7 +96,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField overrideZonePVPType = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField bagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 5);
         public static readonly UpdateField bankBagSlotFlags = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 7);
-        public static readonly UpdateField questCompleted = new UpdateField(typeof(ulong[]), UpdateFieldFlag.None, 1000);
         public static readonly UpdateField honor = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField honorNextLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField perksProgramCurrency = new UpdateField(typeof(int), UpdateFieldFlag.None);
