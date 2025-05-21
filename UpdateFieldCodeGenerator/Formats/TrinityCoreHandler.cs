@@ -687,7 +687,12 @@ namespace UpdateFieldCodeGenerator.Formats
                     if (type == typeof(WowGuid) || type == typeof(Vector2) || type == typeof(Vector3) || type == typeof(DungeonScoreSummary)
                         || type == typeof(DungeonScoreData) || type == typeof(ItemBonusKey) || type == typeof(ItemInstance) || type == typeof(ItemEnchantData)
                         || type == typeof(ItemGemData) || type == typeof(PerksVendorItem))
-                        _source.WriteLine($"data << {name};");
+                    {
+                        if (name.Contains('[') || !_writeUpdateMasks)
+                            _source.WriteLine($"data << {name};");
+                        else
+                            _source.WriteLine($"data << *{name};");
+                    }
                     else if (type == typeof(Bits))
                         _source.WriteLine($"data.WriteBits({name}, {bitSize});");
                     else if (type == typeof(Quaternion))
