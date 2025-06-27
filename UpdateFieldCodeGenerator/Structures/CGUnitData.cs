@@ -15,7 +15,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField stateAnimID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField stateAnimKitID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField stateWorldEffectIDsSize = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.None, typeof(CGUnitData).GetField("stateWorldEffectIDs", BindingFlags.Static | BindingFlags.Public), customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField stateWorldEffectsQuestObjectiveID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField stateWorldEffectsQuestObjectiveID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField spellOverrideNameID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField stateWorldEffectIDs = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField charm = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
