@@ -5,7 +5,7 @@ namespace UpdateFieldCodeGenerator.Formats
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private const string ModuleName = "V11_0_0_55666";
-        private const string Version = "V11_1_5_60392";
+        private const string Version = "V11_1_7_61491";
 
         private List<string> _optionalInitVariables;
 

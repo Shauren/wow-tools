@@ -102,6 +102,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField numBankSlots = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField numAccountBankTabs = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField dailyQuestsCompleted = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
+        public static readonly UpdateField field_1328 = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField availableQuestLineXQuestIDs = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField heirlooms = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField heirloomFlags = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
