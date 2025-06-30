@@ -106,29 +106,12 @@ namespace UpdateFieldCodeGenerator.Formats
             _changesMaskClears.Clear();
             _equalityComparisonFields.Clear();
             _viewerDependentVariables.Clear();
-
-            var structureName = RenameType(structureType);
-
-            if (_create)
-            {
-                if (_isRoot)
-                    _source.WriteLine($"void {structureName}::WriteCreate(ByteBuffer& data, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const");
-                else
-                    _source.WriteLine($"void {structureName}::WriteCreate(ByteBuffer& data, {_owningObjectType} const* owner, Player const* receiver) const");
-            }
-            else
-            {
-                if (_isRoot)
-                    _source.WriteLine($"void {structureName}::WriteUpdate(ByteBuffer& data, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const");
-                else
-                    _source.WriteLine($"void {structureName}::WriteUpdate(ByteBuffer& data, bool ignoreChangesMask, {_owningObjectType} const* owner, Player const* receiver) const");
-            }
-
-            _source.WriteLine("{");
         }
 
         public override void OnStructureEnd(bool needsFlush, bool forceMaskMask)
         {
+            var structureName = RenameType(_structureType);
+
             ++_bitCounter;
             if (!_create)
             {
@@ -167,8 +150,8 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
                 else
                 {
-                    _header.WriteLine($"    bool operator==({RenameType(_structureType)} const& right) const;");
-                    _header.WriteLine($"    bool operator!=({RenameType(_structureType)} const& right) const {{ return !(*this == right); }}");
+                    _header.WriteLine($"    bool operator==({structureName} const& right) const;");
+                    _header.WriteLine($"    bool operator!=({structureName} const& right) const {{ return !(*this == right); }}");
                 }
 
                 foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
@@ -197,23 +180,11 @@ namespace UpdateFieldCodeGenerator.Formats
 
                     var noneFlags = new int[(_bitCounter + 31) / 32];
                     bitMaskByFlag[UpdateFieldFlag.None].CopyTo(noneFlags, 0);
-
-                    _source.WriteLine($"    Mask allowedMaskForTarget({{ {string.Join(", ", noneFlags.Select(v => "0x" + v.ToString("X8") + "u"))} }});");
-                    _source.WriteLine($"    AppendAllowedFieldsMaskForFlag(allowedMaskForTarget, fieldVisibilityFlags);");
-                    _source.WriteLine($"    WriteUpdate(data, {_changesMaskName} & allowedMaskForTarget, false, owner, receiver);");
-                }
-                else if (_isRoot)
-                    _source.WriteLine($"    WriteUpdate(data, {_changesMaskName}, false, owner, receiver);");
-
-                if (_isRoot)
-                {
-                    _source.WriteLine("}");
-                    _source.WriteLine();
                 }
 
                 if (_allUsedFlags != UpdateFieldFlag.None)
                 {
-                    _source.WriteLine($"void {RenameType(_structureType)}::AppendAllowedFieldsMaskForFlag(Mask& allowedMaskForTarget, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags)");
+                    _source.WriteLine($"static constexpr void {structureName}AppendAllowedFieldsMaskForFlag({structureName}::Mask& allowedMaskForTarget, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags)");
                     _source.WriteLine("{");
                     for (var j = 0; j < 8; ++j)
                     {
@@ -228,21 +199,51 @@ namespace UpdateFieldCodeGenerator.Formats
                     _source.WriteLine("}");
                     _source.WriteLine();
 
+                    _source.WriteLine($"void {structureName}::AppendAllowedFieldsMaskForFlag(Mask& allowedMaskForTarget, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags)");
+                    _source.WriteLine("{");
+                    _source.WriteLine($"    {structureName}AppendAllowedFieldsMaskForFlag(allowedMaskForTarget, fieldVisibilityFlags);");
+                    _source.WriteLine("}");
+                    _source.WriteLine();
+
                     var noneFlags = new int[(_bitCounter + 31) / 32];
                     bitMaskByFlag[UpdateFieldFlag.None].CopyTo(noneFlags, 0);
 
-                    _source.WriteLine($"void {RenameType(_structureType)}::FilterDisallowedFieldsMaskForFlag(Mask& changesMask, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags)");
+                    _source.WriteLine($"void {structureName}::FilterDisallowedFieldsMaskForFlag(Mask& changesMask, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags)");
                     _source.WriteLine("{");
                     _source.WriteLine($"    Mask allowedMaskForTarget({{ {string.Join(", ", noneFlags.Select(v => "0x" + v.ToString("X8") + "u"))} }});");
-                    _source.WriteLine($"    AppendAllowedFieldsMaskForFlag(allowedMaskForTarget, fieldVisibilityFlags);");
+                    _source.WriteLine($"    {structureName}AppendAllowedFieldsMaskForFlag(allowedMaskForTarget, fieldVisibilityFlags);");
                     _source.WriteLine($"    changesMask &= allowedMaskForTarget;");
+                    _source.WriteLine("}");
+                    _source.WriteLine();
+                }
+
+                _source.WriteLine(_isRoot
+                    ? $"void {structureName}::WriteUpdate(ByteBuffer& data, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const"
+                    : $"void {structureName}::WriteUpdate(ByteBuffer& data, bool ignoreChangesMask, {_owningObjectType} const* owner, Player const* receiver) const");
+
+                _source.WriteLine("{");
+
+                if (_allUsedFlags != UpdateFieldFlag.None)
+                {
+                    var noneFlags = new int[(_bitCounter + 31) / 32];
+                    bitMaskByFlag[UpdateFieldFlag.None].CopyTo(noneFlags, 0);
+
+                    _source.WriteLine($"    Mask allowedMaskForTarget({{ {string.Join(", ", noneFlags.Select(v => "0x" + v.ToString("X8") + "u"))} }});");
+                    _source.WriteLine($"    {structureName}AppendAllowedFieldsMaskForFlag(allowedMaskForTarget, fieldVisibilityFlags);");
+                    _source.WriteLine($"    WriteUpdate(data, {_changesMaskName} & allowedMaskForTarget, false, owner, receiver);");
+                }
+                else if (_isRoot)
+                    _source.WriteLine($"    WriteUpdate(data, {_changesMaskName}, false, owner, receiver);");
+
+                if (_isRoot)
+                {
                     _source.WriteLine("}");
                     _source.WriteLine();
                 }
 
                 if (_isRoot)
                 {
-                    _source.WriteLine($"void {RenameType(_structureType)}::WriteUpdate(ByteBuffer& data, Mask const& changesMask, bool ignoreNestedChangesMask, {_owningObjectType} const* owner, Player const* receiver) const");
+                    _source.WriteLine($"void {structureName}::WriteUpdate(ByteBuffer& data, Mask const& changesMask, bool ignoreNestedChangesMask, {_owningObjectType} const* owner, Player const* receiver) const");
                     _source.WriteLine("{");
                 }
                 else
@@ -283,6 +284,22 @@ namespace UpdateFieldCodeGenerator.Formats
 
                 _source.WriteLine();
             }
+            else if (!_create)
+            {
+                _source.WriteLine(_isRoot
+                    ? $"void {structureName}::WriteUpdate(ByteBuffer& data, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const"
+                    : $"void {structureName}::WriteUpdate(ByteBuffer& data, bool ignoreChangesMask, {_owningObjectType} const* owner, Player const* receiver) const");
+
+                _source.WriteLine("{");
+            }
+            else
+            {
+                _source.WriteLine(_isRoot
+                    ? $"void {structureName}::WriteCreate(ByteBuffer& data, EnumFlag<UpdateFieldFlag> fieldVisibilityFlags, {_owningObjectType} const* owner, Player const* receiver) const"
+                    : $"void {structureName}::WriteCreate(ByteBuffer& data, {_owningObjectType} const* owner, Player const* receiver) const");
+
+                _source.WriteLine("{");
+            }
 
             PostProcessFieldWrites();
 
@@ -317,7 +334,7 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 if (_writeUpdateMasks)
                 {
-                    _source.WriteLine($"void {RenameType(_structureType)}::ClearChangesMask()");
+                    _source.WriteLine($"void {structureName}::ClearChangesMask()");
                     _source.WriteLine("{");
                     foreach (var clear in _changesMaskClears)
                         _source.WriteLine(clear);
@@ -327,7 +344,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
                 else
                 {
-                    _source.WriteLine($"bool {RenameType(_structureType)}::operator==({RenameType(_structureType)} const& right) const");
+                    _source.WriteLine($"bool {structureName}::operator==({structureName} const& right) const");
                     _source.WriteLine("{");
                     _source.WriteLine($"    return {string.Join(Environment.NewLine + "        && ", _equalityComparisonFields)};");
                     _source.WriteLine("}");
