@@ -8,7 +8,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_field_0 = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_orderID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
         public static readonly UpdateField m_skillLineAbilityID = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_orderState = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField m_orderState = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_orderType = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField m_minQuality = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField m_expirationTime = new UpdateField(typeof(long), UpdateFieldFlag.None);
