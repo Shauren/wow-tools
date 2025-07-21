@@ -233,7 +233,7 @@ namespace UpdateFieldCodeGenerator
                 && (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional)))
             {
                 fieldHandler.FinishControlBlocks();
-                fieldHandler.FinishBitPack(null);
+                fieldHandler.FinishBitPack("WriteCreate_FinishBitPack");
             }
 
             if (allFields.TryGetValue(CreateTypeOrder.Bits, out fieldGroup))
@@ -292,7 +292,7 @@ namespace UpdateFieldCodeGenerator
                     fieldHandler.OnField(Name, Field);
 
                 fieldHandler.FinishControlBlocks();
-                fieldHandler.FinishBitPack(null);
+                fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_after_BlzVectors");
             }
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicField, out fieldGroup))
@@ -319,7 +319,7 @@ namespace UpdateFieldCodeGenerator
                 allFields.ContainsKey(UpdateTypeOrder.JamDynamicField) || allFields.ContainsKey(UpdateTypeOrder.JamDynamicFieldArray))
             {
                 fieldHandler.FinishControlBlocks();
-                fieldHandler.FinishBitPack(null);
+                fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_after_DynamicField_sizes");
             }
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicField, out fieldGroup))
@@ -338,7 +338,7 @@ namespace UpdateFieldCodeGenerator
             if (allFields.TryGetValue(UpdateTypeOrder.Optional, out fieldGroup))
             {
                 fieldHandler.FinishControlBlocks();
-                fieldHandler.FinishBitPack(null);
+                fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_before_Optionals");
 
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnOptionalFieldInitUpdate(Name, Field);

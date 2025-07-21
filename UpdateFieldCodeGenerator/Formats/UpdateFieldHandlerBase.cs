@@ -197,9 +197,8 @@ namespace UpdateFieldCodeGenerator.Formats
             else if (_structureType == typeof(JamMirrorDeclinedNames_C))
             {
                 FinishControlBlocks(null, "SplitBits");
-                FinishBitPack("FinishBitPack_SplitBits");
                 moveFieldBeforeField("SplitBits", false, "m_name", false);
-                moveFieldBeforeField("FinishBitPack_SplitBits", false, "m_name", false);
+                moveFieldBeforeField("WriteUpdate_FinishBitPack_after_DynamicField_sizes", false, "m_name", false);
             }
             else if (_structureType == typeof(CGActivePlayerData))
             {
@@ -221,7 +220,17 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
                 else
                 {
-                    moveFieldBeforeField("accountBankTabSettings", true, "pvpInfo", false);
+                    FinishControlBlocks(null, "blocks_after_accountBankTabSettings");
+                    FinishBitPack("bits_after_accountBankTabSettings");
+                    moveFieldBeforeField("blocks_after_accountBankTabSettings", false, "pvpInfo", false);
+                    moveFieldBeforeField("bits_after_accountBankTabSettings", false, "pvpInfo", false);
+
+                    moveFieldBeforeField("accountBankTabSettings", true, "blocks_after_accountBankTabSettings", false);
+
+                    FinishControlBlocks(null, "blocks_before_accountBankTabSettings");
+                    FinishBitPack("bits_before_accountBankTabSettings");
+                    moveFieldBeforeField("blocks_before_accountBankTabSettings", false, "accountBankTabSettings", true);
+                    moveFieldBeforeField("bits_before_accountBankTabSettings", false, "accountBankTabSettings", true);
 
                     moveFieldBeforeField("delveData", false, "invSlots", false);
                     moveFieldBeforeField("walkInData", false, "delveData", false);
@@ -257,13 +266,19 @@ namespace UpdateFieldCodeGenerator.Formats
 
                 moveFieldBeforeField("questSession.has_value()", false, "petStable.has_value()", false);
 
-                FinishControlBlocks(null, string.Empty);
-                FinishBitPack("FinishBitPack_afterOptionalBit");
-                var finishBitPackAfterOptionalBit = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
-                _fieldWrites.RemoveRange(_fieldWrites.Count - 2, 2);
+                FinishControlBlocks(null, "FinishControlBlocks_Optionals");
+                FinishBitPack("FinishBitPack_Optionals");
 
-                var researchHistoryIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("researchHistory") && !fieldWrite.IsSize);
-                _fieldWrites.InsertRange(researchHistoryIndex, finishBitPackAfterOptionalBit);
+                if (!_create && this is WowPacketParserHandler)
+                {
+                    moveFieldBeforeField("FinishControlBlocks_Optionals", false, "questSession.has_value()", false);
+                    moveFieldBeforeField("FinishBitPack_Optionals", false, "questSession.has_value()", false);
+                }
+                else
+                {
+                    moveFieldBeforeField("FinishControlBlocks_Optionals", false, "researchHistory", false);
+                    moveFieldBeforeField("FinishBitPack_Optionals", false, "researchHistory", false);
+                }
             }
             else if (_structureType == typeof(JamMirrorPlayerDataElement_C))
             {
@@ -330,6 +345,12 @@ namespace UpdateFieldCodeGenerator.Formats
             else if (_structureType == typeof(JamMirrorBankTabSettings_C))
             {
                 moveFieldBeforeField("m_depositFlags", false, "m_name", false);
+                if (!_create)
+                {
+                    FinishControlBlocks(null, "FinishControlBlocks_after_sizes");
+                    moveFieldBeforeField("FinishControlBlocks_after_sizes", false, "m_depositFlags", false);
+                    moveFieldBeforeField("WriteUpdate_FinishBitPack_after_DynamicField_sizes", false, "m_depositFlags", false);
+                }
             }
             else if(_structureType == typeof(JamMirrorWalkInData_C))
             {
@@ -360,7 +381,7 @@ namespace UpdateFieldCodeGenerator.Formats
                         _fieldWrites.Insert(0, overrideScaleCurve);
                     }
 
-                    moveFieldBeforeField("FinishBitPack", false, "m_overrideMoveCurveX", false);
+                    moveFieldBeforeField("WriteCreate_FinishBitPack", false, "m_overrideMoveCurveX", false);
                     moveFieldBeforeField("m_heightIgnoresScale", false, "m_overrideMoveCurveX", false);
                     moveFieldBeforeField("m_field_261", false, "m_overrideMoveCurveX", false);
                 }
