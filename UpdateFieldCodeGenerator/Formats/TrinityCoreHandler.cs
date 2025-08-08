@@ -64,6 +64,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.WriteLine("#include \"ByteBuffer.h\"");
             _source.WriteLine("#include \"Corpse.h\"");
             _source.WriteLine("#include \"DynamicObject.h\"");
+            _source.WriteLine("#include \"PacketOperators.h\"");
             _source.WriteLine("#include \"Player.h\"");
             _source.WriteLine("#include \"ViewerDependentValues.h\"");
             _source.WriteLine();
@@ -688,6 +689,9 @@ namespace UpdateFieldCodeGenerator.Formats
             _source.Write(GetIndent());
             if (name.EndsWith("size()"))
             {
+                if (type == typeof(DynamicString))
+                    name += " + 1";
+
                 if (_create || !_isRoot)
                 {
                     var sizeWriteExpression = bitSize > 0 ? $".WriteBits({name}, {bitSize})" : $" << uint32({name})";
@@ -719,6 +723,8 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"{GetIndent()}data << float({name}{access}z);");
                         _source.WriteLine($"{GetIndent()}data << float({name}{access}w);");
                     }
+                    else if (type == typeof(DynamicString))
+                        _source.WriteLine($"data << WorldPackets::SizedCString::Data({name});");
                     else if (_create)
                         _source.WriteLine($"{name}{access}WriteCreate(data, owner, receiver);");
                     else
@@ -766,7 +772,10 @@ namespace UpdateFieldCodeGenerator.Formats
                     _source.WriteLine($"data << float({name});");
                     break;
                 case TypeCode.String:
-                    _source.WriteLine($"data.WriteString({name});");
+                    _source.Write("data << WorldPackets::SizedString::Data(");
+                    if (!name.Contains('[') && _writeUpdateMasks)
+                        _source.Write('*');
+                    _source.WriteLine($"{name});");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));

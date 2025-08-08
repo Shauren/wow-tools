@@ -225,6 +225,10 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 declarationType = typeof(uint);
             }
+            if (typeof(DynamicString).IsAssignableFrom(type))
+            {
+                declarationType = typeof(string);
+            }
 
             if (!_create && _writeUpdateMasks)
             {
@@ -471,7 +475,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 if (_create || !_isRoot || type == typeof(string))
                 {
                     var sizeReadExpression = bitSize > 0 ? $"packet.ReadBits({bitSize})" : "packet.ReadUInt32()";
-                    if (type != typeof(string))
+                    if (type != typeof(string) && type != typeof(DynamicString))
                         _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[{sizeReadExpression}];");
                     else
                         _source.WriteLine($"data.{outputFieldName} = new string('*', (int){sizeReadExpression});");
@@ -515,6 +519,16 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"Substructures.ItemHandler.ReadItemGemData(packet, indexes{nextIndex}, \"{name}\");");
                     else if (type == typeof(PerksVendorItem))
                         _source.WriteLine($"Substructures.PerksProgramHandler.ReadPerksVendorItem(packet, indexes{nextIndex}, \"{name}\");");
+                    else if (type == typeof(DynamicString))
+                    {
+                        _source.WriteLine($"if (data.{outputFieldName}.Length > 1)");
+                        _source.WriteLine($"{GetIndent()}{{");
+                        _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = packet.ReadWoWString(\"{name}\", data.{outputFieldName}.Length - 1, indexes{nextIndex});");
+                        _source.WriteLine($"{GetIndent()}    packet.ReadByte();");
+                        _source.WriteLine($"{GetIndent()}}}");
+                        _source.WriteLine($"{GetIndent()}else");
+                        _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = string.Empty;");
+                    }
                     else if (_create)
                         _source.WriteLine($"data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     else

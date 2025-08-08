@@ -365,10 +365,14 @@ namespace UpdateFieldCodeGenerator
             if (typeof(BlzOptionalField).IsAssignableFrom(field.Type))
                 return (new UpdateField(typeof(Bits), field.Flag, field.SizeForField, bitSize: 1, customFlag: field.CustomFlag, order: field.Order), field.SizeForField.Name + ".has_value()");
 
-            if (field.Type.IsArray)
-                return (new UpdateField(typeof(uint[]), field.Flag, field.SizeForField, field.Size, bitSize: field.BitSize, customFlag: field.CustomFlag, order: field.Order), field.SizeForField.Name + "{0}size()");
+            var sizeType = typeof(uint);
+            if (typeof(DynamicString).IsAssignableFrom(field.Type))
+                sizeType = typeof(DynamicString);
 
-            return (new UpdateField(typeof(uint), field.Flag, field.SizeForField, bitSize: field.BitSize, customFlag: field.CustomFlag, order: field.Order), field.SizeForField.Name + "{0}size()");
+            if (field.Type.IsArray)
+                sizeType = sizeType.MakeArrayType();
+
+            return (new UpdateField(sizeType, field.Flag, field.SizeForField, field.Size, bitSize: field.BitSize, customFlag: field.CustomFlag, order: field.Order), field.SizeForField.Name + "{0}size()");
         }
 
         private static CreateTypeOrder GetCreateTypeOrder(UpdateField fieldType)

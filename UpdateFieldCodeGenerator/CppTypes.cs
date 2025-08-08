@@ -28,6 +28,7 @@ namespace UpdateFieldCodeGenerator
                 { typeof(float), typeof(float) },
                 { typeof(double), typeof(double) },
                 { typeof(string), CreateType("std::string") },
+                { typeof(DynamicString), CreateType("std::string") },
                 { typeof(BlzVectorField<>), CreateType("std::vector", "T") },
                 { typeof(WowGuid), CreateType("ObjectGuid") },
                 { typeof(Bits), CreateType("uint32") },
