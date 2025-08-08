@@ -2,7 +2,7 @@
 
 namespace UpdateFieldCodeGenerator.Structures
 {
-    [HasChangesMask]
+    [HasChangesMask(forceMaskMask: true)]
     [HasMutableInterface]
     class CGUnitData
     {

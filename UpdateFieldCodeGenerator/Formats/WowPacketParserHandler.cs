@@ -96,7 +96,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 ++_bitCounter;
                 var maskBlocks = (_bitCounter + 31) / 32;
                 _source.WriteLine($"{GetIndent()}var rawChangesMask = new int[{maskBlocks}];");
-                if (maskBlocks > 1 || forceMaskMask)
+                if (forceMaskMask)
                 {
                     _source.WriteLine($"{GetIndent()}var rawMaskMask = new int[{(maskBlocks + 31) / 32}];");
                     if (maskBlocks > 32)
@@ -123,7 +123,19 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                 }
                 else
-                    _source.WriteLine($"{GetIndent()}rawChangesMask[0] = (int)packet.ReadBits({_bitCounter});");
+                {
+                    var blockIndex = 0;
+                    var bitCounter = _bitCounter;
+                    while (bitCounter > 32)
+                    {
+                        _source.WriteLine($"{GetIndent()}rawChangesMask[{blockIndex}] = packet.ReadInt32();");
+                        ++blockIndex;
+                        bitCounter -= 32;
+                    }
+
+                    if (bitCounter > 0)
+                        _source.WriteLine($"{GetIndent()}rawChangesMask[{blockIndex}] = (int)packet.ReadBits({bitCounter});");
+                }
 
                 _source.WriteLine($"{GetIndent()}var changesMask = new BitArray(rawChangesMask);");
                 _source.WriteLine();

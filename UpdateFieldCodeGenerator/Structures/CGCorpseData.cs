@@ -1,6 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
-    [HasChangesMask]
+    [HasChangesMask(forceMaskMask: true)]
     public class CGCorpseData
     {
         public static readonly ObjectType ObjectType = ObjectType.Corpse;

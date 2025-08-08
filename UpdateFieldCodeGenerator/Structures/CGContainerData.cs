@@ -1,6 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
-    [HasChangesMask]
+    [HasChangesMask(forceMaskMask: true)]
     public class CGContainerData
     {
         public static readonly ObjectType ObjectType = ObjectType.Container;

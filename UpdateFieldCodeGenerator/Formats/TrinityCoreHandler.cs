@@ -256,7 +256,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
 
                 var maskBlocks = (_bitCounter + 31) / 32;
-                if (maskBlocks > 1 || forceMaskMask)
+                if (forceMaskMask)
                 {
                     if (maskBlocks > 32)
                     {
@@ -281,7 +281,19 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                 }
                 else
-                    _source.WriteLine($"    data.WriteBits(changesMask.GetBlock(0), {_bitCounter});");
+                {
+                    var blockIndex = 0;
+                    var bitCounter = _bitCounter;
+                    while (bitCounter > 32)
+                    {
+                        _source.WriteLine($"    data << uint32(changesMask.GetBlock({blockIndex});");
+                        ++blockIndex;
+                        bitCounter -= 32;
+                    }
+
+                    if (bitCounter > 0)
+                        _source.WriteLine($"    data.WriteBits(changesMask.GetBlock({blockIndex}), {bitCounter});");
+                }
 
                 _source.WriteLine();
             }
