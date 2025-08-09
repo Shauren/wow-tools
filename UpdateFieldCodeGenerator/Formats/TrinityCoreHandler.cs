@@ -286,7 +286,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     var bitCounter = _bitCounter;
                     while (bitCounter > 32)
                     {
-                        _source.WriteLine($"    data << uint32(changesMask.GetBlock({blockIndex});");
+                        _source.WriteLine($"    data << uint32(changesMask.GetBlock({blockIndex}));");
                         ++blockIndex;
                         bitCounter -= 32;
                     }
@@ -484,7 +484,7 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 _delayedHeaderWrites.Add(() =>
                 {
-                    WriteFieldDeclaration(name, updateField);
+                    WriteFieldDeclaration(name, updateField, updateField.UpdateBitGroup);
                 });
                 if (_writeUpdateMasks)
                     _changesMaskClears.Add($"    Base::ClearChangesMask({name});");
@@ -618,7 +618,9 @@ namespace UpdateFieldCodeGenerator.Formats
         private void GenerateBitIndexConditions(UpdateField updateField, string name, List<FlowControlBlock> flowControl, IReadOnlyList<FlowControlBlock> previousControlFlow, int arrayLoopBlockIndex)
         {
             var newField = false;
-            var nameForIndex = updateField.SizeForField != null ? RenameField(updateField.SizeForField.Name) : name;
+            var nameForIndex = updateField.UpdateBitGroup != null
+                ? RenameField(updateField.UpdateBitGroup)
+                : updateField.SizeForField != null ? RenameField(updateField.SizeForField.Name) : name;
             if (!_fieldBitIndex.TryGetValue(nameForIndex, out var bitIndex))
             {
                 bitIndex = new List<int>();
@@ -806,15 +808,17 @@ namespace UpdateFieldCodeGenerator.Formats
             return cppType;
         }
 
-        private void WriteFieldDeclaration(string name, UpdateField declarationType)
+        private void WriteFieldDeclaration(string name, UpdateField declarationType, string nameForIndex)
         {
             var fieldGeneratedType = CppTypes.GetCppType(declarationType.Type);
             string typeName;
             string line;
             if (_writeUpdateMasks)
             {
-                var bit = CppTypes.CreateConstantForTemplateParameter(_fieldBitIndex[name][0]);
-                var blockIndex = _fieldBitIndex[name].Count > 1 ? _fieldBitIndex[name][1] : -1;
+                nameForIndex = nameForIndex != null ? RenameField(nameForIndex) : name;
+                var indices = _fieldBitIndex[nameForIndex];
+                var bit = CppTypes.CreateConstantForTemplateParameter(indices[0]);
+                var blockIndex = indices.Count > 1 ? indices[1] : -1;
                 if (fieldGeneratedType.IsArray)
                 {
                     if (typeof(DynamicUpdateField).IsAssignableFrom(fieldGeneratedType.GetElementType()))

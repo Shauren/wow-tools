@@ -408,7 +408,9 @@ namespace UpdateFieldCodeGenerator.Formats
         private void GenerateBitIndexConditions(UpdateField updateField, string name, List<FlowControlBlock> flowControl, IReadOnlyList<FlowControlBlock> previousControlFlow, int arrayLoopBlockIndex)
         {
             var newField = false;
-            var nameForIndex = updateField.SizeForField != null ? RenameField(updateField.SizeForField.Name) : name;
+            var nameForIndex = updateField.UpdateBitGroup != null
+                ? RenameField(updateField.UpdateBitGroup)
+                : updateField.SizeForField != null ? RenameField(updateField.SizeForField.Name) : name;
             if (!_fieldBitIndex.TryGetValue(nameForIndex, out var bitIndex))
             {
                 bitIndex = new List<int>();
