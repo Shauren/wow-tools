@@ -260,7 +260,9 @@ namespace UpdateFieldCodeGenerator.Formats
             Type interfaceType = null;
             if (updateField.SizeForField != null)
             {
-                type = (updateField.SizeForField.GetValue(null) as UpdateField).Type;
+                var parentType = (updateField.SizeForField.GetValue(null) as UpdateField).Type;
+                if (!typeof(VariantUpdateField).IsAssignableFrom(parentType))
+                    type = parentType;
                 if (type.IsArray)
                     type = type.GetElementType();
                 if (type.GenericTypeArguments.Length > 0)
@@ -271,16 +273,22 @@ namespace UpdateFieldCodeGenerator.Formats
             if (updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.HasDynamicChangesMask))
                 RegisterDynamicChangesMaskFieldType(type);
 
-            _fieldWrites.Add((name, false, (pcf) =>
+            if (!typeof(VariantUpdateField).IsAssignableFrom(updateField.Type))
             {
-                WriteControlBlocks(_source, flowControl, pcf);
-                WriteField(name, outputFieldName, type, updateField.BitSize, nextIndex, interfaceType);
-                _indent = 3;
-                return flowControl;
+                _fieldWrites.Add((name, false, (pcf) =>
+                {
+                    WriteControlBlocks(_source, flowControl, pcf);
+                    WriteField(name, outputFieldName, type, updateField.BitSize, nextIndex, interfaceType);
+                    _indent = 3;
+                    return flowControl;
+                }
+                ));
             }
-            ));
 
-            if (_create && updateField.SizeForField == null && declarationType.GetCustomAttribute<DontStoreInWowPacketParserAttribute>() == null)
+            if (_create
+                && (updateField.SizeForField == null || typeof(VariantUpdateField).IsAssignableFrom(((UpdateField)updateField.SizeForField.GetValue(null)).Type))
+                && !typeof(VariantUpdateField).IsAssignableFrom(updateField.Type)
+                && declarationType.GetCustomAttribute<DontStoreInWowPacketParserAttribute>() == null)
                 WriteFieldDeclaration(name, updateField, declarationType, declarationSettable);
 
             return flowControl;

@@ -170,7 +170,8 @@ namespace UpdateFieldCodeGenerator
 
             if (typeof(DynamicUpdateField).IsAssignableFrom(type)
                 || typeof(BlzVectorField).IsAssignableFrom(type)
-                || typeof(BlzOptionalField).IsAssignableFrom(type))
+                || typeof(BlzOptionalField).IsAssignableFrom(type)
+                || typeof(VariantUpdateField.Case).IsAssignableFrom(type))
                 return GetFieldElementType(type.GenericTypeArguments[0], StructureReferenceType.Embedded);
 
             return (type, structureReferenceType);
@@ -364,6 +365,9 @@ namespace UpdateFieldCodeGenerator
 
             if (typeof(BlzOptionalField).IsAssignableFrom(field.Type))
                 return (new UpdateField(typeof(Bits), field.Flag, field.SizeForField, bitSize: 1, customFlag: field.CustomFlag, updateBitGroup: field.UpdateBitGroup, order: field.Order), field.SizeForField.Name + ".has_value()");
+
+            if (typeof(VariantUpdateField.Case).IsAssignableFrom(field.Type))
+                return (new UpdateField(field.Type.GenericTypeArguments[0], field.Flag, field.SizeForField, field.Size, 0, field.CustomFlag, field.Conditions, field.Comment, field.UpdateBitGroup, field.Order), fieldInfo.Name);
 
             var sizeType = typeof(uint);
             if (typeof(DynamicString).IsAssignableFrom(field.Type))

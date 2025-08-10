@@ -384,6 +384,10 @@ namespace UpdateFieldCodeGenerator.Formats
             var arrayLoopBlockIndex = -1;
             var indexLetter = 'i';
             var allIndexes = "";
+            if (updateField.SizeForField != null && typeof(VariantUpdateField).IsAssignableFrom(((UpdateField)updateField.SizeForField.GetValue(null)).Type))
+            {
+                nameUsedToWrite = $"{RenameField(updateField.SizeForField.Name)}.Get<{TypeHandler.GetFriendlyName(PrepareFieldType(type))}>()";
+            }
             if (type.IsArray)
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"for (uint32 {indexLetter} = 0; {indexLetter} < {updateField.Size}; ++{indexLetter})" });
@@ -471,14 +475,17 @@ namespace UpdateFieldCodeGenerator.Formats
             if (updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.HasDynamicChangesMask))
                 RegisterDynamicChangesMaskFieldType(type);
 
-            _fieldWrites.Add((name, false, (pcf) =>
+            if (!typeof(VariantUpdateField).IsAssignableFrom(updateField.Type))
             {
-                WriteControlBlocks(_source, flowControl, pcf);
-                WriteField(nameUsedToWrite, access, type, updateField.BitSize);
-                _indent = 1;
-                return flowControl;
+                _fieldWrites.Add((name, false, (pcf) =>
+                {
+                    WriteControlBlocks(_source, flowControl, pcf);
+                    WriteField(nameUsedToWrite, access, type, updateField.BitSize);
+                    _indent = 1;
+                    return flowControl;
+                }
+                ));
             }
-            ));
 
             if (!_create && updateField.SizeForField == null)
             {
@@ -856,6 +863,18 @@ namespace UpdateFieldCodeGenerator.Formats
                     fieldGeneratedType = _optionalUpdateFieldType.MakeGenericType(elementType,
                         CppTypes.CreateConstantForTemplateParameter(blockIndex),
                         bit);
+                }
+                else if (typeof(VariantUpdateField).IsAssignableFrom(declarationType.Type))
+                {
+                    var elementTypes = fieldGeneratedType.GenericTypeArguments.Select(genericTypeArg => PrepareFieldType(genericTypeArg)).ToArray();
+                    typeName = "UNSUPPORTED";
+                    var genericDefinitionTypes = Enumerable.Range(1, elementTypes.Length).Select(i => "T" + i)
+                        .Prepend("Bit").Prepend("BlockBit").ToArray();
+                    var variantUpdateFieldType = CppTypes.CreateType("VariantUpdateField", genericDefinitionTypes);
+                    fieldGeneratedType = variantUpdateFieldType.MakeGenericType(
+                        elementTypes
+                            .Prepend(bit)
+                            .Prepend(CppTypes.CreateConstantForTemplateParameter(blockIndex)).ToArray());
                 }
                 else
                 {
