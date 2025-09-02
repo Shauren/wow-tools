@@ -152,5 +152,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField field_31C = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField field_320 = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "Soft targeting related? When UnitFlags3 & 0x40000000 is set, increases some range check using CombatReach by this amount");
         public static readonly UpdateField nameplateAttachToGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "When set, nameplate of this unit will instead appear on that object");
+        public static readonly UpdateField assistActionDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorUnitAssistActionData_C>), UpdateFieldFlag.None, typeof(CGUnitData).GetField("assistActionData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
+        public static readonly UpdateField assistActionData = new UpdateField(typeof(BlzOptionalField<JamMirrorUnitAssistActionData_C>), UpdateFieldFlag.None);
     }
 }

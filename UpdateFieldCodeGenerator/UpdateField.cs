@@ -37,6 +37,10 @@ namespace UpdateFieldCodeGenerator
             SizeForField = sizeForField ?? throw new ArgumentNullException(nameof(sizeForField));
         }
 
-        public record struct Condition(FieldInfo FieldToCompare, string OperatorAndConstant);
+        public record struct Condition(FieldInfo FieldToCompare, string OperatorAndConstant, string OrGroup)
+        {
+            public Condition(FieldInfo fieldToCompare, string operatorAndConstant, [CallerLineNumber] int order = 0)
+                : this(fieldToCompare, operatorAndConstant, order.ToString()) { }
+        }
     }
 }

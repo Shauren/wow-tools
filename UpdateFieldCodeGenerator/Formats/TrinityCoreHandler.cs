@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Reflection;
+using static UpdateFieldCodeGenerator.UpdateField;
 
 namespace UpdateFieldCodeGenerator.Formats
 {
@@ -467,10 +468,11 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
             }
 
-            foreach (var (fieldToCompare, operatorAndConstant) in updateField.Conditions)
-            {
-                flowControl.Add(new FlowControlBlock { Statement = $"if ({RenameField(fieldToCompare.Name)} {operatorAndConstant})" });
-            }
+            flowControl.AddRange(updateField.Conditions
+                .GroupBy(cond => cond.OrGroup)
+                .Select(conditionsGroup => conditionsGroup
+                    .Select(condition => $"{RenameField(condition.FieldToCompare.Name)} {condition.OperatorAndConstant}"))
+                .Select(conditions => new FlowControlBlock { Statement = $"if ({string.Join(" || ", conditions)})" }));
 
             if (updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.HasDynamicChangesMask))
                 RegisterDynamicChangesMaskFieldType(type);

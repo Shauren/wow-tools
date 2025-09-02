@@ -33,6 +33,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField fakeInebriation = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField virtualPlayerRealm = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField currentSpecID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
+        public static readonly UpdateField currentCombatTraitConfigSubTreeID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField taxiMountAnimKitID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField avgItemLevel = new UpdateField(typeof(float[]), UpdateFieldFlag.None, 6);
         public static readonly UpdateField currentBattlePetBreedQuality = new UpdateField(typeof(byte), UpdateFieldFlag.None);
@@ -52,6 +53,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField hasQuestSession = new UpdateField(typeof(bool), UpdateFieldFlag.PartyMember);
         public static readonly UpdateField hasLevelLink = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField dungeonScore = new UpdateField(typeof(DungeonScoreSummary), UpdateFieldFlag.None);
+        public static readonly UpdateField leaverInfo = new UpdateField(typeof(JamMirrorLeaverInfo_C), UpdateFieldFlag.None);
         public static readonly UpdateField spectateTarget = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField field_200 = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField visualItemReplacements = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);

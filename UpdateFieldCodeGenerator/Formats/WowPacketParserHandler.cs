@@ -5,7 +5,7 @@ namespace UpdateFieldCodeGenerator.Formats
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private const string ModuleName = "V11_0_0_55666";
-        private const string Version = "V11_1_7_61491";
+        private const string Version = "V11_2_0_62213";
 
         private List<string> _optionalInitVariables;
 
@@ -254,8 +254,11 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
             }
 
-            foreach (var (fieldToCompare, operatorAndConstant) in updateField.Conditions)
-                flowControl.Add(new FlowControlBlock { Statement = $"if (data.{RenameField(fieldToCompare.Name)} {operatorAndConstant})" });
+            flowControl.AddRange(updateField.Conditions
+                .GroupBy(cond => cond.OrGroup)
+                .Select(conditionsGroup => conditionsGroup
+                    .Select(condition => $"data.{RenameField(condition.FieldToCompare.Name)} {condition.OperatorAndConstant}"))
+                .Select(conditions => new FlowControlBlock { Statement = $"if ({string.Join(" || ", conditions)})" }));
 
             Type interfaceType = null;
             if (updateField.SizeForField != null)
