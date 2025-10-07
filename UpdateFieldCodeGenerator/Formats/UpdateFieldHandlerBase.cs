@@ -141,27 +141,30 @@ namespace UpdateFieldCodeGenerator.Formats
                 fieldToMove = RenameField(fieldToMove);
                 where = RenameField(where);
                 var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == fieldToMove && fieldWrite.IsSize == fieldIsSize);
+                if (movedFieldIndex == -1)
+                    throw new ArgumentOutOfRangeException(nameof(fieldToMove), fieldToMove, "Field not found");
+
                 var whereFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == where && fieldWrite.IsSize == whereIsSize);
-                if (movedFieldIndex != -1 && whereFieldIndex != -1)
-                {
-                    // move to just-before-last field
-                    var movedField = _fieldWrites[movedFieldIndex];
-                    _fieldWrites.RemoveAt(movedFieldIndex);
-                    _fieldWrites.Insert(whereFieldIndex < movedFieldIndex ? whereFieldIndex : whereFieldIndex - 1, movedField);
-                }
+                if (whereFieldIndex == -1)
+                    throw new ArgumentOutOfRangeException(nameof(where), where, "Field not found");
+
+                // move to just-before-last field
+                var movedField = _fieldWrites[movedFieldIndex];
+                _fieldWrites.RemoveAt(movedFieldIndex);
+                _fieldWrites.Insert(whereFieldIndex < movedFieldIndex ? whereFieldIndex : whereFieldIndex - 1, movedField);
             }
 
             void moveFieldToEnd(string fieldToMove)
             {
                 fieldToMove = RenameField(fieldToMove);
                 var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == fieldToMove && !fieldWrite.IsSize);
-                if (movedFieldIndex != -1)
-                {
-                    // move to just-before-last field
-                    var movedField = _fieldWrites[movedFieldIndex];
-                    _fieldWrites.RemoveAt(movedFieldIndex);
-                    _fieldWrites.Insert(_fieldWrites.Count - 1, movedField);
-                }
+                if (movedFieldIndex == -1)
+                    throw new ArgumentOutOfRangeException(nameof(fieldToMove), fieldToMove, "Field not found");
+
+                // move to just-before-last field
+                var movedField = _fieldWrites[movedFieldIndex];
+                _fieldWrites.RemoveAt(movedFieldIndex);
+                _fieldWrites.Insert(_fieldWrites.Count - 1, movedField);
             }
 
             if (_structureType == typeof(CGItemData))
@@ -230,7 +233,8 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 FinishControlBlocks(null, "SplitBits");
                 moveFieldBeforeField("SplitBits", false, "m_name", false);
-                moveFieldBeforeField("WriteUpdate_FinishBitPack_after_DynamicField_sizes", false, "m_name", false);
+                if (!_create)
+                    moveFieldBeforeField("WriteUpdate_FinishBitPack_after_DynamicField_sizes", false, "m_name", false);
             }
             else if (_structureType == typeof(CGActivePlayerData))
             {
