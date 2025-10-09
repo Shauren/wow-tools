@@ -156,15 +156,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
             void moveFieldToEnd(string fieldToMove)
             {
-                fieldToMove = RenameField(fieldToMove);
-                var movedFieldIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == fieldToMove && !fieldWrite.IsSize);
-                if (movedFieldIndex == -1)
-                    throw new ArgumentOutOfRangeException(nameof(fieldToMove), fieldToMove, "Field not found");
-
-                // move to just-before-last field
-                var movedField = _fieldWrites[movedFieldIndex];
-                _fieldWrites.RemoveAt(movedFieldIndex);
-                _fieldWrites.Insert(_fieldWrites.Count - 1, movedField);
+                moveFieldBeforeField(fieldToMove, false, "OnStructureEnd", false);
             }
 
             if (_structureType == typeof(CGItemData))

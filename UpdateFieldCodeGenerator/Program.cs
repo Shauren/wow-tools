@@ -233,7 +233,7 @@ namespace UpdateFieldCodeGenerator
             if ((allFields.ContainsKey(CreateTypeOrder.DefaultWithBits) || allFields.ContainsKey(CreateTypeOrder.ArrayWithBits))
                 && (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional)))
             {
-                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishControlBlocks("WriteCreate_FinishControlBlocks");
                 fieldHandler.FinishBitPack("WriteCreate_FinishBitPack");
             }
 
@@ -292,7 +292,7 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
-                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishControlBlocks("WriteUpdate_FinishControlBlocks_after_BlzVectors");
                 fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_after_BlzVectors");
             }
 
@@ -301,7 +301,7 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnDynamicFieldSizeUpdate(Name, Field);
 
-                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishControlBlocks("WriteUpdate_FinishControlBlocks_after_DynamicFields");
             }
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicFieldArray, out fieldGroup))
@@ -309,7 +309,7 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnDynamicArrayFieldSizeUpdate(Name, Field);
 
-                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishControlBlocks("WriteUpdate_FinishControlBlocks_after_DynamicFieldArrays");
             }
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicFieldArray, out fieldGroup))
@@ -319,7 +319,7 @@ namespace UpdateFieldCodeGenerator
             if (hasChangesMask != null || allFields.ContainsKey(UpdateTypeOrder.Bits) ||
                 allFields.ContainsKey(UpdateTypeOrder.JamDynamicField) || allFields.ContainsKey(UpdateTypeOrder.JamDynamicFieldArray))
             {
-                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishControlBlocks("WriteUpdate_FinishControlBlocks_after_DynamicField_sizes");
                 fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_after_DynamicField_sizes");
             }
 
@@ -338,7 +338,7 @@ namespace UpdateFieldCodeGenerator
 
             if (allFields.TryGetValue(UpdateTypeOrder.Optional, out fieldGroup))
             {
-                fieldHandler.FinishControlBlocks();
+                fieldHandler.FinishControlBlocks("WriteUpdate_FinishControlBlocks_before_Optionals");
                 fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_before_Optionals");
 
                 foreach (var (Field, Name) in fieldGroup)

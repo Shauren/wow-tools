@@ -37,7 +37,7 @@
 
         public void OnStructureEnd(bool needsFlush, bool forceMaskMask)
         {
-            FinishControlBlocks();
+            FinishControlBlocks("OnStructureEnd");
             foreach (var handler in _handlers)
                 handler.OnStructureEnd(needsFlush, forceMaskMask);
         }
@@ -78,11 +78,11 @@
                 _previousControlFlowDict[handler] = handler.OnOptionalFieldInitUpdate(name, updateField, _previousControlFlowDict[handler]);
         }
 
-        public void FinishControlBlocks()
+        public void FinishControlBlocks(string tag)
         {
             foreach (var handler in _handlers)
             {
-                handler.FinishControlBlocks(_previousControlFlowDict[handler], string.Empty);
+                handler.FinishControlBlocks(_previousControlFlowDict[handler], tag);
                 _previousControlFlowDict[handler] = null;
             }
         }
