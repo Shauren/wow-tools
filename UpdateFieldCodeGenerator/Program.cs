@@ -42,7 +42,7 @@ namespace UpdateFieldCodeGenerator
                     .Where(field => typeof(UpdateField).IsAssignableFrom(field.FieldType))
                     .Select(field => ResolveField(field).Field)
                     .OrderBy(field => field.Order)
-                    .Select(field => GetFieldElementType(field.Type, StructureReferenceType.Embedded))
+                    .SelectMany(field => GetFieldElementType(field.Type, StructureReferenceType.Embedded))
                     .Where(fieldType => fieldType.Item1.Namespace == "UpdateFieldCodeGenerator.Structures");
 
                 foreach (var (fieldType, refType) in allFields)
@@ -163,7 +163,7 @@ namespace UpdateFieldCodeGenerator
             throw new ArgumentOutOfRangeException(nameof(type));
         }
 
-        private static (Type, StructureReferenceType) GetFieldElementType(Type type, StructureReferenceType structureReferenceType)
+        private static (Type, StructureReferenceType)[] GetFieldElementType(Type type, StructureReferenceType structureReferenceType)
         {
             if (type.IsArray)
                 return GetFieldElementType(type.GetElementType(), StructureReferenceType.Embedded);
@@ -174,7 +174,14 @@ namespace UpdateFieldCodeGenerator
                 || typeof(VariantUpdateField.Case).IsAssignableFrom(type))
                 return GetFieldElementType(type.GenericTypeArguments[0], StructureReferenceType.Embedded);
 
-            return (type, structureReferenceType);
+            if (typeof(MapUpdateField).IsAssignableFrom(type))
+            {
+                var key = GetFieldElementType(type.GenericTypeArguments[0], StructureReferenceType.Embedded);
+                var val = GetFieldElementType(type.GenericTypeArguments[1], StructureReferenceType.Embedded);
+                return [..key, ..val];
+            }
+
+            return [(type, structureReferenceType)];
         }
 
         private static void WriteCreate(Type dataType, ObjectType objectType, UpdateFieldHandlers fieldHandler)

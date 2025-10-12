@@ -490,7 +490,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _previousFieldCounters = bitIndex;
         }
 
-        private void WriteField(string name, string outputFieldName, Type type, int bitSize, string nextIndex, Type interfaceType)
+        private void WriteField(string name, string outputFieldName, Type type, int bitSize, string nextIndex, Type interfaceType, string outputFieldNamePrefix = "data.")
         {
             _source.Write(GetIndent());
             if (name.EndsWith("size()"))
@@ -501,12 +501,12 @@ namespace UpdateFieldCodeGenerator.Formats
                 {
                     var sizeReadExpression = bitSize > 0 ? $"packet.ReadBits({bitSize})" : "packet.ReadUInt32()";
                     if (type != typeof(string) && type != typeof(DynamicString))
-                        _source.WriteLine($"data.{outputFieldName} = new {interfaceName}[{sizeReadExpression}];");
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = new {interfaceName}[{sizeReadExpression}];");
                     else
-                        _source.WriteLine($"data.{outputFieldName} = new string('*', (int){sizeReadExpression});");
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = new string('*', (int){sizeReadExpression});");
                 }
                 else
-                    _source.WriteLine($"data.{outputFieldName} = Enumerable.Range(0, (int)packet.ReadBits(32)).Select(x => new {RenameType(TypeHandler.GetFriendlyName(type))}()).Cast<{interfaceName}>().ToArray();");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = Enumerable.Range(0, (int)packet.ReadBits(32)).Select(x => new {RenameType(TypeHandler.GetFriendlyName(type))}()).Cast<{interfaceName}>().ToArray();");
                 return;
             }
 
@@ -521,15 +521,15 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 case TypeCode.Object:
                     if (type == typeof(WowGuid))
-                        _source.WriteLine($"data.{outputFieldName} = packet.ReadPackedGuid128(\"{name}\", indexes{nextIndex});");
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadPackedGuid128(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(Bits))
-                        _source.WriteLine($"data.{outputFieldName} = packet.ReadBits(\"{name}\", {bitSize}, indexes{nextIndex});");
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadBits(\"{name}\", {bitSize}, indexes{nextIndex});");
                     else if (type == typeof(Vector2))
-                        _source.WriteLine($"data.{outputFieldName} = packet.ReadVector2(\"{name}\", indexes{nextIndex});");
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadVector2(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(Vector3))
-                        _source.WriteLine($"data.{outputFieldName} = packet.ReadVector3(\"{name}\", indexes{nextIndex});");
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadVector3(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(Quaternion))
-                        _source.WriteLine($"data.{outputFieldName} = packet.ReadQuaternion(\"{name}\", indexes{nextIndex});");
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadQuaternion(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(DungeonScoreSummary))
                         _source.WriteLine($"Substructures.MythicPlusHandler.ReadDungeonScoreSummary(packet, indexes{nextIndex}, \"{name}\");");
                     else if (type == typeof(DungeonScoreData))
@@ -546,62 +546,104 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"Substructures.PerksProgramHandler.ReadPerksVendorItem(packet, indexes{nextIndex}, \"{name}\");");
                     else if (type == typeof(DynamicString))
                     {
-                        _source.WriteLine($"if (data.{outputFieldName}.Length > 1)");
+                        _source.WriteLine($"if ({outputFieldNamePrefix}{outputFieldName}.Length > 1)");
                         _source.WriteLine($"{GetIndent()}{{");
-                        _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = packet.ReadWoWString(\"{name}\", data.{outputFieldName}.Length - 1, indexes{nextIndex});");
+                        _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName} = packet.ReadWoWString(\"{name}\", {outputFieldNamePrefix}{outputFieldName}.Length - 1, indexes{nextIndex});");
                         _source.WriteLine($"{GetIndent()}    packet.ReadByte();");
                         _source.WriteLine($"{GetIndent()}}}");
                         _source.WriteLine($"{GetIndent()}else");
-                        _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = string.Empty;");
+                        _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName} = string.Empty;");
+                    }
+                    else if (typeof(MapUpdateField).IsAssignableFrom(type))
+                    {
+                        if (!_create)
+                        {
+                            _source.WriteLine($"var updateType{outputFieldName} = packet.ReadByte();");
+                            _source.WriteLine($"{GetIndent()}if (updateType{outputFieldName} != 0)");
+                            _source.WriteLine($"{GetIndent()}{{");
+                            ++_indent;
+                            _source.WriteLine($"{GetIndent()}var mapSize{outputFieldName} = packet.ReadUInt32();");
+                        }
+                        else
+                            _source.WriteLine($"var mapSize{outputFieldName} = packet.ReadUInt32();");
+
+                        _source.WriteLine($"{GetIndent()}for (var m = 0u; m < mapSize{outputFieldName}; ++m)");
+                        _source.WriteLine($"{GetIndent()}{{");
+                        WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + ", m", null, string.Empty);
+                        WriteField("Value", $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m", null, string.Empty);
+                        _source.WriteLine($"{GetIndent()}}}");
+
+                        if (!_create)
+                        {
+                            --_indent;
+
+                            _source.WriteLine($"{GetIndent()}}}");
+                            _source.WriteLine($"{GetIndent()}else");
+                            _source.WriteLine($"{GetIndent()}{{");
+
+                            ++_indent;
+                            _source.WriteLine($"{GetIndent()}var changesCount{outputFieldName} = packet.ReadUInt16();");
+                            _source.WriteLine($"{GetIndent()}for (var m = 0u; m < changesCount{outputFieldName}; ++m)");
+                            _source.WriteLine($"{GetIndent()}{{");
+                            WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + ", m", null, string.Empty);
+                            _source.WriteLine($"{GetIndent()}    var changeType = packet.ReadByte(\"ChangeType\", indexes{nextIndex}, m);");
+                            _source.WriteLine($"{GetIndent()}    if (changeType == 2)");
+                            _source.WriteLine($"{GetIndent()}        continue;");
+                            WriteField("Value", $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m", null, string.Empty);
+                            _source.WriteLine($"{GetIndent()}}}");
+                            --_indent;
+
+                            _source.WriteLine($"{GetIndent()}}}");
+                        }
                     }
                     else if (_create)
-                        _source.WriteLine($"data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     else
                     {
                         if (_dynamicChangesMaskTypes.Contains(type.Name))
                         {
                             _source.WriteLine($"if (no{RenameType(type.Name)}ChangesMask)");
-                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
+                            _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                             _source.WriteLine($"{GetIndent()}else");
-                            _source.WriteLine($"{GetIndent()}    data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
+                            _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName} = ReadUpdate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
 
                         }
                         else
-                            _source.WriteLine($"data.{outputFieldName} = ReadUpdate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
+                            _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = ReadUpdate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     }
                     break;
                 case TypeCode.Boolean:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadBit(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadBit(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.SByte:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadSByte(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadSByte(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.Byte:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadByte(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadByte(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.Int16:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadInt16(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadInt16(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.UInt16:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadUInt16(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadUInt16(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.Int32:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadInt32(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadInt32(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.UInt32:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadUInt32(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadUInt32(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.Int64:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadInt64(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadInt64(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.UInt64:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadUInt64(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadUInt64(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.Single:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadSingle(\"{name}\", indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadSingle(\"{name}\", indexes{nextIndex});");
                     break;
                 case TypeCode.String:
-                    _source.WriteLine($"data.{outputFieldName} = packet.ReadWoWString(\"{name}\", data.{outputFieldName}.Length, indexes{nextIndex});");
+                    _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadWoWString(\"{name}\", {outputFieldNamePrefix}{outputFieldName}.Length, indexes{nextIndex});");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
@@ -612,24 +654,15 @@ namespace UpdateFieldCodeGenerator.Formats
         {
             declarationType = TypeHandler.ConvertToInterfaces(declarationType, rawName => RenameType(rawName), _writeUpdateMasks);
             _header.Write($"        public {TypeHandler.GetFriendlyName(declarationType)} {name} {{ get;{(declarationSettable ? " set;" : "")} }}");
-            if (typeof(DynamicUpdateField).IsAssignableFrom(updateField.Type))
-                _header.Write($" = new {TypeHandler.GetFriendlyName(declarationType)}();");
+            if (typeof(DynamicUpdateField).IsAssignableFrom(updateField.Type) || typeof(MapUpdateField).IsAssignableFrom(updateField.Type))
+                _header.Write(" = new();");
             else if (updateField.Type.IsArray)
             {
                 var typeFormat = TypeHandler.GetFriendlyName(declarationType.GetElementType());
                 _header.Write($" = new {typeFormat}[{updateField.Size}]");
                 if (typeof(DynamicUpdateField).IsAssignableFrom(updateField.Type.GetElementType()))
-                {
-                    _header.Write($" {{ ");
-                    for (var i = 0; i < updateField.Size; ++i)
-                    {
-                        if (i != 0)
-                            _header.Write(", ");
+                    _header.Write($" {{ {string.Join(", ", Enumerable.Repeat("new()", updateField.Size))} }} ");
 
-                        _header.Write($"new {typeFormat}()");
-                    }
-                    _header.Write(" }");
-                }
                 _header.Write(";");
             }
 
