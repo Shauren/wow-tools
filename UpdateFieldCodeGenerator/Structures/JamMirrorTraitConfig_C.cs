@@ -31,5 +31,9 @@ namespace UpdateFieldCodeGenerator.Structures
         {
             new UpdateField.Condition(typeof(JamMirrorTraitConfig_C).GetField("m_type", BindingFlags.Static | BindingFlags.Public), "== 3")
         });
+        public static readonly UpdateField m_variationID = new UpdateField(typeof(int), UpdateFieldFlag.None, conditions:
+        [
+            new UpdateField.Condition(typeof(JamMirrorTraitConfig_C).GetField("m_type", BindingFlags.Static | BindingFlags.Public), "== 3")
+        ]);
     }
 }

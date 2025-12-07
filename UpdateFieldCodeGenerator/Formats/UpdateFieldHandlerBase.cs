@@ -194,6 +194,11 @@ namespace UpdateFieldCodeGenerator.Formats
                         moveFieldBeforeField("FinishBitPack_Optionals", false, "assistActionData", false);
                 }
             }
+            else if (_structureType == typeof(JamMirrorQuestLog_C))
+            {
+                if (_create)
+                    moveFieldBeforeField("m_objectiveProgress", false, "m_endTime", false);
+            }
             else if (_structureType == typeof(CGPlayerData))
             {
                 if (_create)
@@ -246,7 +251,8 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("characterBankTabSettings", false, "accountBankTabSettings", false);
                     moveFieldBeforeField("petStable", false, "characterBankTabSettings", false);
 
-                    moveFieldBeforeField("dungeonScore", false, "pvpInfo", false);
+                    moveFieldBeforeField("traitConfigs", false, "pvpInfo", false);
+                    moveFieldBeforeField("dungeonScore", false, "traitConfigs", false);
                 }
                 else
                 {
@@ -267,7 +273,8 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("delveData", false, "challengeModeData", false);
                     moveFieldBeforeField("walkInData", false, "delveData", false);
                     moveFieldBeforeField("petStable", false, "walkInData", false);
-                    moveFieldBeforeField("dungeonScore", false, "petStable", false);
+                    moveFieldBeforeField("traitConfigs", false, "petStable", false);
+                    moveFieldBeforeField("dungeonScore", false, "traitConfigs", false);
 
                     FinishControlBlocks(null, string.Empty);
                     FinishBitPack("FinishBitPack_afterResearch");
@@ -406,6 +413,20 @@ namespace UpdateFieldCodeGenerator.Formats
 
                 FinishBitPack("gameobject_optionals");
                 moveFieldBeforeField("gameobject_optionals", false, "m_assistActionData", false);
+            }
+            else if (_structureType == typeof(JamMirrorVisualAnim_C))
+            {
+                moveFieldToEnd("m_animationDataID");
+                if (_create)
+                {
+                    moveFieldBeforeField("m_animationDataID.has_value()", false, "m_animKitID", false);
+                    moveFieldBeforeField("m_isDecay", false, "m_animKitID", false);
+                    moveFieldBeforeField("WriteCreate_FinishBitPack", false, "m_animKitID", false);
+                }
+                else
+                {
+                    moveFieldBeforeField("m_animationDataID.has_value()", false, "WriteUpdate_FinishControlBlocks_after_DynamicField_sizes", false);
+                }
             }
             else if (_structureType == typeof(JamMirrorGameObjectAssistActionData_C))
             {

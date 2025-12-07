@@ -134,7 +134,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField weeklyRewardsPeriodSinceOrigin = new UpdateField(typeof(uint), UpdateFieldFlag.None, comment: "week count since Cfg_RegionsEntry::ChallengeOrigin");
         public static readonly UpdateField DEBUGSoulbindConduitRank = new UpdateField(typeof(short), UpdateFieldFlag.None);
         public static readonly UpdateField dungeonScore = new UpdateField(typeof(DungeonScoreData), UpdateFieldFlag.None);
-        public static readonly UpdateField traitConfigs = new UpdateField(typeof(DynamicUpdateField<JamMirrorTraitConfig_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField traitConfigs = new UpdateField(typeof(MapUpdateField<int, JamMirrorTraitConfig_C>), UpdateFieldFlag.None);
         public static readonly UpdateField activeCombatTraitConfigID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField craftingOrders = new UpdateField(typeof(DynamicUpdateField<JamMirrorCraftingOrder_C>), UpdateFieldFlag.None);
         public static readonly UpdateField personalCraftingOrderCounts = new UpdateField(typeof(DynamicUpdateField<JamMirrorPersonalCraftingOrderCount_C>), UpdateFieldFlag.None);
