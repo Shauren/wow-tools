@@ -281,7 +281,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 _fieldWrites.Add((name, false, (pcf) =>
                 {
                     WriteControlBlocks(_source, flowControl, pcf);
-                    WriteField(name, outputFieldName, type, updateField.BitSize, nextIndex, interfaceType);
+                    WriteField(name, outputFieldName, type, updateField.BitSize, nextIndex, interfaceType, _create);
                     _indent = 3;
                     return flowControl;
                 }
@@ -490,14 +490,14 @@ namespace UpdateFieldCodeGenerator.Formats
             _previousFieldCounters = bitIndex;
         }
 
-        private void WriteField(string name, string outputFieldName, Type type, int bitSize, string nextIndex, Type interfaceType, string outputFieldNamePrefix = "data.")
+        private void WriteField(string name, string outputFieldName, Type type, int bitSize, string nextIndex, Type interfaceType, bool create, string outputFieldNamePrefix = "data.")
         {
             _source.Write(GetIndent());
             if (name.EndsWith("size()"))
             {
                 outputFieldName = outputFieldName.Substring(0, outputFieldName.Length - 6);
                 var interfaceName = RenameType(TypeHandler.GetFriendlyName(interfaceType));
-                if (_create || !_isRoot || type == typeof(string))
+                if (create || !_isRoot || type == typeof(string) || type == typeof(DynamicString))
                 {
                     var sizeReadExpression = bitSize > 0 ? $"packet.ReadBits({bitSize})" : "packet.ReadUInt32()";
                     if (type != typeof(string) && type != typeof(DynamicString))
@@ -545,18 +545,10 @@ namespace UpdateFieldCodeGenerator.Formats
                     else if (type == typeof(PerksVendorItem))
                         _source.WriteLine($"Substructures.PerksProgramHandler.ReadPerksVendorItem(packet, indexes{nextIndex}, \"{name}\");");
                     else if (type == typeof(DynamicString))
-                    {
-                        _source.WriteLine($"if ({outputFieldNamePrefix}{outputFieldName}.Length > 1)");
-                        _source.WriteLine($"{GetIndent()}{{");
-                        _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName} = packet.ReadWoWString(\"{name}\", {outputFieldNamePrefix}{outputFieldName}.Length - 1, indexes{nextIndex});");
-                        _source.WriteLine($"{GetIndent()}    packet.ReadByte();");
-                        _source.WriteLine($"{GetIndent()}}}");
-                        _source.WriteLine($"{GetIndent()}else");
-                        _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName} = string.Empty;");
-                    }
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadDynamicString(\"{name}\", {outputFieldNamePrefix}{outputFieldName}.Length, indexes{nextIndex});");
                     else if (typeof(MapUpdateField).IsAssignableFrom(type))
                     {
-                        if (!_create)
+                        if (!create)
                         {
                             _source.WriteLine($"var updateType{outputFieldName} = packet.ReadByte();");
                             _source.WriteLine($"{GetIndent()}if (updateType{outputFieldName} != 0)");
@@ -569,11 +561,11 @@ namespace UpdateFieldCodeGenerator.Formats
 
                         _source.WriteLine($"{GetIndent()}for (var m = 0u; m < mapSize{outputFieldName}; ++m)");
                         _source.WriteLine($"{GetIndent()}{{");
-                        WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + ", m", null, string.Empty);
-                        WriteField("Value", $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m", null, string.Empty);
+                        WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + ", m", null, true, string.Empty);
+                        WriteField("Value", $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m", null, true, string.Empty);
                         _source.WriteLine($"{GetIndent()}}}");
 
-                        if (!_create)
+                        if (!create)
                         {
                             --_indent;
 
@@ -585,18 +577,18 @@ namespace UpdateFieldCodeGenerator.Formats
                             _source.WriteLine($"{GetIndent()}var changesCount{outputFieldName} = packet.ReadUInt16();");
                             _source.WriteLine($"{GetIndent()}for (var m = 0u; m < changesCount{outputFieldName}; ++m)");
                             _source.WriteLine($"{GetIndent()}{{");
-                            WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + ", m", null, string.Empty);
+                            WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + ", m", null, false, string.Empty);
                             _source.WriteLine($"{GetIndent()}    var changeType = packet.ReadByte(\"ChangeType\", indexes{nextIndex}, m);");
                             _source.WriteLine($"{GetIndent()}    if (changeType == 2)");
                             _source.WriteLine($"{GetIndent()}        continue;");
-                            WriteField("Value", $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m", null, string.Empty);
+                            WriteField("Value", $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m", null, false, string.Empty);
                             _source.WriteLine($"{GetIndent()}}}");
                             --_indent;
 
                             _source.WriteLine($"{GetIndent()}}}");
                         }
                     }
-                    else if (_create)
+                    else if (create)
                         _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     else
                     {
