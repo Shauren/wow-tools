@@ -1,6 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator
 {
-    public abstract class Vector2
+    public struct Vector2
     {
     }
 }

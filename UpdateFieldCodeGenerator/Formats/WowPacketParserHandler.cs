@@ -5,7 +5,7 @@ namespace UpdateFieldCodeGenerator.Formats
     public class WowPacketParserHandler : UpdateFieldHandlerBase
     {
         private const string ModuleName = "V11_0_0_55666";
-        private const string Version = "V11_2_5_63506";
+        private const string Version = "V11_2_7_64632";
 
         private List<string> _optionalInitVariables;
 
@@ -530,6 +530,8 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadVector3(\"{name}\", indexes{nextIndex});");
                     else if (type == typeof(Quaternion))
                         _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadQuaternion(\"{name}\", indexes{nextIndex});");
+                    else if (type == typeof(AaBox))
+                        _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = new AaBox(packet.ReadVector3(\"Low\", indexes{nextIndex}, \"{name}\"), packet.ReadVector3(\"High\", indexes{nextIndex}, \"{name}\"));");
                     else if (type == typeof(DungeonScoreSummary))
                         _source.WriteLine($"Substructures.MythicPlusHandler.ReadDungeonScoreSummary(packet, indexes{nextIndex}, \"{name}\");");
                     else if (type == typeof(DungeonScoreData))
@@ -644,7 +646,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
         private void WriteFieldDeclaration(string name, UpdateField updateField, Type declarationType, bool declarationSettable)
         {
-            declarationType = TypeHandler.ConvertToInterfaces(declarationType, rawName => RenameType(rawName), _writeUpdateMasks);
+            declarationType = TypeHandler.ConvertToInterfaces(declarationType, RenameType, _writeUpdateMasks);
             _header.Write($"        public {TypeHandler.GetFriendlyName(declarationType)} {name} {{ get;{(declarationSettable ? " set;" : "")} }}");
             if (typeof(DynamicUpdateField).IsAssignableFrom(updateField.Type) || typeof(MapUpdateField).IsAssignableFrom(updateField.Type))
                 _header.Write(" = new();");

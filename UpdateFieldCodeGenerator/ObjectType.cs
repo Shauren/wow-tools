@@ -2,6 +2,7 @@
 {
     public enum ObjectType
     {
+        BaseEntity = -1,
         Object = 0,
         Item = 1,
         Container = 2,
@@ -16,6 +17,18 @@
         AreaTrigger = 11,
         SceneObject = 12,
         Conversation = 13,
-        Vendor = 117
+        MeshObject = 14,
+        Vendor = 100,
+        HousingDecor,
+        HousingRoom,
+        HousingRoomComponentMesh,
+        HousingPlayerHouse,
+        HousingCornerstone,
+        HousingPlotAreaTrigger,
+        NeighborhoodMirrorData,
+        MirroredPositionData,
+        PlayerHouseInfoComponent,
+        HousingStorage,
+        HousingFixture,
     }
 }

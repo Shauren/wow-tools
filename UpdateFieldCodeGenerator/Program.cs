@@ -7,7 +7,8 @@ namespace UpdateFieldCodeGenerator
     {
         private static readonly Dictionary<ObjectType, ObjectType> _objectTypeInheritance = new Dictionary<ObjectType, ObjectType>
         {
-            {ObjectType.Object, ObjectType.Object},
+            {ObjectType.BaseEntity, ObjectType.BaseEntity},
+            {ObjectType.Object, ObjectType.BaseEntity},
             {ObjectType.Item, ObjectType.Object},
             {ObjectType.Container, ObjectType.Item},
             {ObjectType.AzeriteEmpoweredItem, ObjectType.Item},
@@ -21,7 +22,19 @@ namespace UpdateFieldCodeGenerator
             {ObjectType.AreaTrigger, ObjectType.Object},
             {ObjectType.SceneObject, ObjectType.Object},
             {ObjectType.Conversation, ObjectType.Object},
-            {ObjectType.Vendor, ObjectType.Vendor}
+            {ObjectType.MeshObject, ObjectType.Object},
+            {ObjectType.Vendor, ObjectType.Unit},
+            {ObjectType.HousingDecor, ObjectType.MeshObject},
+            {ObjectType.HousingRoom, ObjectType.BaseEntity},
+            {ObjectType.HousingRoomComponentMesh, ObjectType.MeshObject},
+            {ObjectType.HousingPlayerHouse, ObjectType.BaseEntity},
+            {ObjectType.HousingCornerstone, ObjectType.GameObject},
+            {ObjectType.HousingPlotAreaTrigger, ObjectType.AreaTrigger},
+            {ObjectType.NeighborhoodMirrorData, ObjectType.BaseEntity},
+            {ObjectType.MirroredPositionData, ObjectType.BaseEntity},
+            {ObjectType.PlayerHouseInfoComponent, ObjectType.ActivePlayer},
+            {ObjectType.HousingStorage, ObjectType.BaseEntity},
+            {ObjectType.HousingFixture, ObjectType.MeshObject},
         };
 
         public static void Main()
@@ -124,7 +137,6 @@ namespace UpdateFieldCodeGenerator
             var minDepth = inheritanceDepths.Min();
 
             // normalize all types to same level
-            var typesAtDepth = new List<ObjectType>();
             for (var i = 0; i < types.Count; ++i)
             {
                 while (inheritanceDepths[i] != minDepth)
@@ -148,10 +160,11 @@ namespace UpdateFieldCodeGenerator
 
         public static int GetInheritanceDepth(ObjectType objectType)
         {
-            if (objectType == ObjectType.Object)
+            var parent = _objectTypeInheritance[objectType];
+            if (objectType == parent)
                 return 0;
 
-            return 1 + GetInheritanceDepth(_objectTypeInheritance[objectType]);
+            return 1 + GetInheritanceDepth(parent);
         }
 
         public static ObjectType GetObjectType(Type type)

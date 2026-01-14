@@ -14,7 +14,8 @@ namespace UpdateFieldCodeGenerator
 
         public static string GetFriendlyName(Type type)
         {
-            return _codeDomProvider.GetTypeOutput(ResolveTypeReference(type));
+            return _codeDomProvider.GetTypeOutput(ResolveTypeReference(type))
+                .Replace("UpdateFieldCodeGenerator.", "");
         }
 
         private static Type MakeNullable(Type type)
@@ -33,7 +34,7 @@ namespace UpdateFieldCodeGenerator
             if (type.IsArray)
                 return new CodeTypeReference(ResolveTypeReference(type.GetElementType()), type.GetArrayRank());
 
-            return new CodeTypeReference(type.Name, type.GenericTypeArguments.Select(genericType => ResolveTypeReference(genericType)).ToArray());
+            return new CodeTypeReference(type.Name, type.GenericTypeArguments.Select(ResolveTypeReference).ToArray());
         }
 
         public static Type ConvertToInterfaces(Type genericOrArrayType, Func<string, string> nameConverter, bool asNullable)
@@ -54,7 +55,7 @@ namespace UpdateFieldCodeGenerator
             if (genericOrArrayType.IsAbstract)
                 return genericOrArrayType;
 
-            if (genericOrArrayType.Assembly == Assembly.GetExecutingAssembly() || genericOrArrayType.Assembly.IsDynamic)
+            if (!genericOrArrayType.IsValueType && (genericOrArrayType.Assembly == Assembly.GetExecutingAssembly() || genericOrArrayType.Assembly.IsDynamic))
                 return CreateInterfaceTypeFor(genericOrArrayType, nameConverter);
 
             return asNullable ? MakeNullable(genericOrArrayType) : genericOrArrayType;

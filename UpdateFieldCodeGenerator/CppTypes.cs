@@ -35,6 +35,7 @@ namespace UpdateFieldCodeGenerator
                 { typeof(Vector2), CreateType("TaggedPosition", "Tag").MakeGenericType(CreateType("Position::XY")) },
                 { typeof(Vector3), CreateType("TaggedPosition", "Tag").MakeGenericType(CreateType("Position::XYZ")) },
                 { typeof(Quaternion), CreateType("QuaternionData") },
+                { typeof(AaBox), CreateType("AaBox") },
                 { typeof(DungeonScoreSummary), CreateType("WorldPackets::MythicPlus::DungeonScoreSummary") },
                 { typeof(DungeonScoreData), CreateType("WorldPackets::MythicPlus::DungeonScoreData") },
                 { typeof(ItemBonusKey), CreateType("WorldPackets::Item::ItemBonusKey") },

@@ -114,6 +114,10 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField runeforgePowers = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
         public static readonly UpdateField transmogIllusions = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
         public static readonly UpdateField warbandScenes = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
+        public static readonly UpdateField houseRooms = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
+        public static readonly UpdateField houseExteriorComponents = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
+        public static readonly UpdateField houseThemes = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
+        public static readonly UpdateField houseRoomComponentTextures = new UpdateField(typeof(DynamicUpdateField<uint>), UpdateFieldFlag.None);
         public static readonly UpdateField characterRestrictions = new UpdateField(typeof(DynamicUpdateField<JamMirrorCharacterRestriction_C>), UpdateFieldFlag.None);
         public static readonly UpdateField spellPctModByLabel = new UpdateField(typeof(DynamicUpdateField<JamMirrorSpellPctModByLabel_C>), UpdateFieldFlag.None);
         public static readonly UpdateField spellFlatModByLabel = new UpdateField(typeof(DynamicUpdateField<JamMirrorSpellFlatModByLabel_C>), UpdateFieldFlag.None);

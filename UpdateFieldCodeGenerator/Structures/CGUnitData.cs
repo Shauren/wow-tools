@@ -36,6 +36,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField classId = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField playerClassId = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField sex = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField creatureType = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField displayPower = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField overrideDisplayPowerID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField health = new UpdateField(typeof(long), UpdateFieldFlag.None);
@@ -64,7 +65,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField combatReach = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField displayScale = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField creatureFamily = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField creatureType = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField overrideCreatureType = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField nativeDisplayID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField nativeXDisplayScale = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField mountDisplayID = new UpdateField(typeof(int), UpdateFieldFlag.None);

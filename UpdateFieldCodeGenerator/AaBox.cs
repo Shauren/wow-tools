@@ -1,6 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator
 {
-    public struct Quaternion
+    public struct AaBox
     {
     }
 }

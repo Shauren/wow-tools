@@ -32,8 +32,8 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 
 void DumpUIErrors(std::shared_ptr<Process> wow)
 {
-    static std::uintptr_t const UIErrorsOffset = 0x47ED9B0;
-    static std::size_t const UIErrorsSize = 1203;
+    static std::uintptr_t const UIErrorsOffset = 0x4DF1C20;
+    static std::size_t const UIErrorsSize = 1224;
 
     Enum uiErrors;
     uiErrors.SetName("class GameError");
@@ -53,28 +53,23 @@ struct WowCS_FragmentDefinition
 {
     std::uint32_t FragmentID;
     char const* Name;
-    std::uint32_t StorageType;
-    std::uint8_t Field_14;
-    std::uint32_t Field_18;
+    std::uint32_t Flags;
     std::uint32_t FragmentSize;
-    std::uint16_t Field_20;
-    void* Factory;
-    void* Assignment;
-    void* Destructor;
-    void* Field_40;
-    void* Field_48;
-    std::uint32_t Field_50;
+    std::uint32_t Field_18;
+    std::uint8_t StorageType;
+    std::uint8_t SomethingRelevant;
+    std::uint8_t Pad[146];
 
-    bool IsInitialOnly() const { return (Field_18 & 2) != 0; }
-    bool IsUpdatable() const { return StorageType != 4 && Field_14 >= 3 && !IsInitialOnly(); }
-    bool IsOwnerOnly() const { return Field_14 >= 3 && (Field_18 & 1); }
+    bool IsInitialOnly() const { return (Flags & 2) != 0; }
+    bool IsUpdatable() const { return StorageType != 4 && SomethingRelevant >= 3 && !IsInitialOnly(); }
+    bool IsOwnerOnly() const { return SomethingRelevant >= 3 && (Flags & 1); }
     bool IsIndirect() const { return StorageType == 1; }
     bool IsTag() const { return StorageType == 4; }
 };
 
 void DumpWowCSData(std::shared_ptr<Process> wow)
 {
-    static std::uintptr_t const FragmentsOffset = 0x4786C20;
+    static std::uintptr_t const FragmentsOffset = 0x4F04560;
     static std::size_t const FragmentsSize = 256;
 
     std::ofstream out("WowCSEntityDefinitions.h");
@@ -109,7 +104,7 @@ void DumpWowCSData(std::shared_ptr<Process> wow)
 
 int main()
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("Wow.exe"), 63506, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT.exe"), 64587, true);
     if (!wow)
         return 1;
 

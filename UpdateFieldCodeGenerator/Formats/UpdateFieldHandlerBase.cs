@@ -199,6 +199,11 @@ namespace UpdateFieldCodeGenerator.Formats
                 if (_create)
                     moveFieldBeforeField("m_objectiveProgress", false, "m_endTime", false);
             }
+            else if (_structureType == typeof(JamMirrorCTROptions_C))
+            {
+                if (!_create)
+                    moveFieldToEnd("m_conditionalFlags");
+            }
             else if (_structureType == typeof(CGPlayerData))
             {
                 if (_create)
@@ -493,6 +498,73 @@ namespace UpdateFieldCodeGenerator.Formats
                         _fieldWrites.Insert(actorsSizeIndex, dontPlayBroadcastTextSounds);
                     }
                 }
+            }
+            else if (_structureType == typeof(CGMeshObjectData))
+            {
+                if (_create)
+                {
+                    moveFieldBeforeField("m_isWMO", false, "m_fileDataID", false);
+                    moveFieldBeforeField("m_isRoom", false, "m_fileDataID", false);
+                    moveFieldBeforeField("m_geobox.has_value()", false, "m_fileDataID", false);
+                }
+                else
+                {
+                    moveFieldBeforeField("m_geobox.has_value()", false, "WriteUpdate_FinishControlBlocks_after_DynamicField_sizes", false);
+                }
+            }
+            else if (_structureType == typeof(JamMirrorDecorStoragePersistedData_C))
+            {
+                if (_create)
+                    moveFieldToEnd("m_dyes");
+                else
+                {
+                    moveFieldBeforeField("field_20", false, "m_dyes.has_value()", false);
+                }
+
+                if (this is TrinityCoreHandler)
+                {
+                    FinishBitPack("FinishBitPack_afterOptionalBits");
+                    moveFieldBeforeField("FinishBitPack_afterOptionalBits", false, "m_dyes", false);
+                }
+            }
+            else if (_structureType == typeof(CGHousingDecorData))
+            {
+                if (_create)
+                    moveFieldToEnd("m_persistedData");
+                else
+                    moveFieldBeforeField("m_targetGameObjectGUID", false, "m_persistedData.has_value()", false);
+
+                if (this is TrinityCoreHandler)
+                {
+                    FinishBitPack("FinishBitPack_afterOptionalBits");
+                    moveFieldBeforeField("FinishBitPack_afterOptionalBits", false, "m_persistedData", false);
+                }
+            }
+            else if (_structureType == typeof(CGNeighborhoodMirrorData))
+            {
+                if (_create)
+                    moveFieldBeforeField("m_name{0}size()", false, "m_ownerGUID", false);
+                else
+                {
+                    FinishBitPack("FinishBitPack_beforeNameLength");
+                    FinishControlBlocks(null, "FinishControlBlocks_beforeNameLength");
+                    moveFieldBeforeField("FinishControlBlocks_beforeNameLength", false, "m_name{0}size()", false);
+                    moveFieldBeforeField("FinishBitPack_beforeNameLength", false, "m_name{0}size()", false);
+                }
+            }
+            else if (_structureType == typeof(JamMirrorNeighborhoodCharter_C))
+            {
+                if (_create)
+                    moveFieldBeforeField("m_name{0}size()", false, "m_name", false);
+                else
+                {
+                    moveFieldBeforeField("field_0", false, "m_signatures{0}size()", false);
+                    moveFieldBeforeField("field_4", false, "m_signatures{0}size()", false);
+                }
+            }
+            else if (_structureType == typeof(CGPlayerHouseInfoComponentData))
+            {
+                moveFieldToEnd("m_charter");
             }
         }
 
