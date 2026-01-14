@@ -749,7 +749,12 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"{GetIndent()}data << float({name}{access}w);");
                     }
                     else if (type == typeof(DynamicString))
-                        _source.WriteLine($"data << WorldPackets::SizedCString::Data({name});");
+                    {
+                        _source.Write("data << WorldPackets::SizedCString::Data(");
+                        if (!name.Contains('[') && _writeUpdateMasks)
+                            _source.Write('*');
+                        _source.WriteLine($"{name});");
+                    }
                     else if (typeof(MapUpdateField).IsAssignableFrom(type))
                     {
                         if (_create)
