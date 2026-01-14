@@ -915,7 +915,7 @@ namespace UpdateFieldCodeGenerator.Formats
             else if (fieldGeneratedType.IsArray)
             {
                 typeName = TypeHandler.GetFriendlyName(fieldGeneratedType.GetElementType());
-                line = $"    {typeName} {name}[{declarationType.Size}];";
+                line = $"    std::array<{typeName}, {declarationType.Size}> {name};";
             }
             else
             {
