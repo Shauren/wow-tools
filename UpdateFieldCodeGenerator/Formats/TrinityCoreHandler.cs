@@ -916,12 +916,20 @@ namespace UpdateFieldCodeGenerator.Formats
             else if (fieldGeneratedType.IsArray)
             {
                 typeName = TypeHandler.GetFriendlyName(fieldGeneratedType.GetElementType());
-                line = $"    std::array<{typeName}, {declarationType.Size}> {name};";
+                line = $"    std::array<{typeName}, {declarationType.Size}> {name} = {{}};";
             }
             else
             {
                 typeName = TypeHandler.GetFriendlyName(PrepareFieldType(fieldGeneratedType));
-                line = $"    {typeName} {name};";
+                var initializer = "";
+                if (typeName.StartsWith("int") || typeName.StartsWith("uint"))
+                    initializer = " = 0";
+                else if (typeName == "float")
+                    initializer = " = 0.0f";
+                else if (typeName == "bool")
+                    initializer = " = false";
+
+                line = $"    {typeName} {name}{initializer};";
             }
 
             _header.Write(line);
