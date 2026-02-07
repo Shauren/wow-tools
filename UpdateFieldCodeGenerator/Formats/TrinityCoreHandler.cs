@@ -13,6 +13,8 @@ namespace UpdateFieldCodeGenerator.Formats
         private readonly Type _dynamicUpdateFieldType = CppTypes.CreateType("DynamicUpdateField", "T", "BlockBit", "Bit");
         private readonly Type _mapUpdateFieldBaseType = CppTypes.CreateType("MapUpdateFieldBase", "K", "V");
         private readonly Type _mapUpdateFieldType = CppTypes.CreateType("MapUpdateField", "K", "V", "BlockBit", "Bit");
+        private readonly Type _setUpdateFieldBaseType = CppTypes.CreateType("SetUpdateFieldBase", "T");
+        private readonly Type _setUpdateFieldType = CppTypes.CreateType("SetUpdateField", "T", "BlockBit", "Bit");
         private readonly Type _optionalUpdateFieldBaseType = CppTypes.CreateType("OptionalUpdateFieldBase", "T");
         private readonly Type _optionalUpdateFieldType = CppTypes.CreateType("OptionalUpdateField", "T", "BlockBit", "Bit");
 
@@ -764,6 +766,13 @@ namespace UpdateFieldCodeGenerator.Formats
                         else
                             _source.WriteLine($"WriteMapFieldUpdate({name}, {(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");
                     }
+                    else if (typeof(SetUpdateField).IsAssignableFrom(type))
+                    {
+                        if (_create)
+                            _source.WriteLine($"WriteSetFieldCreate({name}, data, receiver, owner);");
+                        else
+                            _source.WriteLine($"WriteSetFieldUpdate({name}, {(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");
+                    }
                     else if (_create)
                         _source.WriteLine($"{name}{access}WriteCreate(data, receiver, owner);");
                     else
@@ -880,6 +889,14 @@ namespace UpdateFieldCodeGenerator.Formats
                     var elementType = PrepareFieldType(fieldGeneratedType.GenericTypeArguments[1]);
                     typeName = TypeHandler.GetFriendlyName(elementType);
                     fieldGeneratedType = _mapUpdateFieldType.MakeGenericType(keyType, elementType,
+                        CppTypes.CreateConstantForTemplateParameter(blockIndex),
+                        bit);
+                }
+                else if (typeof(SetUpdateField).IsAssignableFrom(declarationType.Type))
+                {
+                    var elementType = PrepareFieldType(fieldGeneratedType.GenericTypeArguments[0]);
+                    typeName = TypeHandler.GetFriendlyName(elementType);
+                    fieldGeneratedType = _setUpdateFieldType.MakeGenericType(elementType,
                         CppTypes.CreateConstantForTemplateParameter(blockIndex),
                         bit);
                 }

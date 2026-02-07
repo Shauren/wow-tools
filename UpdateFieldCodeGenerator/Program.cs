@@ -183,6 +183,7 @@ namespace UpdateFieldCodeGenerator
 
             if (typeof(DynamicUpdateField).IsAssignableFrom(type)
                 || typeof(BlzVectorField).IsAssignableFrom(type)
+                || typeof(SetUpdateField).IsAssignableFrom(type)
                 || typeof(BlzOptionalField).IsAssignableFrom(type)
                 || typeof(VariantUpdateField.Case).IsAssignableFrom(type))
                 return GetFieldElementType(type.GenericTypeArguments[0], StructureReferenceType.Embedded);

@@ -590,6 +590,48 @@ namespace UpdateFieldCodeGenerator.Formats
                             _source.WriteLine($"{GetIndent()}}}");
                         }
                     }
+                    else if (typeof(SetUpdateField).IsAssignableFrom(type))
+                    {
+                        if (!create)
+                        {
+                            _source.WriteLine($"var updateType{outputFieldName} = packet.ReadByte();");
+                            _source.WriteLine($"{GetIndent()}if (updateType{outputFieldName} != 0)");
+                            _source.WriteLine($"{GetIndent()}{{");
+                            ++_indent;
+                            _source.WriteLine($"{GetIndent()}var setSize{outputFieldName} = packet.ReadUInt32();");
+                        }
+                        else
+                            _source.WriteLine($"var setSize{outputFieldName} = packet.ReadUInt32();");
+
+                        _source.WriteLine($"{GetIndent()}for (var s = 0u; s < setSize{outputFieldName}; ++s)");
+                        _source.WriteLine($"{GetIndent()}{{");
+                        WriteField("Value", "    var val", type.GenericTypeArguments[0], 0, nextIndex + $", \"{name}\", s", null, true, string.Empty);
+                        _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName}.Add(val);");
+                        _source.WriteLine($"{GetIndent()}}}");
+
+                        if (!create)
+                        {
+                            --_indent;
+
+                            _source.WriteLine($"{GetIndent()}}}");
+                            _source.WriteLine($"{GetIndent()}else");
+                            _source.WriteLine($"{GetIndent()}{{");
+
+                            ++_indent;
+                            _source.WriteLine($"{GetIndent()}var changesCount{outputFieldName} = packet.ReadUInt16();");
+                            _source.WriteLine($"{GetIndent()}for (var s = 0u; s < changesCount{outputFieldName}; ++s)");
+                            _source.WriteLine($"{GetIndent()}{{");
+                            WriteField("Value", "    var value", type.GenericTypeArguments[0], 0, nextIndex + $", \"{name}\", s", null, false, string.Empty);
+                            _source.WriteLine($"{GetIndent()}    var changeType = packet.ReadByte(\"ChangeType\", indexes{nextIndex}, \"{name}\", s);");
+                            _source.WriteLine($"{GetIndent()}    if (changeType == 2)");
+                            _source.WriteLine($"{GetIndent()}        continue;");
+                            _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName}.Add(value);");
+                            _source.WriteLine($"{GetIndent()}}}");
+                            --_indent;
+
+                            _source.WriteLine($"{GetIndent()}}}");
+                        }
+                    }
                     else if (create)
                         _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     else
@@ -648,7 +690,9 @@ namespace UpdateFieldCodeGenerator.Formats
         {
             declarationType = TypeHandler.ConvertToInterfaces(declarationType, RenameType, _writeUpdateMasks);
             _header.Write($"        public {TypeHandler.GetFriendlyName(declarationType)} {name} {{ get;{(declarationSettable ? " set;" : "")} }}");
-            if (typeof(DynamicUpdateField).IsAssignableFrom(updateField.Type) || typeof(MapUpdateField).IsAssignableFrom(updateField.Type))
+            if (typeof(DynamicUpdateField).IsAssignableFrom(updateField.Type)
+                || typeof(MapUpdateField).IsAssignableFrom(updateField.Type)
+                || typeof(SetUpdateField).IsAssignableFrom(updateField.Type))
                 _header.Write(" = new();");
             else if (updateField.Type.IsArray)
             {
