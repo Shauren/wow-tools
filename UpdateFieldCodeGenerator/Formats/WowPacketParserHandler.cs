@@ -563,8 +563,8 @@ namespace UpdateFieldCodeGenerator.Formats
 
                         _source.WriteLine($"{GetIndent()}for (var m = 0u; m < mapSize{outputFieldName}; ++m)");
                         _source.WriteLine($"{GetIndent()}{{");
-                        WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + ", m", null, true, string.Empty);
-                        WriteField("Value", $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m", null, true, string.Empty);
+                        WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + $", \"{name}\", m", null, true, string.Empty);
+                        WriteField(name, $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m, \"Value\"", null, true, string.Empty);
                         _source.WriteLine($"{GetIndent()}}}");
 
                         if (!create)
@@ -579,11 +579,11 @@ namespace UpdateFieldCodeGenerator.Formats
                             _source.WriteLine($"{GetIndent()}var changesCount{outputFieldName} = packet.ReadUInt16();");
                             _source.WriteLine($"{GetIndent()}for (var m = 0u; m < changesCount{outputFieldName}; ++m)");
                             _source.WriteLine($"{GetIndent()}{{");
-                            WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + ", m", null, false, string.Empty);
-                            _source.WriteLine($"{GetIndent()}    var changeType = packet.ReadByte(\"ChangeType\", indexes{nextIndex}, m);");
+                            WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + $", \"{name}\", m", null, false, string.Empty);
+                            _source.WriteLine($"{GetIndent()}    var changeType = packet.ReadByte(\"ChangeType\", indexes{nextIndex}, \"{name}\", m);");
                             _source.WriteLine($"{GetIndent()}    if (changeType == 2)");
                             _source.WriteLine($"{GetIndent()}        continue;");
-                            WriteField("Value", $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m", null, false, string.Empty);
+                            WriteField(name, $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m, \"Value\"", null, false, string.Empty);
                             _source.WriteLine($"{GetIndent()}}}");
                             --_indent;
 
