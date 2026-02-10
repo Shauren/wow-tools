@@ -30,5 +30,6 @@
         PlayerHouseInfoComponent,
         HousingStorage,
         HousingFixture,
+        PlayerInitiativeComponent,
     }
 }

@@ -43,6 +43,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_forcedPositionAndRotation = new UpdateField(typeof(BlzOptionalField<JamMirrorForceSetAreaTriggerPositionAndRotation_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_pathType = new UpdateField(typeof(int), UpdateFieldFlag.None, updateBitGroup: "m_pathData");
         public static readonly UpdateField m_shapeType = new UpdateField(typeof(byte), UpdateFieldFlag.None, updateBitGroup: "m_shapeData");
+        public static readonly UpdateField m_periodModifier = new UpdateField(typeof(JamMirrorAreaTriggerActionSetPeriodModifier_C), UpdateFieldFlag.None);
 
         public static readonly UpdateField m_pathData = new UpdateField(typeof(VariantUpdateField<JamMirrorAreaTriggerSplineCalculator_C, JamMirrorAreaTriggerOrbit_C, JamMirrorAreaTriggerMovementScript_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_spline = new UpdateField(typeof(VariantUpdateField.Case<JamMirrorAreaTriggerSplineCalculator_C>), UpdateFieldFlag.None, typeof(CGAreaTriggerData).GetField("m_pathData", BindingFlags.Static | BindingFlags.Public), conditions:

@@ -5,7 +5,7 @@ namespace UpdateFieldCodeGenerator.Structures
     [HasChangesMask(blockGroupSize: -1)]
     public class JamMirrorCraftingOrderItem_C
     {
-        public static readonly UpdateField m_field_0 = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
+        public static readonly UpdateField m_orderItemID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
         public static readonly UpdateField m_itemGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_ownerGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_itemID = new UpdateField(typeof(int), UpdateFieldFlag.None);

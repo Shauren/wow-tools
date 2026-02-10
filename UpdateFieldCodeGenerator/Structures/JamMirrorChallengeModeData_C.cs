@@ -2,10 +2,10 @@
 {
     public class JamMirrorChallengeModeData_C
     {
-        public static readonly UpdateField m_unknown_1120_1 = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_unknown_1120_2 = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_unknown_1120_3 = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
-        public static readonly UpdateField m_unknown_1120_4 = new UpdateField(typeof(long), UpdateFieldFlag.None);
+        public static readonly UpdateField m_mapID = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField m_initialPlayerCount = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField m_instanceID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
+        public static readonly UpdateField m_startTime = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField m_keystoneOwnerGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_leaverGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_instanceAbandonVoteCooldown = new UpdateField(typeof(long), UpdateFieldFlag.None);

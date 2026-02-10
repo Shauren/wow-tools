@@ -91,10 +91,10 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField modTimeRate = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField createdBySpell = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField emoteState = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField stats = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 4);
-        public static readonly UpdateField statPosBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 4);
-        public static readonly UpdateField statNegBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 4);
-        public static readonly UpdateField statSupportBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 4);
+        public static readonly UpdateField stats = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 5);
+        public static readonly UpdateField statPosBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 5);
+        public static readonly UpdateField statNegBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 5);
+        public static readonly UpdateField statSupportBuff = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 5);
         public static readonly UpdateField resistances = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner | UpdateFieldFlag.Empath, 7);
         public static readonly UpdateField bonusResistanceMods = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 7);
         public static readonly UpdateField manaCostModifier = new UpdateField(typeof(int[]), UpdateFieldFlag.Owner, 7);
@@ -150,8 +150,8 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField silencedSchoolMask = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField field_314 = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField currentAreaID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField field_31C = new UpdateField(typeof(float), UpdateFieldFlag.None);
-        public static readonly UpdateField field_320 = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "Soft targeting related? When UnitFlags3 & 0x40000000 is set, increases some range check using CombatReach by this amount");
+        public static readonly UpdateField nameplateDistanceMod = new UpdateField(typeof(float), UpdateFieldFlag.None);
+        public static readonly UpdateField autoAttackRangeMod = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "When UnitFlags3 & 0x40000000 is set, increases some autoattack range by this amount");
         public static readonly UpdateField nameplateAttachToGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "When set, nameplate of this unit will instead appear on that object");
         public static readonly UpdateField assistActionDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorUnitAssistActionData_C>), UpdateFieldFlag.None, typeof(CGUnitData).GetField("assistActionData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField assistActionData = new UpdateField(typeof(BlzOptionalField<JamMirrorUnitAssistActionData_C>), UpdateFieldFlag.None);

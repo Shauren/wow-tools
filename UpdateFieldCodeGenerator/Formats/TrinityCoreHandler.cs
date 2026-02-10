@@ -1091,6 +1091,8 @@ namespace UpdateFieldCodeGenerator.Formats
                     return "BaseEntity";
                 case ObjectType.HousingFixture:
                     return "Object"; // MeshObject
+                case ObjectType.PlayerInitiativeComponent:
+                    return "Player";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(objectType));
             }

@@ -192,6 +192,8 @@ namespace UpdateFieldCodeGenerator.Formats
                     }
                     else
                         moveFieldBeforeField("FinishBitPack_Optionals", false, "assistActionData", false);
+
+                    moveFieldToEnd("virtualItems");
                 }
             }
             else if (_structureType == typeof(JamMirrorQuestLog_C))
@@ -203,6 +205,11 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 if (!_create)
                     moveFieldToEnd("m_conditionalFlags");
+            }
+            else if (_structureType == typeof(JamMirrorLeaverInfo_C))
+            {
+                if (!_create)
+                    moveFieldToEnd("m_isLeaver");
             }
             else if (_structureType == typeof(CGPlayerData))
             {
@@ -228,6 +235,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("name", false, "partyType", false);
                     moveFieldBeforeField("leaverInfo", false, "partyType", false);
                     moveFieldBeforeField("declinedNames", false, "partyType", false);
+                    moveFieldToEnd("visibleItems");
                     moveFieldToEnd("visibleEquipableSpells");
                 }
             }
@@ -256,7 +264,10 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("characterBankTabSettings", false, "accountBankTabSettings", false);
                     moveFieldBeforeField("petStable", false, "characterBankTabSettings", false);
 
-                    moveFieldBeforeField("traitConfigs", false, "pvpInfo", false);
+                    moveFieldBeforeField("transmogMetadata", false, "pvpInfo", false);
+                    moveFieldBeforeField("viewedOutfit", false, "transmogMetadata", false);
+                    moveFieldBeforeField("transmogOutfits", false, "viewedOutfit", false);
+                    moveFieldBeforeField("traitConfigs", false, "transmogOutfits", false);
                     moveFieldBeforeField("dungeonScore", false, "traitConfigs", false);
                 }
                 else
@@ -278,7 +289,10 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("delveData", false, "challengeModeData", false);
                     moveFieldBeforeField("walkInData", false, "delveData", false);
                     moveFieldBeforeField("petStable", false, "walkInData", false);
-                    moveFieldBeforeField("traitConfigs", false, "petStable", false);
+                    moveFieldBeforeField("transmogMetadata", false, "petStable", false);
+                    moveFieldBeforeField("viewedOutfit", false, "transmogMetadata", false);
+                    moveFieldBeforeField("transmogOutfits", false, "viewedOutfit", false);
+                    moveFieldBeforeField("traitConfigs", false, "transmogOutfits", false);
                     moveFieldBeforeField("dungeonScore", false, "traitConfigs", false);
 
                     FinishControlBlocks(null, string.Empty);
@@ -291,8 +305,8 @@ namespace UpdateFieldCodeGenerator.Formats
                     _fieldWrites.InsertRange(researchIndex + 1, finishBitPack);
                 }
 
-                moveFieldBeforeField("field_1410", false, "dungeonScore", false);
-                moveFieldBeforeField("frozenPerksVendorItem", false, "field_1410", false);
+                moveFieldBeforeField("levelLinkInfo", false, "dungeonScore", false);
+                moveFieldBeforeField("frozenPerksVendorItem", false, "levelLinkInfo", false);
                 moveFieldBeforeField("questSession", false, "frozenPerksVendorItem", false);
                 moveFieldBeforeField("researchHistory", false, "questSession", false);
                 moveFieldBeforeField("challengeModeData.has_value()", false, "researchHistory", false);
@@ -411,6 +425,32 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("m_owners", false, "m_started", false);
                 }
             }
+            else if (_structureType == typeof(JamMirrorTransmogOutfitData_C))
+            {
+                if (!_create)
+                    moveFieldToEnd("outfitInfo");
+            }
+            else if (_structureType == typeof(JamMirrorTransmogOutfitDataInfo_C))
+            {
+                if (_create)
+                {
+                    moveFieldBeforeField("situationsEnabled", false, "WriteCreate_FinishControlBlocks", false);
+                    moveFieldToEnd("name");
+                }
+                else
+                {
+                    moveFieldBeforeField("icon", false, "name{0}size()", false);
+                }
+            }
+            else if (_structureType == typeof(JamMirrorTransmogOutfitMetadata_C))
+            {
+                if (!_create)
+                {
+                    moveFieldToEnd("locked");
+                    moveFieldToEnd("WriteUpdate_FinishControlBlocks_after_DynamicField_sizes");
+                    moveFieldToEnd("WriteUpdate_FinishBitPack_after_DynamicField_sizes");
+                }
+            }
             else if (_structureType == typeof(CGGameObjectData))
             {
                 if (_create)
@@ -515,16 +555,22 @@ namespace UpdateFieldCodeGenerator.Formats
             else if (_structureType == typeof(JamMirrorDecorStoragePersistedData_C))
             {
                 if (_create)
-                    moveFieldToEnd("m_dyes");
+                {
+                    moveFieldToEnd("m_dyeSlots");
+                    moveFieldToEnd("m_sourceValue");
+                }
                 else
                 {
-                    moveFieldBeforeField("field_20", false, "m_dyes.has_value()", false);
+                    moveFieldBeforeField("m_sourceType", false, "m_dyeSlots.has_value()", false);
+                    moveFieldBeforeField("m_sourceValue{0}size()", false, "m_dyeSlots", false);
                 }
 
                 if (this is TrinityCoreHandler)
                 {
+                    FinishControlBlocks(null, "FinishControlBlocks_afterOptionalBits");
                     FinishBitPack("FinishBitPack_afterOptionalBits");
-                    moveFieldBeforeField("FinishBitPack_afterOptionalBits", false, "m_dyes", false);
+                    moveFieldBeforeField("FinishControlBlocks_afterOptionalBits", false, "m_dyeSlots", false);
+                    moveFieldBeforeField("FinishBitPack_afterOptionalBits", false, "m_dyeSlots", false);
                 }
             }
             else if (_structureType == typeof(CGHousingDecorData))
@@ -562,9 +608,26 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("field_4", false, "m_signatures{0}size()", false);
                 }
             }
+            else if (_structureType == typeof(JamMirrorNeighborhoodOwnershipTransfer_C))
+            {
+                if (_create)
+                    moveFieldToEnd("m_neighborhoodName");
+
+                FinishBitPack("FinishBitPack_afterLength");
+                moveFieldBeforeField("FinishBitPack_afterLength", false, "m_neighborhoodName", false);
+            }
             else if (_structureType == typeof(CGPlayerHouseInfoComponentData))
             {
                 moveFieldToEnd("m_charter");
+                moveFieldToEnd("m_neighborhoodOwnershipTransfer");
+            }
+            else if (_structureType == typeof(JamMirrorNICompletedInitiativesEntry_C))
+            {
+                if (!_create)
+                {
+                    moveFieldBeforeField("m_initiativeID", false, "m_completedMilestones{0}size()", false);
+                    moveFieldToEnd("m_completed");
+                }
             }
         }
 

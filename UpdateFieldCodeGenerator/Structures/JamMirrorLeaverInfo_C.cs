@@ -10,7 +10,7 @@
         public static readonly UpdateField m_consecutiveSuccesses = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_lastPenaltyTime = new UpdateField(typeof(long), UpdateFieldFlag.None);
         public static readonly UpdateField m_leaverExpirationTime = new UpdateField(typeof(long), UpdateFieldFlag.None);
-        public static readonly UpdateField m_unknown_1120 = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_leaverStatus = new UpdateField(typeof(Bits), UpdateFieldFlag.None, bitSize: 1);
+        public static readonly UpdateField m_flags = new UpdateField(typeof(int), UpdateFieldFlag.None);
+        public static readonly UpdateField m_isLeaver = new UpdateField(typeof(bool), UpdateFieldFlag.None, bitSize: 1);
     }
 }

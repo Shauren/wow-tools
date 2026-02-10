@@ -35,6 +35,7 @@ namespace UpdateFieldCodeGenerator
             {ObjectType.PlayerHouseInfoComponent, ObjectType.ActivePlayer},
             {ObjectType.HousingStorage, ObjectType.BaseEntity},
             {ObjectType.HousingFixture, ObjectType.MeshObject},
+            {ObjectType.PlayerInitiativeComponent, ObjectType.ActivePlayer},
         };
 
         public static void Main()
