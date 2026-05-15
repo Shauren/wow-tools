@@ -1079,8 +1079,6 @@ namespace UpdateFieldCodeGenerator.Formats
                     return "BaseEntity";
                 case ObjectType.HousingCornerstone:
                     return "GameObject";
-                case ObjectType.HousingPlotAreaTrigger:
-                    return "AreaTrigger";
                 case ObjectType.NeighborhoodMirrorData:
                     return "BaseEntity";
                 case ObjectType.MirroredPositionData:

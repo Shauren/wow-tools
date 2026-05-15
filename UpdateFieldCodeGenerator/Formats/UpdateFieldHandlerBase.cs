@@ -258,8 +258,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 if (_create)
                 {
                     moveFieldToEnd("challengeModeData");
-                    moveFieldBeforeField("delveData", false, "challengeModeData", false);
-                    moveFieldBeforeField("walkInData", false, "delveData", false);
+                    moveFieldBeforeField("walkInData", false, "challengeModeData", false);
                     moveFieldBeforeField("accountBankTabSettings", false, "walkInData", false);
                     moveFieldBeforeField("characterBankTabSettings", false, "accountBankTabSettings", false);
                     moveFieldBeforeField("petStable", false, "characterBankTabSettings", false);
@@ -267,7 +266,8 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("transmogMetadata", false, "pvpInfo", false);
                     moveFieldBeforeField("viewedOutfit", false, "transmogMetadata", false);
                     moveFieldBeforeField("transmogOutfits", false, "viewedOutfit", false);
-                    moveFieldBeforeField("traitConfigs", false, "transmogOutfits", false);
+                    moveFieldBeforeField("delveData", false, "transmogOutfits", false);
+                    moveFieldBeforeField("traitConfigs", false, "delveData", false);
                     moveFieldBeforeField("dungeonScore", false, "traitConfigs", false);
                 }
                 else
@@ -286,13 +286,13 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("bits_before_accountBankTabSettings", false, "characterBankTabSettings", true);
 
                     moveFieldBeforeField("challengeModeData", false, "invSlots", false);
-                    moveFieldBeforeField("delveData", false, "challengeModeData", false);
-                    moveFieldBeforeField("walkInData", false, "delveData", false);
+                    moveFieldBeforeField("walkInData", false, "challengeModeData", false);
                     moveFieldBeforeField("petStable", false, "walkInData", false);
                     moveFieldBeforeField("transmogMetadata", false, "petStable", false);
                     moveFieldBeforeField("viewedOutfit", false, "transmogMetadata", false);
                     moveFieldBeforeField("transmogOutfits", false, "viewedOutfit", false);
-                    moveFieldBeforeField("traitConfigs", false, "transmogOutfits", false);
+                    moveFieldBeforeField("delveData", false, "transmogOutfits", false);
+                    moveFieldBeforeField("traitConfigs", false, "delveData", false);
                     moveFieldBeforeField("dungeonScore", false, "traitConfigs", false);
 
                     FinishControlBlocks(null, string.Empty);
@@ -310,8 +310,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 moveFieldBeforeField("questSession", false, "frozenPerksVendorItem", false);
                 moveFieldBeforeField("researchHistory", false, "questSession", false);
                 moveFieldBeforeField("challengeModeData.has_value()", false, "researchHistory", false);
-                moveFieldBeforeField("delveData.has_value()", false, "challengeModeData.has_value()", false);
-                moveFieldBeforeField("walkInData.has_value()", false, "delveData.has_value()", false);
+                moveFieldBeforeField("walkInData.has_value()", false, "challengeModeData.has_value()", false);
 
                 if (_create)
                 {
@@ -415,14 +414,16 @@ namespace UpdateFieldCodeGenerator.Formats
             else if (_structureType == typeof(JamMirrorWalkInData_C))
             {
                 if (!_create)
-                    moveFieldBeforeField("Field_18", false, "m_type", false);
+                    moveFieldBeforeField("m_walkInPartyGUID", false, "m_walkInInstanceType", false);
             }
             else if (_structureType == typeof(JamMirrorDelveData_C))
             {
                 if (!_create)
                 {
-                    moveFieldBeforeField("m_owners{0}size()", false, "m_started", false);
-                    moveFieldBeforeField("m_owners", false, "m_started", false);
+                    moveFieldBeforeField("m_playersEligibleForRewards{0}size()", false, "m_entranceType", false);
+                    moveFieldBeforeField("m_activeOptionalAffixIDs{0}size()", false, "m_entranceType", false);
+                    moveFieldBeforeField("m_playersEligibleForRewards", false, "m_restrictingRewardPlayers", false);
+                    moveFieldBeforeField("m_activeOptionalAffixIDs", false, "m_restrictingRewardPlayers", false);
                 }
             }
             else if (_structureType == typeof(JamMirrorTransmogOutfitData_C))
@@ -509,6 +510,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldToEnd("m_forcedPositionAndRotation");
                     moveFieldToEnd("m_overrideMoveCurveY");
                     moveFieldToEnd("m_overrideMoveCurveZ");
+                    moveFieldToEnd("m_unk1205Curve");
                     moveFieldToEnd("m_visualAnim");
                     moveFieldToEnd("m_spline");
                     moveFieldToEnd("m_orbit");

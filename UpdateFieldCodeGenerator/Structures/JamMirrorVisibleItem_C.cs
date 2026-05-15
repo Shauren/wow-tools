@@ -13,5 +13,6 @@
         public static readonly UpdateField m_hasIllusion = new UpdateField(typeof(bool), UpdateFieldFlag.None);
         public static readonly UpdateField m_itemModifiedAppearanceID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_transmogSlotOption = new UpdateField(typeof(byte), UpdateFieldFlag.None);
+        public static readonly UpdateField m_sheatheCategory = new UpdateField(typeof(byte), UpdateFieldFlag.None);
     }
 }

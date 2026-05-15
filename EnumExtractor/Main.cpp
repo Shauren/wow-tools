@@ -32,8 +32,8 @@ void DumpEnum(Enum const& enumData, std::string const& fileNameBase)
 
 void DumpUIErrors(Process& wow)
 {
-    static constexpr std::uintptr_t UIErrorsOffset = 0x3E538C0;
-    static constexpr std::size_t UIErrorsSize = 1237;
+    static constexpr std::uintptr_t UIErrorsOffset = 0x3EC8270;
+    static constexpr std::size_t UIErrorsSize = 1240;
 
     Enum uiErrors;
     uiErrors.SetName("class GameError");
@@ -69,14 +69,14 @@ struct WowCS_FragmentDefinition
 
 void DumpWowCSData(Process& wow)
 {
-    static constexpr std::uintptr_t FragmentsOffset = 0x3E8CBF0;
+    static constexpr std::uintptr_t FragmentsOffset = 0x4095F70;
     static constexpr std::size_t FragmentsSize = 256;
 
     std::ofstream out("WowCSEntityDefinitions.h");
 
     Enum fragmentsEnum;
     fragmentsEnum.SetName("WowCSEntityFragments");
-    fragmentsEnum.SetPaddingAfterValueName(28);
+    fragmentsEnum.SetPaddingAfterValueName(32);
     std::vector<WowCS_FragmentDefinition> fragments = wow.ReadArray<WowCS_FragmentDefinition>(FragmentsOffset, FragmentsSize);
     for (std::size_t i = 0; i < fragments.size(); ++i)
     {
@@ -104,8 +104,8 @@ void DumpWowCSData(Process& wow)
 
 void DumpResponseCodes(Process& wow)
 {
-    static constexpr std::uintptr_t Offset = 0x35EB830;
-    static constexpr std::size_t Size = 112;
+    static constexpr std::uintptr_t Offset = 0x3666DE0;
+    static constexpr std::size_t Size = 113;
 
     Enum responseCodes;
     responseCodes.SetName("ResponseCodes");
@@ -123,7 +123,7 @@ void DumpResponseCodes(Process& wow)
 
 int main()
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT.exe"), 65769, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT.exe"), 67088, true);
     if (!wow)
         return 1;
 

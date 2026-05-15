@@ -13,5 +13,6 @@
         public static readonly UpdateField m_charter = new UpdateField(typeof(JamMirrorNeighborhoodCharter_C), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_editorMode = new UpdateField(typeof(byte), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_neighborhoodOwnershipTransfer = new UpdateField(typeof(JamMirrorNeighborhoodOwnershipTransfer_C), UpdateFieldFlag.Owner);
+        public static readonly UpdateField m_currentHouse = new UpdateField(typeof(WowGuid), UpdateFieldFlag.Owner);
     }
 }

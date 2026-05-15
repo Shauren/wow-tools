@@ -24,7 +24,6 @@
         HousingRoomComponentMesh,
         HousingPlayerHouse,
         HousingCornerstone,
-        HousingPlotAreaTrigger,
         NeighborhoodMirrorData,
         MirroredPositionData,
         PlayerHouseInfoComponent,

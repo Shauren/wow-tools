@@ -165,11 +165,10 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField accountBankTabSettings = new UpdateField(typeof(DynamicUpdateField<JamMirrorBankTabSettings_C>), UpdateFieldFlag.None, bitSize: 3);
         public static readonly UpdateField walkInDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorWalkInData_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("walkInData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField walkInData = new UpdateField(typeof(BlzOptionalField<JamMirrorWalkInData_C>), UpdateFieldFlag.None);
-        public static readonly UpdateField delveDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorDelveData_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("delveData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
-        public static readonly UpdateField delveData = new UpdateField(typeof(BlzOptionalField<JamMirrorDelveData_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField delveData = new UpdateField(typeof(MapUpdateField<int, JamMirrorDelveData_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField transmogOutfits = new UpdateField(typeof(MapUpdateField<uint, JamMirrorTransmogOutfitData_C>), UpdateFieldFlag.None);
         public static readonly UpdateField challengeModeDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorChallengeModeData_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("challengeModeData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField challengeModeData = new UpdateField(typeof(BlzOptionalField<JamMirrorChallengeModeData_C>), UpdateFieldFlag.None);
-        public static readonly UpdateField transmogOutfits = new UpdateField(typeof(MapUpdateField<uint, JamMirrorTransmogOutfitData_C>), UpdateFieldFlag.None);
         public static readonly UpdateField viewedOutfit = new UpdateField(typeof(JamMirrorTransmogOutfitData_C), UpdateFieldFlag.None);
         public static readonly UpdateField transmogMetadata = new UpdateField(typeof(JamMirrorTransmogOutfitMetadata_C), UpdateFieldFlag.None);
         public static readonly UpdateField backpackAutoSortDisabled = new UpdateField(typeof(bool), UpdateFieldFlag.None);

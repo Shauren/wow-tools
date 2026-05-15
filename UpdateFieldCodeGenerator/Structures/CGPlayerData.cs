@@ -27,6 +27,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField duelTeam = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField guildTimeStamp = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField questLog = new UpdateField(typeof(JamMirrorQuestLog_C[]), UpdateFieldFlag.PartyMember, 175, customFlag: CustomUpdateFieldFlag.HasDynamicChangesMask);
+        public static readonly UpdateField questLogQuestIdToIndex = new UpdateField(typeof(MapUpdateField<int, int>), UpdateFieldFlag.PartyMember);
         public static readonly UpdateField questSessionQuestLog = new UpdateField(typeof(DynamicUpdateField<JamMirrorQuestLog_C>), UpdateFieldFlag.PartyMember, customFlag: CustomUpdateFieldFlag.HasDynamicChangesMask);
         public static readonly UpdateField visibleItems = new UpdateField(typeof(JamMirrorVisibleItem_C[]), UpdateFieldFlag.None, 19);
         public static readonly UpdateField playerTitle = new UpdateField(typeof(int), UpdateFieldFlag.None);

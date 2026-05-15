@@ -29,7 +29,6 @@ namespace UpdateFieldCodeGenerator
             {ObjectType.HousingRoomComponentMesh, ObjectType.MeshObject},
             {ObjectType.HousingPlayerHouse, ObjectType.BaseEntity},
             {ObjectType.HousingCornerstone, ObjectType.GameObject},
-            {ObjectType.HousingPlotAreaTrigger, ObjectType.AreaTrigger},
             {ObjectType.NeighborhoodMirrorData, ObjectType.BaseEntity},
             {ObjectType.MirroredPositionData, ObjectType.BaseEntity},
             {ObjectType.PlayerHouseInfoComponent, ObjectType.ActivePlayer},
