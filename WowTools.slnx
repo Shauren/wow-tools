@@ -1,0 +1,25 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Win32" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="EnumExtractor/EnumExtractor.vcxproj" Id="0fc810f9-59cd-4f5f-8589-75da6243e673">
+    <BuildDependency Project="shared/shared.vcxproj" />
+  </Project>
+  <Project Path="GameObjectPropertyExtractor/GameObjectPropertyExtractor.vcxproj" Id="7d300fde-554a-4c19-98d6-5bd87f6a9b81">
+    <BuildDependency Project="shared/shared.vcxproj" />
+  </Project>
+  <Project Path="OpcodeToConnectionGenerator/OpcodeToConnectionGenerator.vcxproj" Id="1a52ab80-9486-4f5d-b247-031e8575c4e8">
+    <BuildDependency Project="shared/shared.vcxproj" />
+  </Project>
+  <Project Path="RedirectDecrypt/RedirectDecrypt.csproj" Id="d6071ea5-14c9-4fe9-9cec-d3d4e9335e21">
+    <Platform Solution="*|Win32" Project="x86" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="shared/shared.vcxproj" Id="809cc30d-558f-46ed-87e9-06af0bc63fb6" />
+  <Project Path="UpdateFieldCodeGenerator/UpdateFieldCodeGenerator.csproj" />
+  <Project Path="UpdateFieldExtractor/UpdateFieldExtractor.vcxproj" Id="85a7502e-e6a3-4638-b369-5831629c24e1" />
+  <Project Path="UpdateFieldExtractorLib/UpdateFieldExtractorLib.vcxproj" Id="134032ca-7960-4c7e-b4ef-056d5141d7d6">
+    <BuildDependency Project="shared/shared.vcxproj" />
+  </Project>
+</Solution>
