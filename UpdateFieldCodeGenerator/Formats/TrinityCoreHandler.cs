@@ -426,6 +426,8 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 flowControl.Add(new FlowControlBlock { Statement = $"if ({name}.has_value())" });
                 type = type.GenericTypeArguments[0];
+                if (Type.GetTypeCode(type) != TypeCode.Object)
+                    nameUsedToWrite = $"*{nameUsedToWrite}";
             }
 
             if ((updateField.CustomFlag & CustomUpdateFieldFlag.ViewerDependent) != CustomUpdateFieldFlag.None)
@@ -935,6 +937,12 @@ namespace UpdateFieldCodeGenerator.Formats
             {
                 typeName = TypeHandler.GetFriendlyName(fieldGeneratedType.GetElementType());
                 line = $"    std::array<{typeName}, {declarationType.Size}> {name} = {{}};";
+            }
+            else if (typeof(BlzOptionalField).IsAssignableFrom(declarationType.Type))
+            {
+                var elementType = PrepareFieldType(fieldGeneratedType.GenericTypeArguments[0]);
+                typeName = TypeHandler.GetFriendlyName(elementType);
+                line = $"    Optional<{typeName}> {name};";
             }
             else
             {
