@@ -19,6 +19,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_createdBy = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_guildGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_flags = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField m_flagsB = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_parentRotation = new UpdateField(typeof(Quaternion), UpdateFieldFlag.None);
         public static readonly UpdateField m_factionTemplate = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_state = new UpdateField(typeof(sbyte), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);

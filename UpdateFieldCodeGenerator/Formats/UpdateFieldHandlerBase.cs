@@ -387,11 +387,36 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             else if (_structureType == typeof(JamMirrorCraftingOrderItem_C))
             {
+                FinishBitPack("FinishBitPack_afterOptionalBit");
+
+                moveFieldToEnd("m_reagent");
+
+                if (this is WowPacketParserHandler)
+                {
+                    FinishControlBlocks(null, "FinishControlBlocks_afterOptionalBit");
+
+                    moveFieldToEnd("FinishControlBlocks_afterOptionalBit");
+                    moveFieldToEnd("FinishBitPack_afterOptionalBit");
+                    moveFieldToEnd("m_dataSlotIndex.has_value()");
+                }
+                else
+                {
+                    moveFieldToEnd("m_dataSlotIndex.has_value()");
+                    moveFieldToEnd("FinishBitPack_afterOptionalBit");
+                }
+
+                moveFieldToEnd("m_dataSlotIndex");
+            }
+            else if (_structureType == typeof(JamMirrorCraftingReagentBase_C))
+            {
                 if (_create)
-                    moveFieldBeforeField("m_dataSlotIndex.has_value()", false, "m_dataSlotIndex", false);
+                {
+                    moveFieldBeforeField("m_currencyID.has_value()", false, "m_itemID", false);
+                    moveFieldBeforeField("m_itemID.has_value()", false, "m_currencyID.has_value()", false);
+                }
 
                 FinishBitPack("FinishBitPack_afterOptionalBit");
-                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_dataSlotIndex", false);
+                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_itemID", false);
             }
             else if (_structureType == typeof(JamMirrorStablePetInfo_C))
             {
