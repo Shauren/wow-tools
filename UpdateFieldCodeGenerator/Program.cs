@@ -254,8 +254,8 @@ namespace UpdateFieldCodeGenerator
             if ((allFields.ContainsKey(CreateTypeOrder.DefaultWithBits) || allFields.ContainsKey(CreateTypeOrder.ArrayWithBits))
                 && (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional)))
             {
-                fieldHandler.FinishControlBlocks("WriteCreate_FinishControlBlocks");
-                fieldHandler.FinishBitPack("WriteCreate_FinishBitPack");
+                fieldHandler.FinishControlBlocksIn(fieldHandler.WowPacketParser, "WriteCreate_FinishControlBlocks");
+                fieldHandler.FinishBitPackIn(fieldHandler.WowPacketParser, "WriteCreate_FinishBitPack");
             }
 
             if (allFields.TryGetValue(CreateTypeOrder.Bits, out fieldGroup))
@@ -265,6 +265,12 @@ namespace UpdateFieldCodeGenerator
             if (allFields.TryGetValue(CreateTypeOrder.Optional, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnOptionalFieldInitCreate(Name, Field);
+
+            if (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional))
+            {
+                fieldHandler.FinishControlBlocksIn(fieldHandler.TrinityCore, "WriteCreate_FinishControlBlocks");
+                fieldHandler.FinishBitPackIn(fieldHandler.TrinityCore, "WriteCreate_FinishBitPack");
+            }
 
             if (allFields.TryGetValue(CreateTypeOrder.Optional, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
@@ -374,8 +380,8 @@ namespace UpdateFieldCodeGenerator
 
             if (optionalFields.Count > 0)
             {
-                fieldHandler.FinishControlBlocks("WriteUpdate_FinishControlBlocks_after_Optionals");
-                fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_after_Optionals");
+                fieldHandler.FinishControlBlocks("WriteUpdate_FinishControlBlocks_Optionals");
+                fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_Optionals");
 
                 foreach (var (Field, Name) in optionalFields)
                     fieldHandler.OnField(Name, Field);

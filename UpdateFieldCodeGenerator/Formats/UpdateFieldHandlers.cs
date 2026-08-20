@@ -2,7 +2,7 @@
 {
     public class UpdateFieldHandlers : IDisposable
     {
-        private readonly ICollection<IUpdateFieldHandler> _handlers;
+        private readonly IList<IUpdateFieldHandler> _handlers;
         private readonly Dictionary<IUpdateFieldHandler, IReadOnlyList<FlowControlBlock>> _previousControlFlowDict;
 
         public UpdateFieldHandlers()
@@ -16,6 +16,9 @@
             foreach (var handler in _handlers)
                 _previousControlFlowDict[handler] = null;
         }
+
+        public IUpdateFieldHandler TrinityCore => _handlers[0];
+        public IUpdateFieldHandler WowPacketParser => _handlers[1];
 
         public void BeforeStructures()
         {
@@ -81,16 +84,24 @@
         public void FinishControlBlocks(string tag)
         {
             foreach (var handler in _handlers)
-            {
-                handler.FinishControlBlocks(_previousControlFlowDict[handler], tag);
-                _previousControlFlowDict[handler] = null;
-            }
+                FinishControlBlocksIn(handler, tag);
+        }
+
+        public void FinishControlBlocksIn(IUpdateFieldHandler handler, string tag)
+        {
+            handler.FinishControlBlocks(_previousControlFlowDict[handler], tag);
+            _previousControlFlowDict[handler] = null;
         }
 
         public void FinishBitPack(string tag)
         {
             foreach (var handler in _handlers)
-                handler.FinishBitPack(tag);
+                FinishBitPackIn(handler, tag);
+        }
+
+        public void FinishBitPackIn(IUpdateFieldHandler handler, string tag)
+        {
+            handler.FinishBitPack(tag);
         }
 
         public void Dispose()
