@@ -104,7 +104,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _dynamicChangesMaskTypes = new List<string>();
         }
 
-        public abstract void OnStructureEnd(bool needsFlush, bool forceMaskMask);
+        public abstract void OnStructureEnd(bool forceMaskMask);
 
         public abstract IReadOnlyList<FlowControlBlock> OnField(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousBlock);
         public abstract IReadOnlyList<FlowControlBlock> OnDynamicFieldSizeCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);

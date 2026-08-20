@@ -133,7 +133,7 @@ namespace UpdateFieldCodeGenerator.Formats
             _viewerDependentVariables.Clear();
         }
 
-        public override void OnStructureEnd(bool needsFlush, bool forceMaskMask)
+        public override void OnStructureEnd(bool forceMaskMask)
         {
             var structureName = RenameType(_structureType);
 

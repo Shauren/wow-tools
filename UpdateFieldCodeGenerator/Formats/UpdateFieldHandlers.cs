@@ -38,11 +38,11 @@
                 handler.OnStructureBegin(structureType, objectType, create, writeUpdateMasks);
         }
 
-        public void OnStructureEnd(bool needsFlush, bool forceMaskMask)
+        public void OnStructureEnd(bool forceMaskMask)
         {
             FinishControlBlocks("OnStructureEnd");
             foreach (var handler in _handlers)
-                handler.OnStructureEnd(needsFlush, forceMaskMask);
+                handler.OnStructureEnd(forceMaskMask);
         }
 
         public void OnField(string name, UpdateField updateField)

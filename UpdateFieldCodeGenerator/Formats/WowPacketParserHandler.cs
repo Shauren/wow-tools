@@ -89,7 +89,7 @@ namespace UpdateFieldCodeGenerator.Formats
             }
         }
 
-        public override void OnStructureEnd(bool needsFlush, bool forceMaskMask)
+        public override void OnStructureEnd(bool forceMaskMask)
         {
             if (_create)
             {

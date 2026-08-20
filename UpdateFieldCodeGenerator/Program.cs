@@ -264,7 +264,7 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
-            fieldHandler.OnStructureEnd(StructureHasBitFields(dataType), false);
+            fieldHandler.OnStructureEnd(false);
         }
 
         private static void WriteUpdate(Type dataType, ObjectType objectType, UpdateFieldHandlers fieldHandler)
@@ -366,8 +366,7 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
-            fieldHandler.OnStructureEnd(StructureHasBitFields(dataType),
-                hasChangesMask != null && hasChangesMask.ForceMaskMask);
+            fieldHandler.OnStructureEnd(hasChangesMask != null && hasChangesMask.ForceMaskMask);
         }
 
         private static (UpdateField Field, string Name) ResolveField(FieldInfo fieldInfo)
@@ -430,55 +429,6 @@ namespace UpdateFieldCodeGenerator
                 return UpdateTypeOrder.Bits;
 
             return UpdateTypeOrder.Default;
-        }
-
-        private static int GetStructureSize(Type type)
-        {
-            return type.GetFields(BindingFlags.Static | BindingFlags.Public)
-                .Where(field => typeof(UpdateField).IsAssignableFrom(field.FieldType))
-                .Select(field => field.GetValue(null) as UpdateField)
-                .Where(field => field.SizeForField == null)
-                .Aggregate(0, (total, current) =>
-                {
-                    return total + (current.BitSize > 0 ? (current.BitSize + 7) / 8 : GetFieldSize(current.Type)) * Math.Max(current.Size, 1);
-                });
-        }
-
-        private static int GetFieldSize(Type type)
-        {
-            switch (Type.GetTypeCode(type))
-            {
-                case TypeCode.Object:
-                    if (type.IsArray)
-                        return GetFieldSize(type.GetElementType());
-                    return GetStructureSize(type);
-                case TypeCode.Boolean:
-                case TypeCode.SByte:
-                case TypeCode.Byte:
-                    return 1;
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                    return 2;
-                case TypeCode.Int32:
-                case TypeCode.UInt32:
-                case TypeCode.Single:
-                    return 4;
-                case TypeCode.Int64:
-                case TypeCode.UInt64:
-                    return 8;
-                default:
-                    break;
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(type));
-        }
-
-        private static bool StructureHasBitFields(Type type)
-        {
-            return type.GetFields(BindingFlags.Static | BindingFlags.Public)
-                .Where(field => typeof(UpdateField).IsAssignableFrom(field.FieldType))
-                .Select(field => field.GetValue(null) as UpdateField)
-                .Any(field => field.Type == typeof(bool) || (field.SizeForField == null && field.BitSize > 0));
         }
     }
 }
