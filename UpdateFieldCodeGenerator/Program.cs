@@ -258,18 +258,28 @@ namespace UpdateFieldCodeGenerator
                 fieldHandler.FinishBitPackIn(fieldHandler.WowPacketParser, "WriteCreate_FinishBitPack");
             }
 
+            var bitsFields = Enumerable.Empty<(UpdateField Field, string Name)>();
             if (allFields.TryGetValue(CreateTypeOrder.Bits, out fieldGroup))
-                foreach (var (Field, Name) in fieldGroup)
-                    fieldHandler.OnField(Name, Field);
-
+                bitsFields = bitsFields.Concat(fieldGroup);
             if (allFields.TryGetValue(CreateTypeOrder.Optional, out fieldGroup))
-                foreach (var (Field, Name) in fieldGroup)
-                    fieldHandler.OnOptionalFieldInitCreate(Name, Field);
+                bitsFields = bitsFields.Concat(fieldGroup);
 
-            if (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional))
+            var valueTuples = bitsFields.ToList();
+            if (valueTuples.Count > 0)
             {
-                fieldHandler.FinishControlBlocksIn(fieldHandler.TrinityCore, "WriteCreate_FinishControlBlocks");
-                fieldHandler.FinishBitPackIn(fieldHandler.TrinityCore, "WriteCreate_FinishBitPack");
+                foreach (var (Field, Name) in valueTuples.OrderBy(field => field.Field.Order))
+                {
+                    if (typeof(BlzOptionalField).IsAssignableFrom(Field.Type))
+                        fieldHandler.OnOptionalFieldInitCreate(Name, Field);
+                    else
+                        fieldHandler.OnField(Name, Field);
+                }
+
+                if (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional))
+                {
+                    fieldHandler.FinishControlBlocksIn(fieldHandler.TrinityCore, "WriteCreate_FinishControlBlocks");
+                    fieldHandler.FinishBitPackIn(fieldHandler.TrinityCore, "WriteCreate_FinishBitPack");
+                }
             }
 
             if (allFields.TryGetValue(CreateTypeOrder.Optional, out fieldGroup))
