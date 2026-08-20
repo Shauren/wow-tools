@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace UpdateFieldCodeGenerator.Structures
+﻿namespace UpdateFieldCodeGenerator.Structures
 {
     [HasChangesMask(forceMaskMask: true)]
     public class CGActivePlayerData
@@ -131,9 +129,8 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField multiFloorExploration = new UpdateField(typeof(DynamicUpdateField<JamMirrorMultiFloorExplore_C>), UpdateFieldFlag.None);
         public static readonly UpdateField recipeProgression = new UpdateField(typeof(DynamicUpdateField<JamMirrorRecipeProgressionInfo_C>), UpdateFieldFlag.None);
         public static readonly UpdateField frozenPerksVendorItem = new UpdateField(typeof(PerksVendorItem), UpdateFieldFlag.None);
-        public static readonly UpdateField questSessionExists = new UpdateField(typeof(BlzOptionalField<JamMirrorQuestSession_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("questSession", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
-        public static readonly UpdateField levelLinkInfo = new UpdateField(typeof(JamMirrorLevelLinkInfo_C), UpdateFieldFlag.None);
         public static readonly UpdateField questSession = new UpdateField(typeof(BlzOptionalField<JamMirrorQuestSession_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField levelLinkInfo = new UpdateField(typeof(JamMirrorLevelLinkInfo_C), UpdateFieldFlag.None);
         public static readonly UpdateField replayedQuests = new UpdateField(typeof(DynamicUpdateField<JamMirrorReplayedQuest_C>), UpdateFieldFlag.None);
         public static readonly UpdateField taskQuests = new UpdateField(typeof(DynamicUpdateField<JamMirrorQuestLog_C>), UpdateFieldFlag.None);
         public static readonly UpdateField disabledSpells = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
@@ -157,17 +154,14 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField itemUpgradeHighTrinketItemID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField itemUpgradeHighTrinketWatermark = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField lootHistoryInstanceID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
-        public static readonly UpdateField petStableExists = new UpdateField(typeof(BlzOptionalField<JamMirrorStableInfo_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("petStable", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField petStable = new UpdateField(typeof(BlzOptionalField<JamMirrorStableInfo_C>), UpdateFieldFlag.None);
         public static readonly UpdateField trackedCollectableSources = new UpdateField(typeof(DynamicUpdateField<JamMirrorCollectableSourceTrackedData_C>), UpdateFieldFlag.None);
         public static readonly UpdateField requiredMountCapabilityFlags = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField characterBankTabSettings = new UpdateField(typeof(DynamicUpdateField<JamMirrorBankTabSettings_C>), UpdateFieldFlag.None, bitSize: 3);
         public static readonly UpdateField accountBankTabSettings = new UpdateField(typeof(DynamicUpdateField<JamMirrorBankTabSettings_C>), UpdateFieldFlag.None, bitSize: 3);
-        public static readonly UpdateField walkInDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorWalkInData_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("walkInData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField walkInData = new UpdateField(typeof(BlzOptionalField<JamMirrorWalkInData_C>), UpdateFieldFlag.None);
         public static readonly UpdateField delveData = new UpdateField(typeof(MapUpdateField<int, JamMirrorDelveData_C>), UpdateFieldFlag.None);
         public static readonly UpdateField transmogOutfits = new UpdateField(typeof(MapUpdateField<uint, JamMirrorTransmogOutfitData_C>), UpdateFieldFlag.None);
-        public static readonly UpdateField challengeModeDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorChallengeModeData_C>), UpdateFieldFlag.None, typeof(CGActivePlayerData).GetField("challengeModeData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField challengeModeData = new UpdateField(typeof(BlzOptionalField<JamMirrorChallengeModeData_C>), UpdateFieldFlag.None);
         public static readonly UpdateField viewedOutfit = new UpdateField(typeof(JamMirrorTransmogOutfitData_C), UpdateFieldFlag.None);
         public static readonly UpdateField transmogMetadata = new UpdateField(typeof(JamMirrorTransmogOutfitMetadata_C), UpdateFieldFlag.None);

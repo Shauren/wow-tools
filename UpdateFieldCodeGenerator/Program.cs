@@ -357,18 +357,29 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
-            if (allFields.TryGetValue(UpdateTypeOrder.Optional, out fieldGroup))
+            var optionalFields = new List<(UpdateField Field, string Name)>();
+            if (allFields.TryGetValue(UpdateTypeOrder.Default, out fieldGroup))
             {
-                fieldHandler.FinishControlBlocks("WriteUpdate_FinishControlBlocks_before_Optionals");
-                fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_before_Optionals");
-
                 foreach (var (Field, Name) in fieldGroup)
-                    fieldHandler.OnOptionalFieldInitUpdate(Name, Field);
+                {
+                    if (typeof(BlzOptionalField).IsAssignableFrom(Field.Type))
+                    {
+                        fieldHandler.OnOptionalFieldInitUpdate(Name, Field);
+                        optionalFields.Add((Field, Name));
+                    }
+                    else
+                        fieldHandler.OnField(Name, Field);
+                }
             }
 
-            if (allFields.TryGetValue(UpdateTypeOrder.Optional, out fieldGroup))
-                foreach (var (Field, Name) in fieldGroup)
+            if (optionalFields.Count > 0)
+            {
+                fieldHandler.FinishControlBlocks("WriteUpdate_FinishControlBlocks_after_Optionals");
+                fieldHandler.FinishBitPack("WriteUpdate_FinishBitPack_after_Optionals");
+
+                foreach (var (Field, Name) in optionalFields)
                     fieldHandler.OnField(Name, Field);
+            }
 
             if (allFields.TryGetValue(UpdateTypeOrder.Array, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
@@ -408,8 +419,8 @@ namespace UpdateFieldCodeGenerator
             if (typeof(bool).IsAssignableFrom(fieldType.Type))
                 return CreateTypeOrder.Bits;
 
-            //if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
-            //    return CreateTypeOrder.Optional;
+            if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
+                return CreateTypeOrder.Optional;
 
             if (fieldType.Type.IsArray)
             {
@@ -433,9 +444,6 @@ namespace UpdateFieldCodeGenerator
 
             if (typeof(DynamicUpdateField).IsAssignableFrom(fieldType.Type))
                 return UpdateTypeOrder.JamDynamicField;
-
-            //if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
-            //    return UpdateTypeOrder.Optional;
 
             if (typeof(BlzVectorField).IsAssignableFrom(fieldType.Type))
                 return UpdateTypeOrder.BlzVector;

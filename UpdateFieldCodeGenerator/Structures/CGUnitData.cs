@@ -153,7 +153,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField nameplateDistanceMod = new UpdateField(typeof(float), UpdateFieldFlag.None);
         public static readonly UpdateField autoAttackRangeMod = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "When UnitFlags3 & 0x40000000 is set, increases some autoattack range by this amount");
         public static readonly UpdateField nameplateAttachToGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "When set, nameplate of this unit will instead appear on that object");
-        public static readonly UpdateField assistActionDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorUnitAssistActionData_C>), UpdateFieldFlag.None, typeof(CGUnitData).GetField("assistActionData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField assistActionData = new UpdateField(typeof(BlzOptionalField<JamMirrorUnitAssistActionData_C>), UpdateFieldFlag.None);
     }
 }

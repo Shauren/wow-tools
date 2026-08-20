@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace UpdateFieldCodeGenerator.Structures
+﻿namespace UpdateFieldCodeGenerator.Structures
 {
     [HasChangesMask(blockGroupSize: 4)]
     public class JamMirrorCraftingOrderItem_C
@@ -12,7 +10,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_reagent = new UpdateField(typeof(JamMirrorCraftingReagentBase_C), UpdateFieldFlag.None);
         public static readonly UpdateField m_quantity = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_reagentQuality = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_dataSlotIndexExists = new UpdateField(typeof(BlzOptionalField<ItemInstance>), UpdateFieldFlag.None, typeof(JamMirrorCraftingOrderItem_C).GetField("m_dataSlotIndex", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField m_dataSlotIndex = new UpdateField(typeof(BlzOptionalField<byte>), UpdateFieldFlag.None);
         public static readonly UpdateField m_flags = new UpdateField(typeof(uint), UpdateFieldFlag.None);
     }

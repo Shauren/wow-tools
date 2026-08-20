@@ -34,7 +34,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_uiWidgetItemQuality = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_uiWidgetItemCount = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_worldEffects = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
-        public static readonly UpdateField m_assistActionDataExists = new UpdateField(typeof(BlzOptionalField<JamMirrorGameObjectAssistActionData_C>), UpdateFieldFlag.None, typeof(CGGameObjectData).GetField("m_assistActionData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField m_assistActionData = new UpdateField(typeof(BlzOptionalField<JamMirrorGameObjectAssistActionData_C>), UpdateFieldFlag.None);
     }
 }

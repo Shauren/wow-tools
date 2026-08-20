@@ -60,7 +60,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField visualItemReplacements = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField visibleEquipableSpells = new UpdateField(typeof(ItemInstance[]), UpdateFieldFlag.None, 16);
         public static readonly UpdateField plunderstormItemDisplayID = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 19);
-        public static readonly UpdateField declinedNamesExists = new UpdateField(typeof(BlzOptionalField<JamMirrorDeclinedNames_C>), UpdateFieldFlag.None, typeof(CGPlayerData).GetField("declinedNames", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField declinedNames = new UpdateField(typeof(BlzOptionalField<JamMirrorDeclinedNames_C>), UpdateFieldFlag.None);
         public static readonly UpdateField personalTabard = new UpdateField(typeof(JamMirrorCustomTabardInfo_C), UpdateFieldFlag.None);
         public static readonly UpdateField npcAsPlayerInfo = new UpdateField(typeof(JamMirrorNPCAsPlayerInfo_C), UpdateFieldFlag.None);

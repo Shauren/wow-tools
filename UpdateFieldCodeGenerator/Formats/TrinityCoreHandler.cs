@@ -589,7 +589,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 nameUsedToWrite += "[i]";
             }
 
-            _fieldWrites.Add((name, true, (pcf) =>
+            _fieldWrites.Add((name + ".has_value()", false, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
                 _source.WriteLine($"{GetIndent()}data.WriteBit({nameUsedToWrite}.has_value());");
@@ -618,10 +618,10 @@ namespace UpdateFieldCodeGenerator.Formats
             if (_writeUpdateMasks)
             {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
-                flowControl.RemoveAt(1); // bit generated but not checked for has_value
+                flowControl.RemoveAt(_blockGroupSize > 0 ? 1 : 0); // bit generated but not checked for has_value
             }
 
-            _fieldWrites.Add((name, true, (pcf) =>
+            _fieldWrites.Add((name + ".has_value()", false, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
                 _source.WriteLine($"{GetIndent()}data.WriteBit({nameUsedToWrite}.has_value());");

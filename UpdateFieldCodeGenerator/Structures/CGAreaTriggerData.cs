@@ -32,7 +32,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_movementStartTime = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_creationTime = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_ZOffset = new UpdateField(typeof(float), UpdateFieldFlag.None);
-        public static readonly UpdateField m_targetRollPitchYawExists = new UpdateField(typeof(BlzOptionalField<Vector3>), UpdateFieldFlag.None, typeof(CGAreaTriggerData).GetField("m_targetRollPitchYaw", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField m_targetRollPitchYaw = new UpdateField(typeof(BlzOptionalField<Vector3>), UpdateFieldFlag.None);
         public static readonly UpdateField m_flags = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_visualAnim = new UpdateField(typeof(JamMirrorVisualAnim_C), UpdateFieldFlag.None);
@@ -41,7 +40,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_morphCurveId = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_moveCurveId = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_facing = new UpdateField(typeof(float), UpdateFieldFlag.None);
-        public static readonly UpdateField m_forcedPositionAndRotationExists = new UpdateField(typeof(BlzOptionalField<JamMirrorForceSetAreaTriggerPositionAndRotation_C>), UpdateFieldFlag.None, typeof(CGAreaTriggerData).GetField("m_forcedPositionAndRotation", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField m_forcedPositionAndRotation = new UpdateField(typeof(BlzOptionalField<JamMirrorForceSetAreaTriggerPositionAndRotation_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_pathType = new UpdateField(typeof(int), UpdateFieldFlag.None, updateBitGroup: "m_pathData");
         public static readonly UpdateField m_shapeType = new UpdateField(typeof(byte), UpdateFieldFlag.None, updateBitGroup: "m_shapeData");

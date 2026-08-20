@@ -22,10 +22,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_npcTreasureID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_reagents = new UpdateField(typeof(DynamicUpdateField<JamMirrorCraftingOrderItem_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_customerNotesSize = new UpdateField(typeof(string), UpdateFieldFlag.None, typeof(JamMirrorCraftingOrderData_C).GetField("m_customerNotes", BindingFlags.Static | BindingFlags.Public), bitSize: 10);
-        public static readonly UpdateField m_customerExists = new UpdateField(typeof(BlzOptionalField<ItemInstance>), UpdateFieldFlag.None, typeof(JamMirrorCraftingOrderData_C).GetField("m_customer", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
-        public static readonly UpdateField m_npcCustomerExists = new UpdateField(typeof(BlzOptionalField<ItemInstance>), UpdateFieldFlag.None, typeof(JamMirrorCraftingOrderData_C).GetField("m_npcCustomer", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
-        public static readonly UpdateField m_outputItemExists = new UpdateField(typeof(BlzOptionalField<ItemInstance>), UpdateFieldFlag.None, typeof(JamMirrorCraftingOrderData_C).GetField("m_outputItem", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
-        public static readonly UpdateField m_outputItemDataExists = new UpdateField(typeof(BlzOptionalField<ItemInstance>), UpdateFieldFlag.None, typeof(JamMirrorCraftingOrderData_C).GetField("m_outputItemData", BindingFlags.Static | BindingFlags.Public), bitSize: 1);
         public static readonly UpdateField m_customerNotes = new UpdateField(typeof(string), UpdateFieldFlag.None, bitSize: 10);
         public static readonly UpdateField m_customer = new UpdateField(typeof(BlzOptionalField<JamMirrorCraftingOrderCustomer_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_npcCustomer = new UpdateField(typeof(BlzOptionalField<JamMirrorCraftingOrderNpcCustomer_C>), UpdateFieldFlag.None);

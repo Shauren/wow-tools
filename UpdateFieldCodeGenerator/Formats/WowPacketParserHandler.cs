@@ -223,15 +223,6 @@ namespace UpdateFieldCodeGenerator.Formats
                 flowControl.Add(new FlowControlBlock { Statement = $"if (has{name})" });
                 type = type.GenericTypeArguments[0];
                 declarationType = type;
-                if (updateField.SizeForField == null)
-                {
-                    var initVar = $"{name} = false;";
-                    if (updateField.Type.IsArray)
-                        initVar = $"{name}[] = new bool[{updateField.Size}];";
-
-                    _optionalInitVariables.Add(initVar);
-                }
-
             }
             if (typeof(Bits).IsAssignableFrom(type))
             {
@@ -372,7 +363,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
             _optionalInitVariables.Add(initVar);
 
-            _fieldWrites.Add((name, true, (pcf) =>
+            _fieldWrites.Add((name + ".has_value()", false, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
                 _source.WriteLine($"{GetIndent()}has{name} = packet.ReadBit(\"Has{name}\", indexes);");
@@ -400,12 +391,12 @@ namespace UpdateFieldCodeGenerator.Formats
             if (_writeUpdateMasks)
             {
                 GenerateBitIndexConditions(updateField, name, flowControl, previousControlFlow, arrayLoopBlockIndex);
-                flowControl.RemoveAt(1); // bit generated but not checked for has_value
+                flowControl.RemoveAt(_blockGroupSize > 0 ? 1 : 0); // bit generated but not checked for has_value
             }
 
             _optionalInitVariables.Add(initVar);
 
-            _fieldWrites.Add((name, true, (pcf) =>
+            _fieldWrites.Add((name + ".has_value()", false, (pcf) =>
             {
                 WriteControlBlocks(_source, flowControl, pcf);
                 _source.WriteLine($"{GetIndent()}has{name} = packet.ReadBit(\"Has{name}\", indexes);");
