@@ -23,13 +23,31 @@ namespace UpdateFieldCodeGenerator.Formats
 
         private readonly string _changesMaskName = "_changesMask";
         private string _owningObjectType;
-        private readonly IList<Action> _delayedHeaderWrites = new List<Action>();
-        private readonly IList<string> _changesMaskClears = new List<string>();
+        private readonly IComparer<string> _fieldDeclarationComparer;
+        private readonly IList<(string SortProperty, Action Writer)> _delayedHeaderWrites = [];
+        private readonly IList<(string SortProperty, string Field)> _changesMaskClears = [];
         private readonly IList<string> _equalityComparisonFields = new List<string>();
         private readonly IList<string> _viewerDependentVariables = new List<string>();
 
         public TrinityCoreHandler() : base(new StreamWriter("UpdateFields.cpp"), new StreamWriter("UpdateFields.h"))
         {
+            _fieldDeclarationComparer = Comparer<string>.Create((a, b) =>
+            {
+                if (!_writeUpdateMasks)
+                    return 0;
+
+                var aInd = _fieldBitIndex[a];
+                var bInd = _fieldBitIndex[b];
+
+                for (var i = 0; i < Math.Min(aInd.Count, bInd.Count); ++i)
+                {
+                    var diff = aInd[i] - bInd[i];
+                    if (diff != 0)
+                        return diff;
+                }
+
+                return aInd.Count - bInd.Count;
+            });
         }
 
         public override void BeforeStructures()
@@ -128,7 +146,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 _header.WriteLine();
                 _header.WriteLine("{");
 
-                foreach (var headerWrite in _delayedHeaderWrites)
+                foreach (var (_, headerWrite) in _delayedHeaderWrites.OrderBy(tup => tup.SortProperty, _fieldDeclarationComparer))
                     headerWrite();
 
                 _header.WriteLine();
@@ -356,7 +374,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 {
                     _source.WriteLine($"void {structureName}::ClearChangesMask()");
                     _source.WriteLine("{");
-                    foreach (var clear in _changesMaskClears)
+                    foreach (var (_, clear) in _changesMaskClears.OrderBy(tup => tup.SortProperty, _fieldDeclarationComparer))
                         _source.WriteLine(clear);
                     _source.WriteLine($"    {_changesMaskName}.ResetAll();");
                     _source.WriteLine("}");
@@ -499,12 +517,13 @@ namespace UpdateFieldCodeGenerator.Formats
 
             if (!_create && updateField.SizeForField == null)
             {
-                _delayedHeaderWrites.Add(() =>
+                var sortProperty = updateField.UpdateBitGroup != null ? RenameField(updateField.UpdateBitGroup) : name;
+                _delayedHeaderWrites.Add((sortProperty, () =>
                 {
                     WriteFieldDeclaration(name, updateField, updateField.UpdateBitGroup);
-                });
+                }));
                 if (_writeUpdateMasks)
-                    _changesMaskClears.Add($"    Base::ClearChangesMask({name});");
+                    _changesMaskClears.Add((sortProperty, $"    Base::ClearChangesMask({name});"));
                 else
                     _equalityComparisonFields.Add($"{name} == right.{name}");
             }
