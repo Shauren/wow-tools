@@ -93,6 +93,14 @@ namespace UpdateFieldCodeGenerator.Formats
         {
             if (_create)
             {
+                var compatDefinition = _structureType.GetField("WppCompatibilityDefinitions", BindingFlags.Static | BindingFlags.Public)?.GetValue(null);
+                if (compatDefinition != null && typeof(IEnumerable<string>).IsAssignableFrom(compatDefinition.GetType()))
+                {
+                    _header.WriteLine();
+                    foreach (var compatField in (IEnumerable<string>)compatDefinition)
+                        _header.WriteLine($"        {compatField}");
+                }
+
                 _header.WriteLine("    }");
                 _header.WriteLine("}");
                 _header.WriteLine();

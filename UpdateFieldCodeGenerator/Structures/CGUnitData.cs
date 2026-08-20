@@ -154,5 +154,12 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField autoAttackRangeMod = new UpdateField(typeof(float), UpdateFieldFlag.None, comment: "When UnitFlags3 & 0x40000000 is set, increases some autoattack range by this amount");
         public static readonly UpdateField nameplateAttachToGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None, comment: "When set, nameplate of this unit will instead appear on that object");
         public static readonly UpdateField assistActionData = new UpdateField(typeof(BlzOptionalField<JamMirrorUnitAssistActionData_C>), UpdateFieldFlag.None);
+
+        public static readonly string[] WppCompatibilityDefinitions =
+        [
+            "uint?[] IUnitData.NpcFlags => [NpcFlags, NpcFlags2];",
+            "int? IUnitData.CreatureType => CreatureType;",
+            "int? IMutableUnitData.CreatureType { get => CreatureType; set => CreatureType = (byte?)value; }"
+        ];
     }
 }
