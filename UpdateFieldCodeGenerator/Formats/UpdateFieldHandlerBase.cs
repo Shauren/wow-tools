@@ -136,7 +136,7 @@ namespace UpdateFieldCodeGenerator.Formats
 
         protected void PostProcessFieldWrites()
         {
-            void moveFieldBeforeField(string fieldToMove, bool fieldIsSize, string where, bool whereIsSize)
+            void moveFieldRelativeToField(string fieldToMove, bool fieldIsSize, string where, bool whereIsSize, bool isBefore)
             {
                 fieldToMove = RenameField(fieldToMove);
                 where = RenameField(where);
@@ -151,7 +151,18 @@ namespace UpdateFieldCodeGenerator.Formats
                 // move to just-before-last field
                 var movedField = _fieldWrites[movedFieldIndex];
                 _fieldWrites.RemoveAt(movedFieldIndex);
-                _fieldWrites.Insert(whereFieldIndex < movedFieldIndex ? whereFieldIndex : whereFieldIndex - 1, movedField);
+                int offset = isBefore ? 0 : 1;
+                _fieldWrites.Insert(whereFieldIndex < movedFieldIndex ? whereFieldIndex + offset : whereFieldIndex - 1 + offset, movedField);
+            }
+
+            void moveFieldBeforeField(string fieldToMove, bool fieldIsSize, string where, bool whereIsSize)
+            {
+                moveFieldRelativeToField(fieldToMove, fieldIsSize, where, whereIsSize, true);
+            }
+
+            void moveFieldAfterField(string fieldToMove, bool fieldIsSize, string where, bool whereIsSize)
+            {
+                moveFieldRelativeToField(fieldToMove, fieldIsSize, where, whereIsSize, false);
             }
 
             void moveFieldToEnd(string fieldToMove)

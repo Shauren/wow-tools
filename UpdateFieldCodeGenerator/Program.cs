@@ -206,7 +206,6 @@ namespace UpdateFieldCodeGenerator
             // * JamDynamicField[].Values (separate loop from count)
             // * JamDynamicField.Values
             // * Bits
-            // * JamDynamicField.Values that have bits in them
             var allFields = dataType.GetFields(BindingFlags.Static | BindingFlags.Public)
                 .Where(field => typeof(UpdateField).IsAssignableFrom(field.FieldType))
                 .Select(field => ResolveField(field))
@@ -223,8 +222,6 @@ namespace UpdateFieldCodeGenerator
             if (allFields.TryGetValue(CreateTypeOrder.JamDynamicField, out fieldGroup))
                 firstBunchOfFields = firstBunchOfFields.Concat(fieldGroup);
             if (allFields.TryGetValue(CreateTypeOrder.JamDynamicFieldArray, out fieldGroup))
-                firstBunchOfFields = firstBunchOfFields.Concat(fieldGroup);
-            if (allFields.TryGetValue(CreateTypeOrder.JamDynamicFieldWithBits, out fieldGroup))
                 firstBunchOfFields = firstBunchOfFields.Concat(fieldGroup);
 
             foreach (var (Field, Name) in firstBunchOfFields.OrderBy(field => field.Field.Order))
@@ -243,16 +240,7 @@ namespace UpdateFieldCodeGenerator
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
-            if (allFields.TryGetValue(CreateTypeOrder.DefaultWithBits, out fieldGroup))
-                foreach (var (Field, Name) in fieldGroup)
-                    fieldHandler.OnField(Name, Field);
-
-            if (allFields.TryGetValue(CreateTypeOrder.ArrayWithBits, out fieldGroup))
-                foreach (var (Field, Name) in fieldGroup)
-                    fieldHandler.OnField(Name, Field);
-
-            if ((allFields.ContainsKey(CreateTypeOrder.DefaultWithBits) || allFields.ContainsKey(CreateTypeOrder.ArrayWithBits))
-                && (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional)))
+            if (allFields.ContainsKey(CreateTypeOrder.Bits) || allFields.ContainsKey(CreateTypeOrder.Optional))
             {
                 fieldHandler.FinishControlBlocksIn(fieldHandler.WowPacketParser, "WriteCreate_FinishControlBlocks");
                 fieldHandler.FinishBitPackIn(fieldHandler.WowPacketParser, "WriteCreate_FinishBitPack");
@@ -273,10 +261,6 @@ namespace UpdateFieldCodeGenerator
             }
 
             if (allFields.TryGetValue(CreateTypeOrder.Optional, out fieldGroup))
-                foreach (var (Field, Name) in fieldGroup)
-                    fieldHandler.OnField(Name, Field);
-
-            if (allFields.TryGetValue(CreateTypeOrder.JamDynamicFieldWithBits, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
@@ -351,15 +335,6 @@ namespace UpdateFieldCodeGenerator
             }
 
             if (allFields.TryGetValue(UpdateTypeOrder.JamDynamicField, out fieldGroup))
-            {
-                foreach (var (Field, Name) in fieldGroup.Where(field => !StructureHasBitFields(field.Field.Type.GenericTypeArguments[0])))
-                    fieldHandler.OnField(Name, Field);
-
-                foreach (var (Field, Name) in fieldGroup.Where(field => StructureHasBitFields(field.Field.Type.GenericTypeArguments[0])))
-                    fieldHandler.OnField(Name, Field);
-            }
-
-            if (allFields.TryGetValue(UpdateTypeOrder.Default, out fieldGroup))
                 foreach (var (Field, Name) in fieldGroup)
                     fieldHandler.OnField(Name, Field);
 
@@ -420,7 +395,7 @@ namespace UpdateFieldCodeGenerator
         private static CreateTypeOrder GetCreateTypeOrder(UpdateField fieldType)
         {
             if (typeof(DynamicUpdateField).IsAssignableFrom(fieldType.Type))
-                return StructureHasBitFields(fieldType.Type.GenericTypeArguments[0]) ? CreateTypeOrder.JamDynamicFieldWithBits : CreateTypeOrder.JamDynamicField;
+                return CreateTypeOrder.JamDynamicField;
 
             if (typeof(bool).IsAssignableFrom(fieldType.Type))
                 return CreateTypeOrder.Bits;
@@ -432,13 +407,7 @@ namespace UpdateFieldCodeGenerator
             {
                 if (typeof(DynamicUpdateField).IsAssignableFrom(fieldType.Type.GetElementType()))
                     return CreateTypeOrder.JamDynamicFieldArray;
-
-                if (StructureHasBitFields(fieldType.Type.GetElementType()))
-                    return CreateTypeOrder.ArrayWithBits;
             }
-
-            if (StructureHasBitFields(fieldType.Type) || fieldType.BitSize > 0)
-                return CreateTypeOrder.DefaultWithBits;
 
             return CreateTypeOrder.Default;
         }
