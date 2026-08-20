@@ -224,12 +224,24 @@ namespace UpdateFieldCodeGenerator
             if (allFields.TryGetValue(CreateTypeOrder.JamDynamicFieldArray, out fieldGroup))
                 firstBunchOfFields = firstBunchOfFields.Concat(fieldGroup);
 
+            var dynamicFieldSizeHasBits = false;
+
             foreach (var (Field, Name) in firstBunchOfFields.OrderBy(field => field.Field.Order))
             {
                 if (typeof(DynamicUpdateField).IsAssignableFrom(Field.Type) || (Field.Type.IsArray && typeof(DynamicUpdateField).IsAssignableFrom(Field.Type.GetElementType())))
+                {
                     fieldHandler.OnDynamicFieldSizeCreate(Name, Field);
+                    if (Field.BitSize > 0)
+                        dynamicFieldSizeHasBits = true;
+                }
                 else
                     fieldHandler.OnField(Name, Field);
+            }
+
+            if (dynamicFieldSizeHasBits)
+            {
+                fieldHandler.FinishControlBlocksIn(fieldHandler.TrinityCore, "WriteCreate_FinishControlBlocks_DynamicFieldSizeBits");
+                fieldHandler.FinishBitPackIn(fieldHandler.TrinityCore, "WriteCreate_FinishBitPack_DynamicFieldSizeBits");
             }
 
             if (allFields.TryGetValue(CreateTypeOrder.JamDynamicFieldArray, out fieldGroup))
