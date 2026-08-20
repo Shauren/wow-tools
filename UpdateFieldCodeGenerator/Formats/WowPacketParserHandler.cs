@@ -75,7 +75,18 @@ namespace UpdateFieldCodeGenerator.Formats
 
             _source.WriteLine($"{GetIndent()}{{");
             _indent = 3;
-            _source.WriteLine($"{GetIndent()}var data = new {structureName}();");
+
+            if (_create || _isRoot || _writeUpdateMasks)
+            {
+                _source.WriteLine($"{GetIndent()}var data = new {structureName}();");
+            }
+            else
+            {
+                _source.WriteLine($"{GetIndent()}return ReadCreate{structureName}(packet, indexes);");
+                _indent = 2;
+                _source.WriteLine($"{GetIndent()}}}");
+                _source.WriteLine();
+            }
         }
 
         public override void OnStructureEnd(bool needsFlush, bool forceMaskMask)
@@ -88,6 +99,9 @@ namespace UpdateFieldCodeGenerator.Formats
                 _header.Close();
                 _header = null;
             }
+
+            if (!_create && !_isRoot && !_writeUpdateMasks)
+                return;
 
             _source.WriteLine($"{GetIndent()}packet.ResetBitReader();");
 

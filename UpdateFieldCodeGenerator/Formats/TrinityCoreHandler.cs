@@ -158,8 +158,10 @@ namespace UpdateFieldCodeGenerator.Formats
 
                 if (_isRoot)
                     _header.WriteLine($"    void WriteUpdate(EnumFlag<UpdateFieldFlag> fieldVisibilityFlags, ByteBuffer& data, Player const* receiver, {_owningObjectType} const* owner) const;");
-                else
+                else if (_writeUpdateMasks)
                     _header.WriteLine($"    void WriteUpdate(bool ignoreChangesMask, ByteBuffer& data, Player const* receiver, {_owningObjectType} const* owner) const;");
+                else
+                    _header.WriteLine($"    void WriteUpdate(bool /*ignoreChangesMask*/, ByteBuffer& data, Player const* receiver, {_owningObjectType} const* owner) const {{ WriteCreate(data, receiver, owner); }}");
 
                 if (_writeUpdateMasks)
                 {
@@ -324,11 +326,13 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             else if (!_create)
             {
-                _source.WriteLine(_isRoot
-                    ? $"void {structureName}::WriteUpdate(EnumFlag<UpdateFieldFlag> fieldVisibilityFlags, ByteBuffer& data, Player const* receiver, {_owningObjectType} const* owner) const"
-                    : $"void {structureName}::WriteUpdate(bool ignoreChangesMask, ByteBuffer& data, Player const* receiver, {_owningObjectType} const* owner) const");
+                if (_isRoot)
+                    _source.WriteLine($"void {structureName}::WriteUpdate(EnumFlag<UpdateFieldFlag> fieldVisibilityFlags, ByteBuffer& data, Player const* receiver, {_owningObjectType} const* owner) const");
+                else if (_writeUpdateMasks)
+                    _source.WriteLine($"void {structureName}::WriteUpdate(bool ignoreChangesMask, ByteBuffer& data, Player const* receiver, {_owningObjectType} const* owner) const");
 
-                _source.WriteLine("{");
+                if (_isRoot || _writeUpdateMasks)
+                    _source.WriteLine("{");
             }
             else
             {
@@ -341,15 +345,18 @@ namespace UpdateFieldCodeGenerator.Formats
 
             PostProcessFieldWrites();
 
-            if (_viewerDependentVariables.Count > 0)
+            if (_create || _isRoot || _writeUpdateMasks)
             {
-                foreach (var viewerDependentVariable in _viewerDependentVariables)
-                    _source.WriteLine($"    {viewerDependentVariable}");
+                if (_viewerDependentVariables.Count > 0)
+                {
+                    foreach (var viewerDependentVariable in _viewerDependentVariables)
+                        _source.WriteLine($"    {viewerDependentVariable}");
 
-                _source.WriteLine();
+                    _source.WriteLine();
+                }
             }
 
-            if (!_create)
+            if (!_create && (_isRoot || _writeUpdateMasks))
             {
                 foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
                 {
@@ -358,15 +365,15 @@ namespace UpdateFieldCodeGenerator.Formats
                 }
             }
 
-            List<FlowControlBlock> previousFlowControl = null;
-            foreach (var (_, _, Write) in _fieldWrites)
-                previousFlowControl = Write(previousFlowControl);
+            if (_create || _isRoot || _writeUpdateMasks)
+            {
+                List<FlowControlBlock> previousFlowControl = null;
+                foreach (var (_, _, Write) in _fieldWrites)
+                    previousFlowControl = Write(previousFlowControl);
 
-            if (needsFlush)
-                _source.WriteLine($"{GetIndent()}data.FlushBits();");
-
-            _source.WriteLine("}");
-            _source.WriteLine();
+                _source.WriteLine("}");
+                _source.WriteLine();
+            }
 
             if (!_create)
             {
