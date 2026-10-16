@@ -182,8 +182,8 @@ namespace UpdateFieldCodeGenerator.Formats
                     _header.WriteLine($"    bool operator!=({structureName} const& right) const {{ return !(*this == right); }}");
                 }
 
-                foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
-                    _header.WriteLine($"    bool Is{RenameType(dynamicChangesMaskType)}ChangesMaskSkipped() const {{ return false; }} // bandwidth savings aren't worth the cpu time");
+                foreach (var dynamicChangesMaskFlag in _dynamicChangesMaskFlags.ToFlagSet().Where(flag => flag != UpdateFieldFlag.None))
+                    _header.WriteLine($"    bool Is{dynamicChangesMaskFlag}ChangesMaskSkipped() const {{ return false; }}");
 
                 _header.WriteLine("};");
                 _header.WriteLine();
@@ -358,11 +358,8 @@ namespace UpdateFieldCodeGenerator.Formats
 
             if (!_create && (_isRoot || _writeUpdateMasks))
             {
-                foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
-                {
-                    var typeName = RenameType(dynamicChangesMaskType);
-                    _source.WriteLine($"    bool no{typeName}ChangesMask = data.WriteBit(Is{typeName}ChangesMaskSkipped());");
-                }
+                foreach (var dynamicChangesMaskFlag in _dynamicChangesMaskFlags.ToFlagSet().Where(flag => flag != UpdateFieldFlag.None))
+                    _source.WriteLine($"    bool no{dynamicChangesMaskFlag}ChangesMask = data.WriteBit(Is{dynamicChangesMaskFlag}ChangesMaskSkipped());");
             }
 
             if (_create || _isRoot || _writeUpdateMasks)
@@ -507,15 +504,12 @@ namespace UpdateFieldCodeGenerator.Formats
                     .Select(condition => $"{RenameField(condition.FieldToCompare.Name)} {condition.OperatorAndConstant}"))
                 .Select(conditions => new FlowControlBlock { Statement = $"if ({string.Join(" || ", conditions)})" }));
 
-            if (updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.HasDynamicChangesMask))
-                RegisterDynamicChangesMaskFieldType(type);
-
             if (!typeof(VariantUpdateField).IsAssignableFrom(updateField.Type))
             {
                 _fieldWrites.Add((name, false, (pcf) =>
                 {
                     WriteControlBlocks(_source, flowControl, pcf);
-                    WriteField(nameUsedToWrite, access, type, updateField.BitSize);
+                    WriteField(nameUsedToWrite, access, type, updateField.BitSize, updateField.Flag);
                     _indent = 1;
                     return flowControl;
                 }
@@ -674,7 +668,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     _flagByUpdateBit[bitIndex[i]] = new SortedSet<UpdateFieldFlag>(updateField.Flag.ToFlagSet());
         }
 
-        private void WriteField(string name, string access, Type type, int bitSize)
+        private void WriteField(string name, string access, Type type, int bitSize, UpdateFieldFlag flag)
         {
             _source.Write(GetIndent());
             if (name.EndsWith("size()"))
@@ -725,26 +719,45 @@ namespace UpdateFieldCodeGenerator.Formats
                         if (_create)
                             _source.WriteLine($"WriteMapFieldCreate({name}, data, receiver, owner);");
                         else
-                            _source.WriteLine($"WriteMapFieldUpdate({name}, {(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");
+                        {
+                            if ((_dynamicChangesMaskFlags & flag) != UpdateFieldFlag.None)
+                            {
+                                _source.WriteLine($"if (no{flag}ChangesMask)");
+                                _source.WriteLine($"{GetIndent()}    WriteMapFieldCreate({name}, data, receiver, owner);");
+                                _source.WriteLine($"{GetIndent()}else");
+                                _source.WriteLine($"{GetIndent()}    WriteMapFieldUpdate({name}, {(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");
+                            }
+                            else
+                                _source.WriteLine($"WriteMapFieldUpdate({name}, {(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");
+                        }
                     }
                     else if (typeof(SetUpdateField).IsAssignableFrom(type))
                     {
                         if (_create)
                             _source.WriteLine($"WriteSetFieldCreate({name}, data, receiver, owner);");
                         else
-                            _source.WriteLine($"WriteSetFieldUpdate({name}, {(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");
+                        {
+                            if ((_dynamicChangesMaskFlags & flag) != UpdateFieldFlag.None)
+                            {
+                                _source.WriteLine($"if (no{flag}ChangesMask)");
+                                _source.WriteLine($"{GetIndent()}    WriteSetFieldCreate({name}, data, receiver, owner);");
+                                _source.WriteLine($"{GetIndent()}else");
+                                _source.WriteLine($"{GetIndent()}    WriteSetFieldUpdate({name}, {(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");
+                            }
+                            else
+                                _source.WriteLine($"WriteSetFieldUpdate({name}, {(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");
+                        }
                     }
                     else if (_create)
                         _source.WriteLine($"{name}{access}WriteCreate(data, receiver, owner);");
                     else
                     {
-                        if (_dynamicChangesMaskTypes.Contains(type.Name))
+                        if ((_dynamicChangesMaskFlags & flag) != UpdateFieldFlag.None)
                         {
-                            _source.WriteLine($"if (no{RenameType(type.Name)}ChangesMask)");
+                            _source.WriteLine($"if (no{flag}ChangesMask)");
                             _source.WriteLine($"{GetIndent()}    {name}{access}WriteCreate(data, receiver, owner);");
                             _source.WriteLine($"{GetIndent()}else");
                             _source.WriteLine($"{GetIndent()}    {name}{access}WriteUpdate({(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");
-
                         }
                         else
                             _source.WriteLine($"{name}{access}WriteUpdate({(_isRoot ? "ignoreNestedChangesMask" : "ignoreChangesMask")}, data, receiver, owner);");

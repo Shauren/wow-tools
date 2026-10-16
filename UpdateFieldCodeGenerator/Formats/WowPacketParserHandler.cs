@@ -167,11 +167,8 @@ namespace UpdateFieldCodeGenerator.Formats
 
             if (!_create)
             {
-                foreach (var dynamicChangesMaskType in _dynamicChangesMaskTypes)
-                {
-                    var typeName = RenameType(dynamicChangesMaskType);
-                    _source.WriteLine($"{GetIndent()}var no{typeName}ChangesMask = packet.ReadBit();");
-                }
+                foreach (var dynamicChangesMaskFlag in _dynamicChangesMaskFlags.ToFlagSet().Where(flag => flag != UpdateFieldFlag.None))
+                    _source.WriteLine($"{GetIndent()}var no{dynamicChangesMaskFlag}ChangesMask = packet.ReadBit();");
             }
 
             foreach (var optionalInitVariable in _optionalInitVariables)
@@ -286,15 +283,12 @@ namespace UpdateFieldCodeGenerator.Formats
                 interfaceType = TypeHandler.ConvertToInterfaces(type, RenameType, _writeUpdateMasks);
             }
 
-            if (updateField.CustomFlag.HasFlag(CustomUpdateFieldFlag.HasDynamicChangesMask))
-                RegisterDynamicChangesMaskFieldType(type);
-
             if (!typeof(VariantUpdateField).IsAssignableFrom(updateField.Type))
             {
                 _fieldWrites.Add((name, false, (pcf) =>
                 {
                     WriteControlBlocks(_source, flowControl, pcf);
-                    WriteField(name, outputFieldName, type, updateField.BitSize, nextIndex, interfaceType, _create);
+                    WriteField(name, outputFieldName, type, updateField.BitSize, updateField.Flag, nextIndex, interfaceType, _create);
                     _indent = 3;
                     return flowControl;
                 }
@@ -429,7 +423,7 @@ namespace UpdateFieldCodeGenerator.Formats
             return flowControl;
         }
 
-        private void WriteField(string name, string outputFieldName, Type type, int bitSize, string nextIndex, Type interfaceType, bool create, string outputFieldNamePrefix = "data.")
+        private void WriteField(string name, string outputFieldName, Type type, int bitSize, UpdateFieldFlag flag, string nextIndex, Type interfaceType, bool create, string outputFieldNamePrefix = "data.")
         {
             _source.Write(GetIndent());
             if (name.EndsWith("size()"))
@@ -489,99 +483,117 @@ namespace UpdateFieldCodeGenerator.Formats
                         _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = packet.ReadDynamicString(\"{name}\", {outputFieldNamePrefix}{outputFieldName}.Length, indexes{nextIndex});");
                     else if (typeof(MapUpdateField).IsAssignableFrom(type))
                     {
-                        if (!create)
+                        void WriteMapReader(bool update, int extraIndent, bool indentFirstLine = false)
                         {
-                            _source.WriteLine($"var updateType{outputFieldName} = packet.ReadByte();");
-                            _source.WriteLine($"{GetIndent()}if (updateType{outputFieldName} != 0)");
-                            _source.WriteLine($"{GetIndent()}{{");
-                            ++_indent;
-                            _source.WriteLine($"{GetIndent()}var mapSize{outputFieldName} = packet.ReadUInt32();");
+                            if (indentFirstLine)
+                                _source.Write(GetIndent());
+
+                            var extraIndentStr = "".PadLeft(extraIndent * 4);
+
+                            _source.WriteLine($"{extraIndentStr}{outputFieldNamePrefix}{outputFieldName}.Read{(update ? "Update" : "Create")}(packet, \"{name}\", indexes,");
+
+                            var indent = GetIndent() + extraIndentStr;
+
+                            _source.WriteLine($"{indent}    (packet, name, indexes, i) =>");
+                            _source.WriteLine($"{indent}    {{");
+                            WriteField("Key", $"{extraIndentStr}        var key", type.GenericTypeArguments[0], 0, flag, nextIndex + ", name, i", null, true, string.Empty);
+                            _source.WriteLine($"{indent}        return key;");
+                            _source.WriteLine($"{indent}    }},");
+                            _source.WriteLine($"{indent}    (packet, name, indexes, i) =>");
+                            _source.WriteLine($"{indent}    {{");
+                            WriteField("Value", $"{extraIndentStr}        var value", type.GenericTypeArguments[1], 0, flag, nextIndex + ", name, i", null, true, string.Empty);
+                            _source.WriteLine($"{indent}        return value;");
+                            if (update)
+                            {
+                                _source.WriteLine($"{indent}    }},");
+                                _source.WriteLine($"{indent}    (packet, name, indexes, i) =>");
+                                _source.WriteLine($"{indent}    {{");
+                                WriteField("Value", $"{extraIndentStr}        var value", type.GenericTypeArguments[1], 0, flag, nextIndex + ", name, i", null, false, string.Empty);
+                                _source.WriteLine($"{indent}        return value;");
+                            }
+                            _source.WriteLine($"{indent}    }});");
+                        }
+
+                        if (create)
+                        {
+                            WriteMapReader(false, 0);
                         }
                         else
-                            _source.WriteLine($"var mapSize{outputFieldName} = packet.ReadUInt32();");
-
-                        _source.WriteLine($"{GetIndent()}for (var m = 0u; m < mapSize{outputFieldName}; ++m)");
-                        _source.WriteLine($"{GetIndent()}{{");
-                        WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + $", \"{name}\", m", null, true, string.Empty);
-                        WriteField(name, $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m, \"Value\"", null, true, string.Empty);
-                        _source.WriteLine($"{GetIndent()}}}");
-
-                        if (!create)
                         {
-                            --_indent;
-
-                            _source.WriteLine($"{GetIndent()}}}");
-                            _source.WriteLine($"{GetIndent()}else");
-                            _source.WriteLine($"{GetIndent()}{{");
-
-                            ++_indent;
-                            _source.WriteLine($"{GetIndent()}var changesCount{outputFieldName} = packet.ReadUInt16();");
-                            _source.WriteLine($"{GetIndent()}for (var m = 0u; m < changesCount{outputFieldName}; ++m)");
-                            _source.WriteLine($"{GetIndent()}{{");
-                            WriteField("Key", "    var key", type.GenericTypeArguments[0], 0, nextIndex + $", \"{name}\", m", null, false, string.Empty);
-                            _source.WriteLine($"{GetIndent()}    var changeType = packet.ReadByte(\"ChangeType\", indexes{nextIndex}, \"{name}\", m);");
-                            _source.WriteLine($"{GetIndent()}    if (changeType == 2)");
-                            _source.WriteLine($"{GetIndent()}        continue;");
-                            WriteField(name, $"    {outputFieldNamePrefix}{outputFieldName}[key]", type.GenericTypeArguments[1], 0, nextIndex + ", m, \"Value\"", null, false, string.Empty);
-                            _source.WriteLine($"{GetIndent()}}}");
-                            --_indent;
-
-                            _source.WriteLine($"{GetIndent()}}}");
+                            if ((_dynamicChangesMaskFlags & flag) != UpdateFieldFlag.None)
+                            {
+                                _source.WriteLine($"if (no{flag}ChangesMask)");
+                                _source.WriteLine($"{GetIndent()}{{");
+                                WriteMapReader(false, 1, true);
+                                _source.WriteLine($"{GetIndent()}}}");
+                                _source.WriteLine($"{GetIndent()}else");
+                                _source.WriteLine($"{GetIndent()}{{");
+                                WriteMapReader(true, 1, true);
+                                _source.WriteLine($"{GetIndent()}}}");
+                            }
+                            else
+                                WriteMapReader(true, 0);
                         }
                     }
                     else if (typeof(SetUpdateField).IsAssignableFrom(type))
                     {
-                        if (!create)
+                        void WriteSetReader(bool update, int extraIndent, bool indentFirstLine = false)
                         {
-                            _source.WriteLine($"var updateType{outputFieldName} = packet.ReadByte();");
-                            _source.WriteLine($"{GetIndent()}if (updateType{outputFieldName} != 0)");
-                            _source.WriteLine($"{GetIndent()}{{");
-                            ++_indent;
-                            _source.WriteLine($"{GetIndent()}var setSize{outputFieldName} = packet.ReadUInt32();");
+                            if (indentFirstLine)
+                                _source.Write(GetIndent());
+
+                            var extraIndentStr = "".PadLeft(extraIndent * 4);
+
+                            _source.WriteLine($"{extraIndentStr}{outputFieldNamePrefix}{outputFieldName}.Read{(update ? "Update" : "Create")}(packet, \"{name}\", indexes,");
+
+                            var indent = GetIndent() + extraIndentStr;
+
+                            _source.WriteLine($"{indent}    (packet, name, indexes, i) =>");
+                            _source.WriteLine($"{indent}    {{");
+                            WriteField("Value", $"{extraIndentStr}        var value", type.GenericTypeArguments[0], 0, flag, nextIndex + ", name, i", null, true, string.Empty);
+                            _source.WriteLine($"{indent}        return value;");
+                            if (update)
+                            {
+                                _source.WriteLine($"{indent}    }},");
+                                _source.WriteLine($"{indent}    (packet, name, indexes, i) =>");
+                                _source.WriteLine($"{indent}    {{");
+                                WriteField("Value", $"{extraIndentStr}        var value", type.GenericTypeArguments[0], 0, flag, nextIndex + ", name, i", null, false, string.Empty);
+                                _source.WriteLine($"{indent}        return value;");
+                            }
+                            _source.WriteLine($"{indent}    }});");
+                        }
+
+                        if (create)
+                        {
+                            WriteSetReader(false, 0);
                         }
                         else
-                            _source.WriteLine($"var setSize{outputFieldName} = packet.ReadUInt32();");
-
-                        _source.WriteLine($"{GetIndent()}for (var s = 0u; s < setSize{outputFieldName}; ++s)");
-                        _source.WriteLine($"{GetIndent()}{{");
-                        WriteField("Value", "    var val", type.GenericTypeArguments[0], 0, nextIndex + $", \"{name}\", s", null, true, string.Empty);
-                        _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName}.Add(val);");
-                        _source.WriteLine($"{GetIndent()}}}");
-
-                        if (!create)
                         {
-                            --_indent;
-
-                            _source.WriteLine($"{GetIndent()}}}");
-                            _source.WriteLine($"{GetIndent()}else");
-                            _source.WriteLine($"{GetIndent()}{{");
-
-                            ++_indent;
-                            _source.WriteLine($"{GetIndent()}var changesCount{outputFieldName} = packet.ReadUInt16();");
-                            _source.WriteLine($"{GetIndent()}for (var s = 0u; s < changesCount{outputFieldName}; ++s)");
-                            _source.WriteLine($"{GetIndent()}{{");
-                            WriteField("Value", "    var value", type.GenericTypeArguments[0], 0, nextIndex + $", \"{name}\", s", null, false, string.Empty);
-                            _source.WriteLine($"{GetIndent()}    var changeType = packet.ReadByte(\"ChangeType\", indexes{nextIndex}, \"{name}\", s);");
-                            _source.WriteLine($"{GetIndent()}    if (changeType == 2)");
-                            _source.WriteLine($"{GetIndent()}        continue;");
-                            _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName}.Add(value);");
-                            _source.WriteLine($"{GetIndent()}}}");
-                            --_indent;
-
-                            _source.WriteLine($"{GetIndent()}}}");
+                            if ((_dynamicChangesMaskFlags & flag) != UpdateFieldFlag.None)
+                            {
+                                _source.WriteLine($"if (no{flag}ChangesMask)");
+                                _source.WriteLine($"{GetIndent()}{{");
+                                WriteSetReader(false, 1, true);
+                                _source.WriteLine($"{GetIndent()}}}");
+                                _source.WriteLine($"{GetIndent()}else");
+                                _source.WriteLine($"{GetIndent()}{{");
+                                WriteSetReader(true, 1, true);
+                                _source.WriteLine($"{GetIndent()}}}");
+                            }
+                            else
+                                WriteSetReader(true, 0);
                         }
                     }
                     else if (create)
                         _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                     else
                     {
-                        if (_dynamicChangesMaskTypes.Contains(type.Name))
+                        if ((_dynamicChangesMaskFlags & flag) != UpdateFieldFlag.None)
                         {
-                            _source.WriteLine($"if (no{RenameType(type.Name)}ChangesMask)");
+                            _source.WriteLine($"if (no{flag}ChangesMask)");
                             _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName} = ReadCreate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
                             _source.WriteLine($"{GetIndent()}else");
                             _source.WriteLine($"{GetIndent()}    {outputFieldNamePrefix}{outputFieldName} = ReadUpdate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");
-
                         }
                         else
                             _source.WriteLine($"{outputFieldNamePrefix}{outputFieldName} = ReadUpdate{RenameType(type)}(packet, indexes, \"{name}\"{nextIndex});");

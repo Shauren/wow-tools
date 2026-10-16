@@ -1,6 +1,6 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
-    [HasChangesMask]
+    [HasChangesMask(dynamicChangesMaskFlags: UpdateFieldFlag.Owner)]
     public class CGPlayerInitiativeComponentData
     {
         public static readonly ObjectType ObjectType = ObjectType.PlayerInitiativeComponent;

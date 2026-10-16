@@ -16,8 +16,7 @@
     public enum CustomUpdateFieldFlag
     {
         None = 0,
-        HasDynamicChangesMask = 0x1,
-        ForceNewBlockBit = 0x2,
-        NoArrayElementBits = 0x4,
+        ForceNewBlockBit = 0x1,
+        NoArrayElementBits = 0x2,
     }
 }

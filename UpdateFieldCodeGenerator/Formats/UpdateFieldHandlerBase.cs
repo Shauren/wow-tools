@@ -19,7 +19,7 @@ namespace UpdateFieldCodeGenerator.Formats
         protected int _bitCounter;
         protected int _nonArrayBitCounter;
         protected List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)> _fieldWrites;
-        protected List<string> _dynamicChangesMaskTypes;
+        protected UpdateFieldFlag _dynamicChangesMaskFlags;
 
         protected UpdateFieldHandlerBase(TextWriter source, TextWriter header)
         {
@@ -95,13 +95,16 @@ namespace UpdateFieldCodeGenerator.Formats
             catch (ArgumentOutOfRangeException)
             {
             }
+
+            var hasChangesMask = structureType.GetCustomAttribute<HasChangesMaskAttribute>();
+
             _fieldBitIndex.Clear();
             _blockGroupBit = 0;
-            _blockGroupSize = structureType.GetCustomAttribute<HasChangesMaskAttribute>()?.BlockGroupSize ?? 32;
+            _blockGroupSize = hasChangesMask?.BlockGroupSize ?? 32;
             _bitCounter = HasNonArrayFields(structureType) && /*CountFields(structureType, _ => true) > 1 &&*/ _blockGroupSize > 0 ? 0 : -1;
             _nonArrayBitCounter = 0;
             _fieldWrites = new List<(string Name, bool IsSize, Func<List<FlowControlBlock>, List<FlowControlBlock>> Write)>();
-            _dynamicChangesMaskTypes = new List<string>();
+            _dynamicChangesMaskFlags = hasChangesMask?.DynamicChangesMaskFlags ?? UpdateFieldFlag.None;
         }
 
         public abstract void OnStructureEnd(bool forceMaskMask);
@@ -543,14 +546,6 @@ namespace UpdateFieldCodeGenerator.Formats
                     moveFieldBeforeField("WriteUpdate_FinishBitPack_Optionals", false, where, false);
                 }
             }
-        }
-
-        protected void RegisterDynamicChangesMaskFieldType(Type fieldType)
-        {
-            if (_dynamicChangesMaskTypes.Contains(fieldType.Name))
-                return;
-
-            _dynamicChangesMaskTypes.Add(fieldType.Name);
         }
 
         public void Dispose()
