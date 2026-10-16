@@ -80,8 +80,8 @@ char const* GetIntType(TypeType typeType, GameObjectPropertyTypeInfo const& type
 
 struct GameObjectProperty
 {
-    static constexpr std::uintptr_t PROPERTY_DATA = 0x38B7BE0;
-    static constexpr std::size_t MAX_PROPERTY_INDEX = 265;
+    static constexpr std::uintptr_t PROPERTY_DATA = 0x3CF8960;
+    static constexpr std::size_t MAX_PROPERTY_INDEX = 276;
 
     std::uint32_t Index;
     char const* Name;
@@ -91,8 +91,8 @@ struct GameObjectProperty
 
 struct GameObjectPropertyInfo
 {
-    static constexpr std::uintptr_t GO_TYPE_DATA = 0x42D3E70;
-    static constexpr std::size_t MAX_GAMEOBJECT_TYPE = 65;
+    static constexpr std::uintptr_t GO_TYPE_DATA = 0x47D9CB0;
+    static constexpr std::size_t MAX_GAMEOBJECT_TYPE = 67;
 
     char const* TypeName;
     std::uint32_t Count;
@@ -171,7 +171,9 @@ char const* TCEnumName[GameObjectPropertyInfo::MAX_GAMEOBJECT_TYPE] =
     "GAMEOBJECT_TYPE_CRAFTING_TABLE",
     "GAMEOBJECT_TYPE_PERKS_PROGRAM_CHEST",
     "GAMEOBJECT_TYPE_FUTURE_PATCH",
-    "GAMEOBJECT_TYPE_ASSIST_ACTION"
+    "GAMEOBJECT_TYPE_ASSIST_ACTION",
+    "GAMEOBJECT_TYPE_RESERVED_13A",
+    "GAMEOBJECT_TYPE_RESERVED_13B",
 };
 
 std::string FormatType(std::shared_ptr<Process> wow, std::uint32_t typeIndex, GameObjectPropertyTypeInfo const& type);
@@ -187,7 +189,7 @@ std::string FixName(std::string name)
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT.exe"), 69189, true);
+    std::shared_ptr<Process> wow = ProcessTools::Open(_T("WowT.exe"), 70290, true);
     if (!wow)
         return 1;
 
