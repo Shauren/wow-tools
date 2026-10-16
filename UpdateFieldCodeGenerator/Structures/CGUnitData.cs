@@ -8,16 +8,16 @@ namespace UpdateFieldCodeGenerator.Structures
     {
         public static readonly ObjectType ObjectType = ObjectType.Unit;
 
-        public static readonly UpdateField displayID = new UpdateField(typeof(int), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField npcFlags = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField npcFlags2 = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField stateSpellVisualID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField stateAnimID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField stateAnimKitID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField stateWorldEffectIDsSize = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.None, typeof(CGUnitData).GetField("stateWorldEffectIDs", BindingFlags.Static | BindingFlags.Public), customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField stateWorldEffectsQuestObjectiveID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField displayID = new UpdateField(typeof(int), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField npcFlags = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField npcFlags2 = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField stateSpellVisualID = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField stateAnimID = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField stateAnimKitID = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField stateWorldEffectIDsSize = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.ViewerDependent, typeof(CGUnitData).GetField("stateWorldEffectIDs", BindingFlags.Static | BindingFlags.Public));
+        public static readonly UpdateField stateWorldEffectsQuestObjectiveID = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField spellOverrideNameID = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField stateWorldEffectIDs = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField stateWorldEffectIDs = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField charm = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField summon = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField critter = new UpdateField(typeof(WowGuid), UpdateFieldFlag.Owner);
@@ -54,13 +54,13 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField scalingLevelMax = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scalingLevelDelta = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField scalingFactionGroup = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField factionTemplate = new UpdateField(typeof(int), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField factionTemplate = new UpdateField(typeof(int), UpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField virtualItems = new UpdateField(typeof(JamMirrorVisibleItem_C[]), UpdateFieldFlag.None, 3);
-        public static readonly UpdateField flags = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField flags2 = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField flags3 = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField flags4 = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField auraState = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField flags = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField flags2 = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField flags3 = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField flags4 = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField auraState = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField attackRoundBaseTime = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 2);
         public static readonly UpdateField rangedAttackRoundBaseTime = new UpdateField(typeof(uint), UpdateFieldFlag.Owner);
         public static readonly UpdateField boundingRadius = new UpdateField(typeof(float), UpdateFieldFlag.None);
@@ -103,7 +103,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField baseMana = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField baseHealth = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
         public static readonly UpdateField sheatheState = new UpdateField(typeof(byte), UpdateFieldFlag.None);
-        public static readonly UpdateField pvpFlags = new UpdateField(typeof(byte), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField pvpFlags = new UpdateField(typeof(byte), UpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField petFlags = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField shapeshiftForm = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField attackPower = new UpdateField(typeof(int), UpdateFieldFlag.Owner);
@@ -133,7 +133,7 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField wildBattlePetLevel = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField battlePetCompanionExperience = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField battlePetCompanionNameTimestamp = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField interactSpellID = new UpdateField(typeof(int), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField interactSpellID = new UpdateField(typeof(int), UpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField scaleDuration = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField looksLikeMountID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField looksLikeCreatureID = new UpdateField(typeof(int), UpdateFieldFlag.None);

@@ -455,7 +455,7 @@ namespace UpdateFieldCodeGenerator.Formats
                     nameUsedToWrite = $"*{nameUsedToWrite}";
             }
 
-            if ((updateField.CustomFlag & CustomUpdateFieldFlag.ViewerDependent) != CustomUpdateFieldFlag.None)
+            if ((updateField.Flag & UpdateFieldFlag.ViewerDependent) != UpdateFieldFlag.None)
             {
                 if (typeof(BlzVectorField).IsAssignableFrom(type))
                     nameUsedToWrite = char.ToLower(nameUsedToWrite[0]) + nameUsedToWrite[1..];
@@ -922,7 +922,7 @@ namespace UpdateFieldCodeGenerator.Formats
                 _header.Write($"{new string(' ', Math.Max(1, 80 - line.Length))}// {declarationType.Comment}");
             _header.WriteLine();
 
-            if ((declarationType.CustomFlag & CustomUpdateFieldFlag.ViewerDependent) != CustomUpdateFieldFlag.None)
+            if ((declarationType.Flag & UpdateFieldFlag.ViewerDependent) != UpdateFieldFlag.None)
                 _header.WriteLine($"    struct {name}Tag : ViewerDependentValueTag<{typeName}> {{}};");
         }
 

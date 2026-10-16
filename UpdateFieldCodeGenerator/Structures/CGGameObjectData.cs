@@ -10,19 +10,19 @@ namespace UpdateFieldCodeGenerator.Structures
 
         public static readonly UpdateField m_displayID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_spellVisualID = new UpdateField(typeof(uint), UpdateFieldFlag.None);
-        public static readonly UpdateField m_stateSpellVisualID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField m_spawnTrackingStateAnimID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField m_spawnTrackingStateAnimKitID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField m_stateWorldEffectIDsSize = new UpdateField(typeof(BlzVectorField<int>), UpdateFieldFlag.None, typeof(CGGameObjectData).GetField("m_stateWorldEffectIDs", BindingFlags.Static | BindingFlags.Public), customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField m_stateWorldEffectsQuestObjectiveID = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
-        public static readonly UpdateField m_stateWorldEffectIDs = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField m_stateSpellVisualID = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField m_spawnTrackingStateAnimID = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField m_spawnTrackingStateAnimKitID = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField m_stateWorldEffectIDsSize = new UpdateField(typeof(BlzVectorField<int>), UpdateFieldFlag.ViewerDependent, typeof(CGGameObjectData).GetField("m_stateWorldEffectIDs", BindingFlags.Static | BindingFlags.Public));
+        public static readonly UpdateField m_stateWorldEffectsQuestObjectiveID = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField m_stateWorldEffectIDs = new UpdateField(typeof(BlzVectorField<uint>), UpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField m_createdBy = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_guildGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
-        public static readonly UpdateField m_flags = new UpdateField(typeof(uint), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField m_flags = new UpdateField(typeof(uint), UpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField m_flagsB = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_parentRotation = new UpdateField(typeof(Quaternion), UpdateFieldFlag.None);
         public static readonly UpdateField m_factionTemplate = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField m_state = new UpdateField(typeof(sbyte), UpdateFieldFlag.None, customFlag: CustomUpdateFieldFlag.ViewerDependent);
+        public static readonly UpdateField m_state = new UpdateField(typeof(sbyte), UpdateFieldFlag.ViewerDependent);
         public static readonly UpdateField m_typeID = new UpdateField(typeof(sbyte), UpdateFieldFlag.None);
         public static readonly UpdateField m_percentHealth = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField m_artKit = new UpdateField(typeof(uint), UpdateFieldFlag.None);

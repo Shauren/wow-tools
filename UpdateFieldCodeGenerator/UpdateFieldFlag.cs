@@ -8,19 +8,16 @@
         PartyMember = 0x02,
         UnitAll = 0x04,
         Empath = 0x08,
-        Unk5 = 0x10,
-        SkipChangeHandlers = 0x20,
-        Unk7 = 0x40,
-        Unk8 = 0x80,
+        ViewerDependent = 0x10,
+        NewObject = 0x20,
     }
 
     [Flags]
     public enum CustomUpdateFieldFlag
     {
         None = 0,
-        ViewerDependent = 0x1,
-        HasDynamicChangesMask = 0x2,
-        ForceNewBlockBit = 0x4,
-        NoArrayElementBits = 0x8,
+        HasDynamicChangesMask = 0x1,
+        ForceNewBlockBit = 0x2,
+        NoArrayElementBits = 0x4,
     }
 }
